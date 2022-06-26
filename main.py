@@ -23,6 +23,6 @@ async def sc(ctx):
 @tree.command(guild = discord.Object(id = config["guild_id"]))
 @app_commands.describe(text = "say what")
 async def say(interaction: discord.Interaction, text: str):
-    await interaction.channel.send(text)
+    await interaction.response.send_message(text)
     
 bot.run(config["discord_token"])
