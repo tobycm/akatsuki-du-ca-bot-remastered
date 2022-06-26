@@ -1,28 +1,30 @@
-import discord
-from discord.ext import commands
-from discord import AllowedMentions, app_commands
 import json
+from discord import Object, Interaction, app_commands, Intents, AllowedMentions
+from discord.ext import commands
 
-bot = commands.Bot(command_prefix=commands.when_mentioned, intents = discord.Intents.all())
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
+# -------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
+
+from modules.vault import get_token
+
+bot = commands.Bot(command_prefix=commands.when_mentioned, intents = Intents.all())
 tree = bot.tree
 
-with open("./config/settings.json", "r") as f:
-    config = json.load(f)
-    
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
     
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx):
-    print(config["guild_id"])
-    await tree.sync(guild = discord.Object(id = config["guild_id"]))
+    print(get_token("guild_id"))
+    await tree.sync(guild = Object(id = get_token("guild_id")))
     await ctx.send("Synced!")
 
     
-@tree.command(guild = discord.Object(id = config["guild_id"]))
+@tree.command(guild = Object(id = get_token("guild_id")))
 @app_commands.describe(text = "say what")
-async def say(interaction: discord.Interaction, text: str):
+async def say(interaction: Interaction, text: str):
     await interaction.response.send_message(text, allowed_mentions = AllowedMentions.none())
     
-bot.run(config["discord_token"])
+bot.run(get_token("discord_token"))
