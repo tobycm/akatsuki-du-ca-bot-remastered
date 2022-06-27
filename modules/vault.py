@@ -1,5 +1,9 @@
-import json
+from json import load
 
-def get_config_value(type):
-    with open("config/settings.json", "r") as loaded_json:
-        return json.load(loaded_json)[type]
+def get_bot_config(type):
+    with open("config/settings.json", "r") as config:
+        return load(config)[type]
+    
+def get_redis_config(type):
+    with open("config/redis.json", "r") as config:
+        return load(config)[type]

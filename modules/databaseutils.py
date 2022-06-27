@@ -1,7 +1,7 @@
 from redis import Redis
 
-def return_redis_instance(host : str = "localhost", port : int = 6379, password : str = None, db : int = 0):
-    return Redis(host = host, port = port, password = password, db = db)
+def return_redis_instance(host : str = "localhost", port : int = 6379, username : str = None, password : str = None, db : int = 0):
+    return Redis(host = host, port = port, username = username, password = password, db = db)
 
 # -------------------------------------------------- prefix --------------------------------------------------
 

@@ -5,7 +5,7 @@ from discord.ext import commands
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
 
-from modules.vault import get_config_value
+from modules.vault import get_bot_config
 from modules.databaseutils import *
 
 bot = commands.Bot(command_prefix=commands.when_mentioned, activity=discord.Game(name="Hibiki Ban Mai"), intents = discord.Intents.all())
@@ -21,8 +21,8 @@ async def on_ready():
     
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx):
-    print(get_config_value("guild_id"))
-    await tree.sync(guild = discord.Object(id = get_config_value("guild_id")))
+    print(get_bot_config("guild_id"))
+    await tree.sync(guild = discord.Object(id = get_bot_config("guild_id")))
     await ctx.send("Synced!")
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
@@ -49,4 +49,4 @@ async def start_up():
     bot.redis_ins = return_redis_instance()
     await bot.load_extension('jishaku')
 
-bot.run(get_config_value("discord_token"))
+bot.run(get_bot_config("discord_token"))
