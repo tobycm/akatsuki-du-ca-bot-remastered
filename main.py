@@ -1,4 +1,3 @@
-import asyncio
 import discord
 from discord.ext import commands
 
@@ -7,7 +6,7 @@ from discord.ext import commands
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
 
 from modules.vault import get_bot_config
-from modules.database_utils import *
+from modules.database_utils import return_redis_instance, get_prefix
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
 # -------------------------------------------------
