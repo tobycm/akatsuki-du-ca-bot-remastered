@@ -7,7 +7,7 @@ from discord.ext import commands
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
 
 from modules.vault import get_bot_config
-from modules.databaseutils import *
+from modules.database_utils import *
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
 # -------------------------------------------------
@@ -33,7 +33,7 @@ async def on_ready():
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
     
 @bot.command(name = "sc", hidden = True)
-async def sc(ctx):
+async def sc(ctx : commands.Context):
     await tree.sync(guild = discord.Object(id = get_bot_config("guild_id")))
     await ctx.send("Synced!")
 
