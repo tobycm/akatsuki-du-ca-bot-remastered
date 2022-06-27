@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 
@@ -8,7 +9,19 @@ from discord.ext import commands
 from modules.vault import get_bot_config
 from modules.databaseutils import *
 
-bot = commands.Bot(command_prefix=commands.when_mentioned, activity=discord.Game(name="Hibiki Ban Mai"), intents = discord.Intents.all())
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
+# -------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot settings
+
+default_prefix = "$"
+
+async def get_prefix_for_bot(bot, message):
+    prefix = await get_prefix(bot.redis_ins, message.guild.id)
+    if prefix is None:
+        return default_prefix
+    return prefix
+
+bot = commands.Bot(command_prefix=get_prefix_for_bot, activity=discord.Game(name="Hibiki Ban Mai"), intents = discord.Intents.all())
 tree = bot.tree
 
 @bot.event
@@ -31,21 +44,18 @@ async def sc(ctx):
 @bot.event
 async def on_guild_join(guild):
     print(f"Joined {guild.name}")
-    # guild_create(guild.id, guild.name, guild.owner.id)
     
 @bot.event
 async def on_guild_remove(guild):
     print(f"Left {guild.name}")
-    # guild_delete(guild.id)
     
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for events code
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
 async def start_up():
-    await bot.wait_until_ready()
-    
     bot.redis_ins = return_redis_instance()
-    await bot.load_extension('jishaku')
+    
+bot.setup_hook = start_up
     
 bot.run(get_bot_config("discord_token"))
