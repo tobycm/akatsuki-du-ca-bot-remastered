@@ -1,4 +1,4 @@
-from redis import Redis
+from aioredis import Redis
 
 def return_redis_instance(host : str = "localhost", port : int = 6379, username : str = None, password : str = None, db : int = 0):
     return Redis(host = host, port = port, username = username, password = password, db = db)

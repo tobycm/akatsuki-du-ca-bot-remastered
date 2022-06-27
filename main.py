@@ -48,5 +48,5 @@ async def start_up():
     
     bot.redis_ins = return_redis_instance()
     await bot.load_extension('jishaku')
-
+    
 bot.run(get_bot_config("discord_token"))
