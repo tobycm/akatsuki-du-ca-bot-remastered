@@ -21,7 +21,6 @@ async def on_ready():
     
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx):
-    print(get_bot_config("guild_id"))
     await tree.sync(guild = discord.Object(id = get_bot_config("guild_id")))
     await ctx.send("Synced!")
 
