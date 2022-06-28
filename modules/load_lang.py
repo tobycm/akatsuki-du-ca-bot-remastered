@@ -10,9 +10,9 @@ async def get_lang():
         full_lang = {}
         
         for option in options:
-            with open(f"lang/{lang}/{option}") as f:
-                loaded_lang = json(f.read())
-                temp = {option: loaded_lang}
+            with open(f"lang/{lang}/{option}", "r") as f:
+                loaded_lang = json.load(f)
+                temp = {option.replace(".json", ""): loaded_lang}
                 full_lang.update(temp)
                 
         lang_pack.update({lang: full_lang})

@@ -1,5 +1,6 @@
 import discord
 from discord.ext.commands import Context, Bot
+from modules.log_utils import command_log
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------
@@ -34,6 +35,7 @@ async def on_ready():
     
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx : Context):
+    command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
     await tree.sync(guild = discord.Object(id = get_bot_config("guild_id")))
     await ctx.send("Synced!")
 
