@@ -1,8 +1,7 @@
-from typing import Tuple
 from aiohttp import ClientSession
 from random import choice
 
-async def get_waifu_image_url() -> Tuple(("url", "source")):
+async def get_waifu_image_url() -> tuple(("url", "source")):
     url = f"https://api.waifu.im/random/?selected_tags={choice(['waifu', 'maid', 'uniform', 'marin-kitagawa', 'mori-calliope', 'raiden-shogun', 'oppai', 'selfies'])}"
     async with ClientSession() as session:
         async with session.get(url) as r:
