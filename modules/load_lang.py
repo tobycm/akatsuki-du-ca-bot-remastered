@@ -4,7 +4,7 @@ from os import listdir
 lang_pack = {}
 lang_list = ["vi-vn", "en-us", "ja-jp"]
 
-async def get_lang():
+async def get_lang() -> dict:
     for lang in lang_list:
         options = [f for f in listdir(f"lang/{lang}/")]
         full_lang = {}

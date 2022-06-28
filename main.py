@@ -1,6 +1,7 @@
 import discord
 from discord.ext.commands import Context, Bot
 from modules.log_utils import command_log
+from modules.nsfw import get_nsfw
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------

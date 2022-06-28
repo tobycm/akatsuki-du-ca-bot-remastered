@@ -1,7 +1,7 @@
 from typing import Tuple
 
 
-def mstotime(ms) -> Tuple((1, 2, 3)):
+def mstotime(ms) -> Tuple(("hours", "minutes", "seconds")):
     """
     Convert milliseconds to time.
     """
