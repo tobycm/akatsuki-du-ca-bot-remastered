@@ -1,0 +1,27 @@
+{
+    "Queue": "キュー",
+    "Playing": "지금 재생 중",
+    "NotFound": "見つかりません",
+    "InQueue": "エンキュー",
+    "NoMusic": "何も再生されていません",
+    "NoMusicInQueue": "キューが空です",
+    "DifferentVoice": "Bạn làm gì đấy? Để yên người ta nghe nhạc đi :Đ",
+    "Paused": "Đã tạm dừng!",
+    "Resumed": "Đã tiếp tục!",
+    "Stopped": "Đã dừng!",
+    "Skipped": "Đã bỏ qua!",
+    "QueueCleared": "Đã xóa hàng chờ!",
+    "QueueShuffled": "Đã xáo trộn hàng chờ!",
+    "Disconnected": "Đã ngắt kết nối!",
+    "NotConnected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
+    "Loop": {
+        "On": "Đã bật chế độ lặp lại!",
+        "Off": "Đã tắt chế độ lặp lại."
+    },
+    "InvalidIndex": "Số thứ tự không hợp lệ!",
+    "SongRemoved": "Đã xóa bài hát thứ",
+    "BotPlayingInOtherVoiceChannel": "Bot đang phát trong kênh khác! Bạn không thể tiêu diệt bot được :0",
+    "BotDestroyed": "Client bot đã bị tiêu diệt muahahaha!",
+    "AuthorNotInVoice": "Vào voice đi chứ :v",
+    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!"
+}

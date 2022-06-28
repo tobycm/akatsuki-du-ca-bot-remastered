@@ -1,0 +1,13 @@
+{
+    "ChangeLanguage": "Select your language:",
+    "MinecraftAccount": [
+        "Minecraft stats for ",
+        "Minecraft Stats\nUsername:"
+    ],
+    "MinecraftServer": [
+        " is offline",
+        " is online",
+        "Minecraft Server Status\n Server IP: ",
+        "Has %d players online"
+    ]
+}

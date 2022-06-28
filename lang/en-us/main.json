@@ -1,0 +1,26 @@
+{
+    "CommandNotFound": [
+        "Looks like you are lost :Đ. Use `",
+        "help` to see the list of commands!"
+    ],
+    "MissingRequiredArgument": [
+        "You forgot to put an argument! Use `",
+        "help` to see the list of commands!"
+    ],
+    "CommandOnCooldown": [
+        "You are on cooldown! Wait ",
+        " seconds before using this command again!"
+    ],
+    "PingForPrefix": [
+        "Why ping LOL, prefix for this server is `",
+        "`. ||Just kidding, feel free to ping me||"
+    ],
+    "NotAvailableLanguage": "This command is not available in English yet!",
+    "MissingPermission": "You are missing permission to use this command! ||Want perms? Ask Toby :D||",
+    "WrongTypeArgument": [
+        "Bruh you typed in the wrong argument type haizzz `",
+        "help` to see where did you type the wrong argument!"
+    ],
+    "MissingGuildPermission": "Uh oh, no permissions for you :)",
+    "EmbedFooter": "Requested by: "
+}

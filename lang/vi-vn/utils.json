@@ -1,0 +1,5 @@
+{
+    "ChangeLanguage": "Chọn ngôn ngữ:",
+    "MinecraftAccount": ["Thông tin người chơi Minecraft: ", "Thông tin người chơi Minecraft\nTên:"],
+    "MinecraftServer": [" đang offline", " đang online", "Thông tin máy chủ Minecraft\nIP máy chủ: ", "Có %d người chơi đang online"]
+}

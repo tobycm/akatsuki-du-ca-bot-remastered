@@ -1,0 +1,26 @@
+{
+    "CommandNotFound": [
+        "何言っての？ヘルプを表示するには `",
+        "help`にメッセージを送信してください !"
+    ],
+    "MissingRequiredArgument": [
+        "引数がありません, `",
+        "help` 不足している引数を確認するための !"
+    ],
+    "CommandOnCooldown": [
+        "お待ちください. ",
+        " 秒後にもう一度やり直してください!"
+    ],
+    "PingForPrefix": [
+        "Ping cái giề 0.0, prefix của server này là `",
+        "`. Ping quài >.<"
+    ],
+    "NotAvailableLanguage": "お住まいの言語ではご利用いただけません.",
+    "MissingPermission": "Hong có quyền đâu nha bạn iu! Đòi quyền thì kêu Toby ấy :))",
+    "WrongTypeArgument": [
+        "Bạn nhập sai loại thông số rồi haizz. `",
+        "help` để xem lại loại thông số nhé!"
+    ],
+    "MissingGuildPermission": "Hong có quyền đâu nha bạn iu!",
+    "EmbedFooter": "依頼者: "
+}

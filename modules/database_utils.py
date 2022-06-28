@@ -31,7 +31,7 @@ async def get_prefix(redis_ins : Redis ,server_id : int):
 
 async def set_op(redis_ins : Redis, new_op_id : int, reason : str, adder_id : int):
     try:
-        await redis_ins.hset("op", new_op_id, reason, adder_id)
+        await redis_ins.hset("op", new_op_id, str({"reason": reason, "adder_id": adder_id}))
     except Exception as e:
         return e
     return True

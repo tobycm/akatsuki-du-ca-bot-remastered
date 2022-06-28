@@ -1,0 +1,41 @@
+{
+    "GIF": {
+        "slap": {
+            "title": "Slap",
+            "mid_text": " has been slap by "
+        },
+        "hug": {
+            "title": "Hug",
+            "mid_text": " hugged ",
+            "mid_text_2": ". How cute :Đ"
+        },
+        "poke": {
+            "title": "Poke",
+            "mid_text": " poked ",
+            "mid_text_2": ". Pokey poke"
+        },
+        "pat": {
+            "title": "Pat",
+            "mid_text": " patted "
+        },
+        "kick": {
+            "title": "Kick",
+            "mid_text": " kicked ",
+            "mid_text_2": ". Dead XD"
+        },
+        "punch": {
+            "title": "Punch",
+            "mid_text": " punched "
+        },
+        "cuddle": {
+            "title": "Cuddle",
+            "mid_text": " cuddled ",
+            "mid_text_2": ". Wait, when did I add this command :0"
+        },
+        "bite": {
+            "title": "Bite",
+            "mid_text": " bit ",
+            "mid_text_2": ". Ayo no biting each other >:|"
+        }
+    }
+}

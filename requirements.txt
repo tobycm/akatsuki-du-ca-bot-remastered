@@ -1,2 +1,6 @@
 git+https://github.com/Rapptz/discord.py
 aioredis
+redis
+aiohttp
+cchardet
+aiodns

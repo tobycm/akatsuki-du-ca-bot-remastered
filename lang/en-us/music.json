@@ -1,0 +1,27 @@
+{
+    "Queue": "Queue",
+    "Playing": "Playing",
+    "NotFound": "Not found",
+    "InQueue": "Queued!",
+    "NoMusic": "Nothing is currently playing!",
+    "NoMusicInQueue": "Queue empty!",
+    "DifferentVoice": "Du Ca is not in your voice channel, what are you trying to do 0.0",
+    "Paused": "Paused!",
+    "Resumed": "Resumed!",
+    "Stopped": "Stopped!",
+    "Skipped": "Skipped!",
+    "QueueCleared": "Queue cleared!",
+    "QueueShuffled": "Queue shuffled!",
+    "Disconnected": "Disconnected!",
+    "NotConnected": "I didn't connect, how can you disconnect me???",
+    "Loop": {
+        "On": "Loop on!",
+        "Off": "Loop off!"
+    },
+    "InvalidIndex": "Invalid index!",
+    "SongRemoved": "Removed track at",
+    "BotPlayingInOtherVoiceChannel": "Bot is playing in a another voice channel, you can't destroy the bot :0",
+    "BotDestroyed": "Music client has been destroyed muahahahaha!",
+    "AuthorNotInVoice": "You need to join the voice channel before calling me >.<",
+    "NoPermissionToConnect": "I have no permission to connect to the voice channel ;-;, you should check my permissions and the voice channel member limit!"
+}

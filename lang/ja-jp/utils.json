@@ -1,0 +1,13 @@
+{
+    "ChangeLanguage": "言語を選択：",
+    "MinecraftAccount": [
+        "Minecraftプレーヤー情報： ",
+        "Minecraftプレーヤー情報\n名前："
+    ],
+    "MinecraftServer": [
+        " オフラインです",
+        " 現在オンライン",
+        "Minecraftサーバー情報\nサーバーIP： ",
+        "オンラインに%d人のプレイヤーがいます"
+    ]
+}
