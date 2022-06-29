@@ -42,7 +42,7 @@ async def on_ready():
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx : Context):
     command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
-    await tree.sync(guild = discord.Object(id = get_bot_config("guild_id")))
+    await tree.sync()
     await ctx.send("Synced!")
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command

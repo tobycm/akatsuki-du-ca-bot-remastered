@@ -21,7 +21,6 @@ class Fun(Cog):
         
     
     @app_commands.checks.cooldown(1, 1, key = cooldown_check)
-    @app_commands.check()
     @app_commands.command(name = "slap")
     @app_commands.guilds(Object(912563175919083571))
     async def slap(self, interaction: Interaction, target : User):
