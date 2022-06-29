@@ -30,7 +30,7 @@ class Fun(Cog):
         """
         
         if target is self.bot.user:
-            await interaction.response.send_message("etou...", ephemeral = True)
+            return await interaction.response.send_message("etou...", ephemeral = True)
         
         method = "slap"
         author = interaction.user
@@ -43,7 +43,7 @@ class Fun(Cog):
             lang = lang["gif"])
         
         await interaction.channel.send(embed = rich_embeds(embed, author, lang["main"]))
-        await interaction.response.send_message("Sent!", ephemeral = True)
+        return await interaction.response.send_message("Sent!", ephemeral = True)
 
 # async def setup(bot: Bot) -> None:
 #   await bot.add_cog(Fun(bot))
