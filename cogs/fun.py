@@ -36,10 +36,10 @@ class Fun(Cog):
         lang = await return_user_lang(self, author.id)
         
         embed = await construct_gif_embed(
-            f"{author.name}#{author.discriminator}",
-            f"{target.name}#{target.discriminator}",
-            method = method,
-            lang = lang["gif"])
+            author,
+            target,
+            method,
+            lang["gif"])
         
         await interaction.channel.send(embed = rich_embeds(embed, author, lang["main"]))
         return await interaction.response.send_message("Sent!", ephemeral = True)

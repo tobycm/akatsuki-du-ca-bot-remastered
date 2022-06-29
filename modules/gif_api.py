@@ -1,6 +1,6 @@
 from aiohttp import ClientSession
 from random import choice
-from discord import Embed
+from discord import Embed, User
 from modules.vault import get_bot_config
 
 async def get_gif_url(method : str) -> str("url"):
@@ -10,15 +10,14 @@ async def get_gif_url(method : str) -> str("url"):
             return choice(data["results"])["media"][0]["gif"]["url"]
     
 async def construct_gif_embed(author : str, target : str, method : str, lang : dict) -> Embed:
-    title = lang["GIF"][method]["title"]
+    title = lang[method]["title"]
     
     if method == "slap":
-        desc = f"{target} {lang['GIF'][method]['mid_text']} {author}"
+        desc = f"{target} {lang[method]['mid_text']} {author}"
     else:
-        desc = str(author) + lang["GIF"][method]["mid_text"] + str(target)
-
+        desc = f"{author} {lang[method]['mid_text']} {target}"
     if method in ["hug", "kick", "poke", "bite", "cuddle"]:
-        desc = desc + lang["GIF"][method]["mid_text_2"]
+        desc = desc + lang[method]["mid_text_2"]
         
     embed = Embed(title = title, description = desc)
     embed.set_image(url = await get_gif_url(method))
