@@ -1,6 +1,7 @@
 from time import time
 import discord
 from discord.ext.commands import Context, Bot
+from modules.checks_and_utils import check_owners
 from modules.log_utils import command_log
 from modules.quote_api import get_quotes
 
@@ -44,6 +45,8 @@ async def on_ready():
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx : Context):
     command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
+    if not await check_owners(bot, ctx):
+        return
     await tree.sync()
     await ctx.send("Synced!")
 

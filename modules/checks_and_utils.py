@@ -2,8 +2,8 @@ from discord import Interaction
 from discord.ext.commands import Context
 from modules.database_utils import get_user_lang
 
-async def check_owners(self, ctx : Context) -> bool:
-   result = self.bot.redis_ins.hget("op", ctx.author.id)
+async def check_owners(bot, ctx : Context) -> bool:
+   result = bot.redis_ins.hget("op", ctx.author.id)
    if result is None:
        return False
    return True
