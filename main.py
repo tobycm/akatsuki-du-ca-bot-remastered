@@ -1,6 +1,5 @@
 from time import time
-from aioredis import Redis
-import discord
+from discord import Game, Intents
 from discord.ext.commands import Context, Bot
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
@@ -18,7 +17,7 @@ from modules.load_lang import get_lang
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
 
-from cogs.fun import Fun
+from cogs.fun import FunCog, GIFCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -32,7 +31,11 @@ async def get_prefix_for_bot(bot, message):
         return default_prefix
     return prefix
 
-bot = Bot(command_prefix=get_prefix_for_bot, activity=discord.Game(name="Hibiki Ban Mai"), intents = discord.Intents.all())
+bot = Bot(
+    command_prefix = get_prefix_for_bot,
+    activity = Game(name="Hibiki Ban Mai"),
+    intents = Intents.all()
+         )
 tree = bot.tree
 
 @bot.event
@@ -46,7 +49,7 @@ async def on_ready():
 @bot.command(name = "sc", hidden = True)
 async def sc(ctx : Context):
     command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
-    if not await check_owners(bot, ctx):
+    if not await check_owners(bot.redis_ins, ctx):
         return
     await tree.sync()
     await ctx.send("Synced!")
@@ -72,8 +75,9 @@ async def start_up():
     bot.lang = await get_lang()
     bot.quotes = await get_quotes()
     bot.quotes_added = time()
-    await bot.add_cog(Fun(bot))
-    print(" -> Fun cog added <-")
+    await bot.add_cog(FunCog(bot))
+    await bot.add_cog(GIFCog(bot))
+    print(" -> Fun and GIF cog added <-")
 
     
 bot.setup_hook = start_up

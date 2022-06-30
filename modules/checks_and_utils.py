@@ -1,9 +1,10 @@
+from aioredis import Redis
 from discord import Interaction
 from discord.ext.commands import Context
 from modules.database_utils import get_user_lang
 
-async def check_owners(bot, ctx : Context) -> bool:
-   result = bot.redis_ins.hget("op", ctx.author.id)
+async def check_owners(redis_ins : Redis, ctx : Context) -> bool:
+   result = await redis_ins.hget("op", ctx.author.id)
    if result is None:
        return False
    return True

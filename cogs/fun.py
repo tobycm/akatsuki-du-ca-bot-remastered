@@ -3,7 +3,7 @@ from secrets import choice
 from string import ascii_letters
 from time import time
 from discord import Embed, User, app_commands, Interaction, File
-from discord.ext.commands import Cog, Bot
+from discord.ext.commands import GroupCog, Bot, Cog
 
 from modules.checks_and_utils import user_cooldown_check, return_user_lang
 from modules.database_utils import get_user_lang
@@ -13,9 +13,10 @@ from modules.log_utils import command_log
 from modules.quote_api import get_quotes
 from modules.waifu_api import get_waifu_image_url
 
-class Fun(Cog):
+class GIFCog(GroupCog, name = "gif"):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        super().__init__()
         
     @property
     def qualified_name(self):
@@ -32,7 +33,7 @@ class Fun(Cog):
         Slap someone xD
         """
         
-        method = "slap"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -57,7 +58,7 @@ class Fun(Cog):
         Hug someone xD
         """
         
-        method = "hug"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -82,7 +83,7 @@ class Fun(Cog):
         Pat someone xD
         """
         
-        method = "pat"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -107,7 +108,7 @@ class Fun(Cog):
         Punch someone xD
         """
         
-        method = "punch"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -132,7 +133,7 @@ class Fun(Cog):
         Kick someone xD
         """
         
-        method = "kick"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -157,7 +158,7 @@ class Fun(Cog):
         Bite someone xD
         """
         
-        method = "bite"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -182,7 +183,7 @@ class Fun(Cog):
         Cuddle someone xD
         """
         
-        method = "cuddle"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -207,7 +208,7 @@ class Fun(Cog):
         Poke someone xD
         """
         
-        method = "poke"
+        method = interaction.command.name
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, method)
         
@@ -225,6 +226,10 @@ class Fun(Cog):
         await interaction.channel.send(embed = rich_embeds(embed, author, lang["main"]))
         return await interaction.response.send_message("Sent!", ephemeral = True)
 
+class FunCog(Cog):
+    def __init__(self, bot : Bot) -> None:
+        self.bot = bot
+        
     @app_commands.checks.cooldown(1, 5, key = user_cooldown_check)
     @app_commands.command(name = "alarm")
     async def alarm(self, interaction : Interaction):
@@ -313,11 +318,12 @@ class Fun(Cog):
             author = a
             quote = q
             
-        return await interaction.response.send_message(embed = rich_embeds(Embed(
-            title = author,
-            description = quote
-        ),
-                            author,
-                            lang["main"]),
-                                                       ephemeral = True)
+        return await interaction.response.send_message(
+            embed = rich_embeds(Embed(
+                title = author,
+                description = quote
+            ),
+            author,
+            lang["main"]),
+            ephemeral = True)
         
