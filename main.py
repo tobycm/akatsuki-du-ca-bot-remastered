@@ -1,14 +1,15 @@
 from time import time
+from aioredis import Redis
 import discord
 from discord.ext.commands import Context, Bot
-from modules.checks_and_utils import check_owners
-from modules.log_utils import command_log
-from modules.quote_api import get_quotes
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
 
+from modules.checks_and_utils import check_owners
+from modules.log_utils import command_log
+from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
 from modules.database_utils import return_redis_instance, get_prefix
 from modules.load_lang import get_lang
