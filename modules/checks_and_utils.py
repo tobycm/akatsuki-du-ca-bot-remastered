@@ -2,15 +2,13 @@ from discord import Interaction
 from discord.ext.commands import Context
 from modules.database_utils import get_user_lang
 
-async def check_owners(self, ctx : Context) -> True or False:
+async def check_owners(self, ctx : Context) -> bool:
    result = self.bot.redis_ins.hget("op", ctx.author.id)
    if result is None:
        return False
    return True
 
-def cooldown_check(interaction : Interaction):
-    if interaction.guild:
-        return interaction.guild.id
+def user_cooldown_check(interaction : Interaction):
     return interaction.user.id
 
 

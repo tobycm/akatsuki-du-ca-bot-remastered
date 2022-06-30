@@ -1,6 +1,8 @@
+from time import time
 import discord
 from discord.ext.commands import Context, Bot
 from modules.log_utils import command_log
+from modules.quote_api import get_quotes
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------
@@ -64,6 +66,8 @@ async def on_guild_remove(guild):
 async def start_up():
     bot.redis_ins = return_redis_instance()
     bot.lang = await get_lang()
+    bot.quotes = await get_quotes()
+    bot.quotes_added = time()
     await bot.add_cog(Fun(bot))
     print(" -> Fun cog added <-")
 
