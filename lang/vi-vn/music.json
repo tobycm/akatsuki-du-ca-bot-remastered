@@ -44,6 +44,8 @@
 
     "AuthorNotInVoice": "Vào voice đi chứ :v",
 
-    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!"
+    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
+
+    "SuggestionSent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
 
 }

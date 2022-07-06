@@ -18,6 +18,7 @@ from modules.load_lang import get_lang
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
 
 from cogs.fun import FunCog, GIFCog
+from cogs.music import RadioMusic
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -78,6 +79,8 @@ async def start_up():
     await bot.add_cog(FunCog(bot))
     await bot.add_cog(GIFCog(bot))
     print(" -> Fun and GIF cog added <-")
+    await bot.add_cog(RadioMusic(bot))
+    print(" -> Radio music cog added <-")
 
     
 bot.setup_hook = start_up
