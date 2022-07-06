@@ -23,5 +23,6 @@
     "BotPlayingInOtherVoiceChannel": "Bot is playing in a another voice channel, you can't destroy the bot :0",
     "BotDestroyed": "Music client has been destroyed muahahahaha!",
     "AuthorNotInVoice": "You need to join the voice channel before calling me >.<",
-    "NoPermissionToConnect": "I have no permission to connect to the voice channel ;-;, you should check my permissions and the voice channel member limit!"
+    "NoPermissionToConnect": "I have no permission to connect to the voice channel ;-;, you should check my permissions and the voice channel member limit!",
+    "SuggestionSent": "Your suggestion has been sent to the radio owner. Thank you so much!"
 }

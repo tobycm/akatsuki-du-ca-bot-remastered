@@ -23,5 +23,6 @@
     "BotPlayingInOtherVoiceChannel": "Bot đang phát trong kênh khác! Bạn không thể tiêu diệt bot được :0",
     "BotDestroyed": "Client bot đã bị tiêu diệt muahahaha!",
     "AuthorNotInVoice": "Vào voice đi chứ :v",
-    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!"
+    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
+    "SuggestionSent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
 }
