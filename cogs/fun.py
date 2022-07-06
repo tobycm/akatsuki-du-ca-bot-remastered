@@ -17,14 +17,6 @@ class GIFCog(GroupCog, name = "gif"):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         super().__init__()
-        
-    @property
-    def qualified_name(self):
-        return ":joy:  Fun"
-
-    def description(self):
-        return "Fun commands that is sussy amogus"
-        
     
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "slap")
