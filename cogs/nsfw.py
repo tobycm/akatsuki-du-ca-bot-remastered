@@ -1,5 +1,5 @@
 from discord import Embed, Interaction, app_commands
-from discord.ext import GroupCog
+from discord.ext.commands import GroupCog
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.log_utils import command_log
