@@ -19,6 +19,7 @@ from modules.load_lang import get_lang
 
 from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic
+from cogs.nsfw import NSFWCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -81,6 +82,8 @@ async def start_up():
     print(" -> Fun and GIF cog added <-")
     await bot.add_cog(RadioMusic(bot))
     print(" -> Radio music cog added <-")
+    await bot.add_cog(NSFWCog(bot))
+    print(" -> NSFW cog added <-")
 
     
 bot.setup_hook = start_up
