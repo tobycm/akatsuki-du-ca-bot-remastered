@@ -8,6 +8,9 @@ from modules.nsfw import get_nsfw
 from modules.checks_and_utils import user_cooldown_check
 
 class NSFWCog(GroupCog, name = "nsfw"):
+    def __init__(self, bot) -> None:
+        super().__init__()
+        self.bot = bot
     
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "art")
@@ -19,7 +22,7 @@ class NSFWCog(GroupCog, name = "nsfw"):
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         
-        lang = await get_user_lang(self.redis_ins, author.id)
+        lang = await get_user_lang(self.bot.redis_ins, author.id)
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral = True)
         
