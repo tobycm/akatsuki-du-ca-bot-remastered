@@ -1,6 +1,6 @@
 {
     "osuUserNotFound": "Player not found bruh",
-    "osuStatsTitle": "%u osu! player info",
+    "osuStatsTitle": "%s osu! player info",
     "osuStatsDescription": [
         "Username: ",
         "User ID: ",

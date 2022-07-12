@@ -30,12 +30,12 @@ class UtilsCog(Cog):
         i = 0
         
         for k, v in osu_user_data.items():
-            description[i] += v
+            description[i] += str(v)
             i += 1
 
-        await interaction.response.send_message(rich_embeds(
+        await interaction.response.send_message(embed = rich_embeds(
             Embed(title = lang["utils"]["osuStatsTitle"] % (user),
-                  description = description.join("\n"),
+                  description = "\n".join(description),
                  ).set_thumbnail(url = f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
                   .set_author(name = "osu! user data", icon_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png"),
             author,
