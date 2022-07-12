@@ -7,6 +7,7 @@ from modules.log_utils import command_log
 class RadioMusic(GroupCog, name = "radio"):
     def __init__(self, bot):
         self.bot = bot
+        super().__init__()
 
     @app_commands.checks.cooldown(1, 10, key = user_cooldown_check)
     @app_commands.command(name = "suggest")
@@ -18,7 +19,7 @@ class RadioMusic(GroupCog, name = "radio"):
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         
-        suggests_channel = await self.bot.get_channel(id = 957341782721585223)
+        suggests_channel = self.bot.get_channel(957341782721585223)
         lang = await return_user_lang(self, author.id)
         
         await suggests_channel.send(f"{author} suggested {song} \n User ID: {author.id}, Guild ID: {author.guild.id}")

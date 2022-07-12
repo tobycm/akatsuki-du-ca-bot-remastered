@@ -1,4 +1,23 @@
 {
+    "osuUserNotFound": "Không tìm thấy người chơi 0.0",
+    "osuStatsTitle": "Thông tin người chơi osu! %user",
+    "osuStatsDescription": [
+        "Tên người chơi: ",
+        "ID người chơi: ",
+        "Ngày tạo tài khoản: ",
+        "Tổng lượt chơi: ",
+        "Tổng điểm: ",
+        "Rank thế giới: ",
+        "Cấp: ",
+        "PP: ",
+        "Độ chính xác: ",
+        "SS: ",
+        "S: ",
+        "A: ",
+        "Quốc gia: ",
+        "Tổng giây đã chơi: ",
+        "Rank quốc gia: "
+    ],
     "ChangeLanguage": "Chọn ngôn ngữ:",
     "MinecraftAccount": ["Thông tin người chơi Minecraft: ", "Thông tin người chơi Minecraft\nTên:"],
     "MinecraftServer": [" đang offline", " đang online", "Thông tin máy chủ Minecraft\nIP máy chủ: ", "Có %d người chơi đang online"]

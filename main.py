@@ -21,6 +21,7 @@ from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
+from cogs.utils import UtilsCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -87,8 +88,9 @@ async def start_up():
     print(" -> NSFW cog added <-")
     await bot.add_cog(ToysCog(bot))
     print(" -> Toys cog added <-")
+    await bot.add_cog(UtilsCog(bot))
+    print(" -> Utils cog added <-")
 
-    
 bot.setup_hook = start_up
     
 bot.run(get_bot_config("discord_token"))

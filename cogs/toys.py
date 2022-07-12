@@ -7,7 +7,6 @@ from modules.log_utils import command_log
 
 class ToysCog(Cog):
     def __init__(self, bot) -> None:
-        super().__init__()
         self.bot = bot
         
     @app_commands.checks.cooldown(1, 0.25, key = user_cooldown_check)

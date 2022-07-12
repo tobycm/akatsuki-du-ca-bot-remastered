@@ -9,8 +9,8 @@ from modules.checks_and_utils import user_cooldown_check
 
 class NSFWCog(GroupCog, name = "nsfw"):
     def __init__(self, bot) -> None:
-        super().__init__()
         self.bot = bot
+        super().__init__()
     
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "art")
