@@ -1,4 +1,23 @@
 {
+    "osuUserNotFound": "Player not found bruh",
+    "osuStatsTitle": "%u osu! player info",
+    "osuStatsDescription": [
+        "Username: ",
+        "User ID: ",
+        "Join date: ",
+        "Total playcount: ",
+        "Total score: ",
+        "Global rank: ",
+        "Level: ",
+        "PP: ",
+        "Accuracy: ",
+        "SS: ",
+        "S: ",
+        "A: ",
+        "Country: ",
+        "Total seconds played: ",
+        "Country rank: "
+    ],
     "ChangeLanguage": "Select your language:",
     "MinecraftAccount": [
         "Minecraft stats for ",

@@ -1,6 +1,6 @@
 {
     "osuUserNotFound": "Không tìm thấy người chơi 0.0",
-    "osuStatsTitle": "Thông tin người chơi osu! %user",
+    "osuStatsTitle": "Thông tin người chơi osu! %u",
     "osuStatsDescription": [
         "Tên người chơi: ",
         "ID người chơi: ",
