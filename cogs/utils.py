@@ -19,7 +19,7 @@ class UtilsCog(Cog):
 
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        lang = return_user_lang(self, author.id)
+        lang = await return_user_lang(self, author.id)
         
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
@@ -37,5 +37,7 @@ class UtilsCog(Cog):
             Embed(title = lang["utils"]["osuStatsTitle"] % (user),
                   description = description.join("\n"),
                  ).set_thumbnail(url = f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
-                  .set_author(name = "osu! user data", icon_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png")
+                  .set_author(name = "osu! user data", icon_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png"),
+            author,
+            lang["main"]
         ))

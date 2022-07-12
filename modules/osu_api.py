@@ -10,10 +10,9 @@ async def get_osu_user_info(user : str) -> json:
             if r.text == "[]":
                 return None
             data = await r.json()
-            total_playcount = (int(data["count300"]) +
-                               int(data["count100"]) +
-                               int(data["count50"])
-                              )
+            data = data[0]
+            total_playcount = int(data["count300"]) + int(data["count100"]) + int(data["count50"])
+
             new_data = {
                 "username": data["username"],
                 "user_id": data["user_id"],
