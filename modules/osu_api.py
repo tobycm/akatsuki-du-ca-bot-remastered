@@ -4,7 +4,7 @@ from modules.vault import get_bot_config
 
 API_ENDPOINT = "https://osu.ppy.sh/api/"
 
-async def get_osu_user_info(user : str) -> json:
+async def get_osu_user_info(user : str) -> json or None:
     async with ClientSession() as session:
         async with session.get(f"{API_ENDPOINT}get_user?k={get_bot_config('osu_token')}&u={user}") as r:
             if r.text == "[]":
