@@ -26,17 +26,19 @@ class UtilsCog(Cog):
             await interaction.response.send_message(lang["utils"]["osuUserNotFound"])
             return
         
-        temp_desc = lang["utils"]["osuStatsDescription"]
+        lang_desc = lang["utils"]["osuStatsDescription"]
         i = 0
-        final_desc = []
+        desc = []
         
         for k, v in osu_user_data.items():
-            final_desc.append(temp_desc[i] + str(v))
+            if k == "country":
+                v = f":flag_{v}:"
+            desc.append(lang_desc[i] + str(v))
             i += 1
             
         embed = rich_embeds(
             Embed(title = lang["utils"]["osuStatsTitle"] % (user,),
-                  description = "\n".join(final_desc),
+                  description = "\n".join(desc),
                  ).set_thumbnail(url = f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
                   .set_author(name = "osu! user data", icon_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png"),
             author,
