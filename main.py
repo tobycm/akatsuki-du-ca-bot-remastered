@@ -21,7 +21,7 @@ from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
-from cogs.utils import UtilsCog
+from cogs.utils import UtilsCog, MinecraftCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -89,7 +89,8 @@ async def start_up():
     await bot.add_cog(ToysCog(bot))
     print(" -> Toys cog added <-")
     await bot.add_cog(UtilsCog(bot))
-    print(" -> Utils cog added <-")
+    await bot.add_cog(MinecraftCog(bot))
+    print(" -> Utils and Minecraft cog added <-")
 
 bot.setup_hook = start_up
     

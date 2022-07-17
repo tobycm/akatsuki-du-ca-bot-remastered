@@ -1,16 +1,17 @@
 from discord import Embed, app_commands, Interaction
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, GroupCog
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
 from modules.log_utils import command_log
+from modules.minecraft_utils import get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 
 class UtilsCog(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.checks.cooldown(1, 0.25, key = user_cooldown_check)
+    @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "osu")
     async def osu(self, interaction : Interaction, user : str):
         """
@@ -44,5 +45,57 @@ class UtilsCog(Cog):
             author,
             lang["main"]
         )
+        
+        return await interaction.response.send_message(embed = embed)
+    
+class MinecraftCog(GroupCog, name = "minecraft"):
+    def __init__(self, bot):
+        self.bot = bot
+        super().__init__()
+        
+    @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
+    @app_commands.command(name = "java_user")
+    async def java_user(self, interaction : Interaction, user : str):
+        """
+        Find info (mostly skin) about a Minecraft Java player
+        """
+        
+        author = interaction.user
+        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        lang = await return_user_lang(self, author.id)
+        
+        uuid, image, thumbnail = await get_minecraft_user_embed(user)
+        embed = rich_embeds(
+                Embed(
+                    title = lang["utils"]["MinecraftAccount"][0] + user,
+                    description = f"{lang['utils']['MinecraftAccount'][1]}{user}\nUUID: {uuid}"
+                ).set_image(
+                    url = image
+                ).set_thumbnail(
+                    url = thumbnail
+                ),
+                author,
+                lang["main"])
+        
+        return await interaction.response.send_message(embed = embed)
+    
+    @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
+    @app_commands.command(name = "java_server")
+    async def java_server(self, interaction : Interaction, server_ip : str):
+        """
+        Find info about a Minecraft Java server
+        """
+        
+        author = interaction.user
+        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        lang = await return_user_lang(self, author.id)
+        
+        embed = rich_embeds(
+                Embed(
+                    title = lang["utils"]["MinecraftServer"][0] + server_ip,
+                    description = f"{lang['utils']['MinecraftServer'][1]}{server_ip}"
+                ),
+                author,
+                lang["main"])
         
         return await interaction.response.send_message(embed = embed)

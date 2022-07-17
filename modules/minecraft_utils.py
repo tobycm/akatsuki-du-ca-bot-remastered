@@ -1,7 +1,9 @@
+from io import BytesIO
+from base64 import b64decode
 from discord import Embed
 from aiohttp import ClientSession
 
-async def get_minecraft_user_embed(username : str, lang : dict) -> Embed:
+async def get_minecraft_user_embed(username : str) -> tuple(["uuid", "image", "thumbnail"]):
     async with ClientSession() as session:
         async with session.get("https://playerdb.co/api/player/minecraft/" + username) as r:
             data = await r.json()
@@ -9,11 +11,8 @@ async def get_minecraft_user_embed(username : str, lang : dict) -> Embed:
             uuid = data["data"]["player"]["id"]
             image = f"https://crafatar.com/renders/body/{uuid}"
             thumbnail = f"https://crafatar.com/avatars/{uuid}"
-            
-            embed = Embed(title = lang["MinecraftAccount"][0] + username, description = lang["MinecraftAccount"][1] + username)
-            embed.set_image(url = image)
-            embed.set_thumbnail(url = thumbnail)
-            return embed
+
+            return (uuid, image, thumbnail)
 
 async def get_minecraft_server_info_embed(server_ip : str, lang : dict) -> Embed:
     async with ClientSession() as session:
@@ -21,5 +20,12 @@ async def get_minecraft_server_info_embed(server_ip : str, lang : dict) -> Embed
             data = await r.json()
             
             if data["online"] == "false":
-                return Embed(title = server_ip + lang["MinecraftServer"][0], description = lang["MinecraftServer"][2] + server_ip)
-            return Embed(title = server_ip + lang["MinecraftServer"][1], description = lang["MinecraftServer"][2] + server_ip + "\n" + lang["MinecraftServer"][3] % (r["players"]["online"]))
+                return "not online"
+            return {
+                "motd": data["motd"]["raw"],
+                "players": [data["players"]["online"], data["players"]["max"]],
+                "version": data["version"],
+                "online": data["online"],
+                "hostname": data["hostname"],
+                "icon": BytesIO(b64decode(data["icon"].replace('\\', '')))
+            }
