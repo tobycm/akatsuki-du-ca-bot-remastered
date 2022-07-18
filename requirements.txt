@@ -3,3 +3,6 @@ redis
 aiohttp
 cchardet
 aiodns
+jishaku
+pynacl
+git+git://github.com/Rapptz/discord.py.git@master#egg=discord.py

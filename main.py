@@ -79,6 +79,10 @@ async def start_up():
     bot.lang = await get_lang()
     bot.quotes = await get_quotes()
     bot.quotes_added = time()
+    
+    await bot.load_extension('jishaku')
+    print("Loaded jishaku")
+    
     await bot.add_cog(FunCog(bot))
     await bot.add_cog(GIFCog(bot))
     print(" -> Fun and GIF cog added <-")
@@ -91,6 +95,7 @@ async def start_up():
     await bot.add_cog(UtilsCog(bot))
     await bot.add_cog(MinecraftCog(bot))
     print(" -> Utils and Minecraft cog added <-")
+    
 
 bot.setup_hook = start_up
     
