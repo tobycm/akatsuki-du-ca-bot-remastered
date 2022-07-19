@@ -1,4 +1,5 @@
 from time import time
+import logging
 from discord import Game, Intents
 from discord.ext.commands import Context, Bot
 
@@ -42,9 +43,11 @@ bot = Bot(
          )
 tree = bot.tree
 
+logger = logging.getLogger('discord')
+
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user}")
+    logger.info(f"Logged in as {bot.user}")
     
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
@@ -64,11 +67,11 @@ async def sc(ctx : Context):
 
 @bot.event
 async def on_guild_join(guild):
-    print(f"Joined {guild.name}")
+    logger.info(f"Joined {guild.name}")
     
 @bot.event
 async def on_guild_remove(guild):
-    print(f"Left {guild.name}")
+    logger.info(f"Left {guild.name}")
     
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for events code
 # -----------------------------------------------------
@@ -81,20 +84,20 @@ async def start_up():
     bot.quotes_added = time()
     
     await bot.load_extension('jishaku')
-    print("Loaded jishaku")
+    logger.info("Loaded jishaku")
     
     await bot.add_cog(FunCog(bot))
     await bot.add_cog(GIFCog(bot))
-    print(" -> Fun and GIF cog added <-")
+    logger.info("-> Fun and GIF Cog added <-")
     await bot.add_cog(RadioMusic(bot))
-    print(" -> Radio music cog added <-")
+    logger.info(" -> Radio music cog added <-")
     await bot.add_cog(NSFWCog(bot))
-    print(" -> NSFW cog added <-")
+    logger.info(" -> NSFW cog added <-")
     await bot.add_cog(ToysCog(bot))
-    print(" -> Toys cog added <-")
+    logger.info(" -> Toys cog added <-")
     await bot.add_cog(UtilsCog(bot))
     await bot.add_cog(MinecraftCog(bot))
-    print(" -> Utils and Minecraft cog added <-")
+    logger.info(" -> Utils and Minecraft cog added <-")
     
 
 bot.setup_hook = start_up
