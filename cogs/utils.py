@@ -92,13 +92,18 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         
         data = await get_minecraft_server_info(server_ip)
         
-        if data == "not online":
-            return await interaction.response.send_message(lang["utils"]["MinecraftServer"][0])
+        if data is False:
+            return await interaction.response.send_message(lang["utils"]["MinecraftServer"]["NotFound"])
+        
+        motd = "```" + '\n'.join([i for i in data['motd']]) + "```"
+        server_info = lang['utils']['MinecraftServer']['server_info'] + server_ip
+        version = lang['utils']['MinecraftServer']['version'] + data['version']
+        players = f"{lang['utils']['MinecraftServer']['players']}{data['players'][0]}/{data['players'][1]}"
         
         embed = rich_embeds(
                     Embed(
-                        title = server_ip + lang["utils"]["MinecraftServer"][1],
-                        description = f"{data['motd']}\n{lang['utils']['MinecraftServer']['server_info']}{server_ip}\n{lang['utils']['MinecraftServer']['version']}{data['version']}\n{lang['utils']['MinecraftServer']['players']}{data['players'][0]}/{data['players'][1]}"
+                        title = f"{server_ip} {lang['utils']['MinecraftServer']['online']}",
+                        description = f"{motd}\n{server_info}\n{version}\n{players}"
                     ),
                     author,
                     lang["main"]

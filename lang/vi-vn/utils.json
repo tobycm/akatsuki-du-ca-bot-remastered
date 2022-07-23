@@ -21,7 +21,7 @@
     "ChangeLanguage": "Chọn ngôn ngữ:",
     "MinecraftAccount": ["Thông tin người chơi Minecraft: ", "Thông tin người chơi Minecraft\nTên:"],
     "MinecraftServer": {
-        "offline": "đang offline",
+        "NotFound": "Không tìm thấy",
         "online": "đang online",
         "server_info": "Thông tin máy chủ Minecraft\nIP máy chủ: ",
         "version": "Phiên bản: ",

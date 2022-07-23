@@ -20,7 +20,8 @@ async def get_minecraft_server_info(server_ip : str) -> Embed:
             data = await r.json()
             
             if data["online"] == "false":
-                return "not online"
+                return False
+            
             return {
                 "motd": data["motd"]["clean"],
                 "players": [data["players"]["online"], data["players"]["max"]],

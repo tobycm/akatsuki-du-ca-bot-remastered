@@ -24,7 +24,7 @@
         "Minecraft Stats\nUsername:"
     ],
     "MinecraftServer": {
-        "offline": "is offline",
+        "NotFound": "Not Found",
         "online": "is online",
         "server_info": "Minecraft Server Status\n Server IP: ",
         "version": "Version: ",
