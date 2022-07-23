@@ -14,7 +14,7 @@ async def get_minecraft_user_embed(username : str) -> tuple(["uuid", "image", "t
 
             return (uuid, image, thumbnail)
 
-async def get_minecraft_server_info_embed(server_ip : str, lang : dict) -> Embed:
+async def get_minecraft_server_info(server_ip : str) -> Embed:
     async with ClientSession() as session:
         async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as r:
             data = await r.json()
@@ -22,10 +22,8 @@ async def get_minecraft_server_info_embed(server_ip : str, lang : dict) -> Embed
             if data["online"] == "false":
                 return "not online"
             return {
-                "motd": data["motd"]["raw"],
+                "motd": data["motd"]["clean"],
                 "players": [data["players"]["online"], data["players"]["max"]],
                 "version": data["version"],
-                "online": data["online"],
-                "hostname": data["hostname"],
-                "icon": BytesIO(b64decode(data["icon"].replace('\\', '')))
+                "icon": data["icon"].replace('\\', '')
             }

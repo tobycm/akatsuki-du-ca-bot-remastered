@@ -23,10 +23,11 @@
         "Minecraftプレーヤー情報： ",
         "Minecraftプレーヤー情報\n名前："
     ],
-    "MinecraftServer": [
-        " オフラインです",
-        " 現在オンライン",
-        "Minecraftサーバー情報\nサーバーIP： ",
-        "オンラインに%d人のプレイヤーがいます"
-    ]
+    "MinecraftServer": {
+        "offline": "đang offline",
+        "online": "đang online",
+        "server_info": "Thông tin máy chủ Minecraft\nIP máy chủ: ",
+        "version": "Phiên bản: ",
+        "players": "Người chơi: "
+    }
 }

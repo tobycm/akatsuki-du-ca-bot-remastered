@@ -23,10 +23,11 @@
         "Minecraft stats for ",
         "Minecraft Stats\nUsername:"
     ],
-    "MinecraftServer": [
-        " is offline",
-        " is online",
-        "Minecraft Server Status\n Server IP: ",
-        "Has %d players online"
-    ]
+    "MinecraftServer": {
+        "offline": "is offline",
+        "online": "is online",
+        "server_info": "Minecraft Server Status\n Server IP: ",
+        "version": "Version: ",
+        "players": "Players: "
+    }
 }

@@ -4,7 +4,7 @@ from discord.ext.commands import Cog, GroupCog
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
 from modules.log_utils import command_log
-from modules.minecraft_utils import get_minecraft_user_embed
+from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 
 class UtilsCog(Cog):
@@ -90,12 +90,18 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         lang = await return_user_lang(self, author.id)
         
+        data = await get_minecraft_server_info(server_ip)
+        
+        if data == "not online":
+            return await interaction.response.send_message(lang["utils"]["MinecraftServer"][0])
+        
         embed = rich_embeds(
-                Embed(
-                    title = lang["utils"]["MinecraftServer"][0] + server_ip,
-                    description = f"{lang['utils']['MinecraftServer'][1]}{server_ip}"
-                ),
-                author,
-                lang["main"])
+                    Embed(
+                        title = server_ip + lang["utils"]["MinecraftServer"][1],
+                        description = f"{data['motd']}\n{lang['utils']['MinecraftServer']['server_info']}{server_ip}\n{lang['utils']['MinecraftServer']['version']}{data['version']}\n{lang['utils']['MinecraftServer']['players']}{data['players'][0]}/{data['players'][1]}"
+                    ),
+                    author,
+                    lang["main"]
+                )
         
         return await interaction.response.send_message(embed = embed)
