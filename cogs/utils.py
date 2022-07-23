@@ -103,7 +103,7 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         embed = rich_embeds(
                     Embed(
                         title = f"{server_ip} {lang['utils']['MinecraftServer']['online']}",
-                        description = f"{motd}\n{server_info}\n{version}\n{players}"
+                        description = f"{motd.lstrip()}\n{server_info}\n{version}\n{players}"
                     ),
                     author,
                     lang["main"]

@@ -19,7 +19,7 @@ async def get_minecraft_server_info(server_ip : str) -> Embed:
         async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as r:
             data = await r.json()
             
-            if data["online"] == "false":
+            if data["online"] is False:
                 return False
             
             return {
