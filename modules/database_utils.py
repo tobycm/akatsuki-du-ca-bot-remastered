@@ -10,7 +10,7 @@ def return_redis_instance(host : str = "localhost", port : int = 6379, username 
 
 # -------------------------------------------------- prefix --------------------------------------------------
 
-async def set_prefix(redis_ins : Redis, server_id : int, prefix) -> True or Exception:
+async def set_prefix(redis_ins : Redis, server_id : int, prefix : str) -> True or Exception:
     try:
         await redis_ins.hset("prefix", server_id, prefix)
     except Exception as e:
