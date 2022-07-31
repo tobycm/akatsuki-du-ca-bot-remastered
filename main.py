@@ -23,7 +23,7 @@ from cogs.music import RadioMusic
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
 from cogs.utils import UtilsCog, MinecraftCog
-from cogs.admin import PrefixCog
+from cogs.admin import PrefixCog, BotAdminCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -101,7 +101,8 @@ async def start_up():
     bot_logger.info(" -> Utils and Minecraft cog added <-")
     await bot.add_cog(PrefixCog(bot))
     bot_logger.info(" -> Prefix cog added <-")
-    
+    await bot.add_cog(BotAdminCog(bot))
+    bot_logger.info(" -> Bot admin cog added <-")
 
 bot.setup_hook = start_up
     

@@ -26,7 +26,7 @@ async def delete_prefix(redis_ins : Redis, server_id : int) -> True or Exception
 
 async def get_prefix(redis_ins : Redis ,server_id : int) -> str("prefix"):
     result = await redis_ins.hget("prefix", server_id)
-    return result.decode()
+    return result.decode() if result is not None else "$"
     
 # -------------------------------------------------- op --------------------------------------------------
 

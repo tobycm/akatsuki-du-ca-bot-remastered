@@ -1,7 +1,8 @@
 from discord import app_commands, Interaction
-from discord.ext.commands import GroupCog
+from discord.ext import commands
+from discord.ext.commands import GroupCog, Cog, Context
 
-from modules.checks_and_utils import guild_cooldown_check
+from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
 from modules.log_utils import command_log
 
@@ -52,4 +53,21 @@ class PrefixCog(GroupCog, name = "prefix"):
         error_channel = self.bot.get_channel(912563176447561796)
         return await error_channel.send(f"{author} tried to reset prefix but failed. Error: {result}")
     
-    
+class BotAdminCog(Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        
+    @commands.command(name = "resetguildprefix")
+    async def resetguildprefix(self, ctx : Context, guild_id : int):
+        """
+        Reset a guild prefix remotely
+        """
+        
+        if not await check_owners(self.bot.redis_ins, ctx):
+            raise app_commands.MissingPermissions(["manage_guild"])
+        
+        command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, ctx.command.name)
+        
+        result = await delete_prefix(self.bot.redis_ins, guild_id)
+        
+        return await ctx.send(f"Prefix reseted for guild {guild_id}" if result else f"Fail to reset prefix. Error: {result}")
