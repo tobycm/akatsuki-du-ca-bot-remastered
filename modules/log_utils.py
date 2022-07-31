@@ -1,6 +1,6 @@
 from time import time
 
-def redis_log(action, status): # create redis log function
+def redis_log(action : str, status : str): # create redis log function
     with open("log/redis_log.txt", "a") as f: # open redis log file
         f.write(f"Action: {action} with status {status}\n") # write action and status to redis log file
         
