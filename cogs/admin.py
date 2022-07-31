@@ -11,7 +11,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         super().__init__()
         
     @app_commands.checks.cooldown(1, 1, key = guild_cooldown_check)
-    @app_commands.checks.has_permissions(manage_server = True)
+    @app_commands.checks.has_permissions(manage_guild = True)
     @app_commands.command(name = "set")
     async def setprefix(self, interaction : Interaction, prefix : str):
         """
@@ -24,7 +24,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         result = await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
         
         if result:
-            return await interaction.response.send_message()
+            return await interaction.response.send_message(f"Prefix set to `{prefix}`")
         
         await interaction.response.send_message("Fail to set prefix")
         
@@ -32,7 +32,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         return await error_channel.send(f"{author} tried to set prefix to `{prefix}` but failed. Error: {result}")
     
     @app_commands.checks.cooldown(1, 1, key = guild_cooldown_check)
-    @app_commands.checks.has_permissions(manage_server = True)
+    @app_commands.checks.has_permissions(manage_guild = True)
     @app_commands.command(name = "reset")
     async def resetprefix(self, interaction : Interaction):
         """
@@ -45,7 +45,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         result = await delete_prefix(self.bot.redis_ins, author.guild.id)
         
         if result:
-            return await interaction.response.send_message()
+            return await interaction.response.send_message("Prefix reseted!")
         
         await interaction.response.send_message("Fail to set prefix")
         
