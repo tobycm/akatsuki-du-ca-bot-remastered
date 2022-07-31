@@ -1,4 +1,4 @@
-from discord import Embed, app_commands, Interaction
+from discord import AllowedMentions, Embed, app_commands, Interaction
 from discord.ext.commands import Cog, GroupCog
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
@@ -47,6 +47,29 @@ class UtilsCog(Cog):
         )
         
         return await interaction.response.send_message(embed = embed)
+            
+    @app_commands.checks.cooldown(1, 2.5, key = user_cooldown_check)
+    @app_commands.command(name = "bugreport")
+    async def bugreport(self, interaction : Interaction, bug_description : str):
+        """
+        Report a bug. Use wisely
+        """
+        
+        author = interaction.user
+        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        bug_channel = self.bot.get_channel(912563176447561796)
+        
+        await interaction.response.send_message("Thank you for your bug report. It will be reviewed shortly.")
+        
+        await bug_channel.send(
+            f"{author} báo lỗi: {bug_description}",
+            allowed_mentions=AllowedMentions(
+                users=False,
+                roles=False,
+                everyone=False
+                )
+            )
+        return await bug_channel.send(f"User ID: {author.id} | Guild ID: {author.guild.id}")
     
 class MinecraftCog(GroupCog, name = "minecraft"):
     def __init__(self, bot):
@@ -110,3 +133,5 @@ class MinecraftCog(GroupCog, name = "minecraft"):
                 )
         
         return await interaction.response.send_message(embed = embed)
+    
+    

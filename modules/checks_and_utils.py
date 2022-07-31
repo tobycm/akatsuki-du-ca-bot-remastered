@@ -12,6 +12,9 @@ async def check_owners(redis_ins : Redis, ctx : Context) -> bool:
 def user_cooldown_check(interaction : Interaction):
     return interaction.user.id
 
+def guild_cooldown_check(interaction : Interaction):
+    return interaction.guild.id
+
 
 async def return_user_lang(self, id):
     lang_option = await get_user_lang(self.bot.redis_ins, id)
