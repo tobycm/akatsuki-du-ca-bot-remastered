@@ -29,7 +29,7 @@ from cogs.admin import PrefixCog, BotAdminCog
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot settings
 
-DEFAULT_PREFIX = "$"
+DEFAULT_PREFIX = get_bot_config("prefix")
 
 async def get_prefix_for_bot(bot, message):
     prefix = await get_prefix(bot.redis_ins, message.guild.id)
@@ -106,4 +106,4 @@ async def start_up():
 
 bot.setup_hook = start_up
     
-bot.run(get_bot_config("discord_token"))
+bot.run(get_bot_config("token"))

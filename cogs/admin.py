@@ -5,7 +5,7 @@ from discord.ext.commands import GroupCog, Cog, Context
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
 from modules.log_utils import command_log
-from modules.vault import get_bot_config
+from modules.vault import get_channel_config
 
 class PrefixCog(GroupCog, name = "prefix"):
     def __init__(self, bot):
@@ -30,7 +30,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         
         await interaction.response.send_message("Fail to set prefix")
         
-        error_channel = self.bot.get_channel(get_bot_config("error_reporting_channel"))
+        error_channel = self.bot.get_channel(get_channel_config("error"))
         return await error_channel.send(f"{author} tried to set prefix to `{prefix}` but failed. Error: {result}")
     
     @app_commands.checks.cooldown(1, 1, key = guild_cooldown_check)
@@ -51,7 +51,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         
         await interaction.response.send_message("Fail to set prefix")
         
-        error_channel = self.bot.get_channel(get_bot_config("error_reporting_channel"))
+        error_channel = self.bot.get_channel(get_channel_config("error"))
         return await error_channel.send(f"{author} tried to reset prefix but failed. Error: {result}")
     
 class BotAdminCog(Cog):

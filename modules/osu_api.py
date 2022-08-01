@@ -1,12 +1,12 @@
 import json
 from aiohttp import ClientSession
-from modules.vault import get_bot_config
+from modules.vault import get_api_key
 
 API_ENDPOINT = "https://osu.ppy.sh/api/"
 
 async def get_osu_user_info(user : str) -> json or None:
     async with ClientSession() as session:
-        async with session.get(f"{API_ENDPOINT}get_user?k={get_bot_config('osu_token')}&u={user}") as r:
+        async with session.get(f"{API_ENDPOINT}get_user?k={get_api_key('osu')}&u={user}") as r:
             if r.text == "[]":
                 return None
             data = await r.json()

@@ -6,7 +6,7 @@ from modules.embed_process import rich_embeds
 from modules.log_utils import command_log
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
-from modules.vault import get_bot_config
+from modules.vault import get_channel_config
 
 class UtilsCog(Cog):
     def __init__(self, bot):
@@ -58,7 +58,7 @@ class UtilsCog(Cog):
         
         author = interaction.user
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        bug_channel = self.bot.get_channel(get_bot_config("bug_reporting_channel"))
+        bug_channel = self.bot.get_channel(get_channel_config("bug"))
         
         await interaction.response.send_message("Thank you for your bug report. It will be reviewed shortly.")
         

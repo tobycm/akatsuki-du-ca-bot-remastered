@@ -1,11 +1,11 @@
 from aiohttp import ClientSession
 from random import choice
-from discord import Embed, User
-from modules.vault import get_bot_config
+from discord import Embed
+from modules.vault import get_api_key
 
 async def get_gif_url(method : str) -> str("url"):
     async with ClientSession() as session:
-        async with session.get(f"https://g.tenor.com/v1/random?q=Anime {method} GIF&key={get_bot_config('tenor_token')}&limit=10") as r:
+        async with session.get(f"https://g.tenor.com/v1/random?q=Anime {method} GIF&key={get_api_key('tenor')}&limit=10") as r:
             data = await r.json()
             return choice(data["results"])["media"][0]["gif"]["url"]
     

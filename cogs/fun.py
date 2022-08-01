@@ -1,5 +1,4 @@
-from random import randint
-from secrets import choice
+from random import randint, choice
 from string import ascii_letters
 from time import time
 from discord import Embed, User, app_commands, Interaction, File
