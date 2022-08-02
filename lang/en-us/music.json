@@ -42,6 +42,7 @@
             }
         },
         "queue": "Queue",
+        "result": "Results",
         "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
     }
 }
