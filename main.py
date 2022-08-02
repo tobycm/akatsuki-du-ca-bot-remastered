@@ -19,7 +19,7 @@ from modules.load_lang import get_lang
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
 
 from cogs.fun import FunCog, GIFCog
-from cogs.music import RadioMusic
+from cogs.music import RadioMusic, MusicCog
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
 from cogs.utils import UtilsCog, MinecraftCog
@@ -91,7 +91,8 @@ async def start_up():
     await bot.add_cog(GIFCog(bot))
     bot_logger.info("-> Fun and GIF Cog added <-")
     await bot.add_cog(RadioMusic(bot))
-    bot_logger.info(" -> Radio music cog added <-")
+    await bot.add_cog(MusicCog(bot))
+    bot_logger.info(" -> Radio and Music cog added <-")
     await bot.add_cog(NSFWCog(bot))
     bot_logger.info(" -> NSFW cog added <-")
     await bot.add_cog(ToysCog(bot))

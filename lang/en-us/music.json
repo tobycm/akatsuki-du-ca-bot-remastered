@@ -1,28 +1,47 @@
 {
-    "Queue": "Queue",
-    "Playing": "Playing",
-    "NotFound": "Not found",
-    "InQueue": "Queued!",
-    "NoMusic": "Nothing is currently playing!",
-    "NoMusicInQueue": "Queue empty!",
-    "DifferentVoice": "Du Ca is not in your voice channel, what are you trying to do 0.0",
-    "Paused": "Paused!",
-    "Resumed": "Resumed!",
-    "Stopped": "Stopped!",
-    "Skipped": "Skipped!",
-    "QueueCleared": "Queue cleared!",
-    "QueueShuffled": "Queue shuffled!",
-    "Disconnected": "Disconnected!",
-    "NotConnected": "I didn't connect, how can you disconnect me???",
-    "Loop": {
-        "On": "Loop on!",
-        "Off": "Loop off!"
+    "voice_client": {
+        "status": {
+            "connecting": "Connecting...",
+            "connected": "Connected!",
+            "disconnecting": "Disconnecting...",
+            "disconnected": "Disconnected!"
+        },
+        "error": {
+            "not_connected": "I didn't connect, how can you disconnect me???",
+            "already_connected": "I'm in already lol",
+            "user_no_voice": "You need to join the voice channel before calling me >.<",
+            "no_permission": "I have no permission to connect to the voice channel ;-; you should check my permissions and the voice channel member limit!",
+            "playing_in_another_channel": "Bot is playing in another channel bro!",
+            "different_voice": "Your VC != Bot VC",
+            "not_found": "Can't found anything. Sad ;-;"
+        }
     },
-    "InvalidIndex": "Invalid index!",
-    "SongRemoved": "Removed track at",
-    "BotPlayingInOtherVoiceChannel": "Bot is playing in a another voice channel, you can't destroy the bot :0",
-    "BotDestroyed": "Music client has been destroyed muahahahaha!",
-    "AuthorNotInVoice": "You need to join the voice channel before calling me >.<",
-    "NoPermissionToConnect": "I have no permission to connect to the voice channel ;-;, you should check my permissions and the voice channel member limit!",
-    "SuggestionSent": "Your suggestion has been sent to the radio owner. Thank you so much!"
+    "misc": {
+        "action": {
+            "queue": {
+                "cleared": "Queue cleared!",
+                "shuffled": "Queue shuffled!",
+                "added": "Added to queue!",
+                "loop": {
+                    "enabled": "Loop on!",
+                    "disabled": "Loop off!"
+                },
+                "removed": "Removed %sth song in queue!"
+            },
+            "music": {
+                "playing": "Playing!",
+                "paused": "Paused!",
+                "resumed": "Resumed!",
+                "skipped": "Skipped!",
+                "stopped": "Stopped!"
+            },
+            "error": {
+                "invalid_index": "Invalid index!",
+                "no_music": "Nothing is currently playing!",
+                "no_queue": "Queue empty!"
+            }
+        },
+        "queue": "Queue",
+        "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
+    }
 }

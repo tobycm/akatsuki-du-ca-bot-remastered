@@ -1,28 +1,47 @@
 {
-    "Queue": "キュー",
-    "Playing": "지금 재생 중",
-    "NotFound": "見つかりません",
-    "InQueue": "エンキュー",
-    "NoMusic": "何も再生されていません",
-    "NoMusicInQueue": "キューが空です",
-    "DifferentVoice": "Bạn làm gì đấy? Để yên người ta nghe nhạc đi :Đ",
-    "Paused": "Đã tạm dừng!",
-    "Resumed": "Đã tiếp tục!",
-    "Stopped": "Đã dừng!",
-    "Skipped": "Đã bỏ qua!",
-    "QueueCleared": "Đã xóa hàng chờ!",
-    "QueueShuffled": "Đã xáo trộn hàng chờ!",
-    "Disconnected": "Đã ngắt kết nối!",
-    "NotConnected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
-    "Loop": {
-        "On": "Đã bật chế độ lặp lại!",
-        "Off": "Đã tắt chế độ lặp lại."
+    "voice_client": {
+        "status": {
+            "connecting": "Đang kết nối...",
+            "connected": "Đã kết nối!",
+            "disconnecting": "Đang ngắt kết nối...",
+            "disconnected": "Đã ngắt kết nối!"
+        },
+        "error": {
+            "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
+            "already_connected": "Kết nối rồi lmao",
+            "user_no_voice": "Vào voice đi chứ :v",
+            "no_permission": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
+            "playing_in_another_channel": "Bot đang phát trong kênh khác!",
+            "different_voice": "Lmao khác kênh voice",
+            "not_found": "Hông tìm được gì hết á ;-;"
+        }
     },
-    "InvalidIndex": "Số thứ tự không hợp lệ!",
-    "SongRemoved": "Đã xóa bài hát thứ",
-    "BotPlayingInOtherVoiceChannel": "Bot đang phát trong kênh khác! Bạn không thể tiêu diệt bot được :0",
-    "BotDestroyed": "Client bot đã bị tiêu diệt muahahaha!",
-    "AuthorNotInVoice": "Vào voice đi chứ :v",
-    "NoPermissionToConnect": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
-    "SuggestionSent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
+    "misc": {
+        "action": {
+            "queue": {
+                "cleared": "Đã xóa hàng đợi!",
+                "shuffled": "Đã xáo trộn hàng đợi!",
+                "added": "Đã thêm vào hàng đợi!",
+                "loop": {
+                    "enabled": "Đã bật chế độ lặp lại!",
+                    "disabled": "Đã tắt chế độ lặp lại!"
+                },
+                "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
+            },
+            "music": {
+                "playing": "Đang phát!",
+                "paused": "Đã tạm dừng!",
+                "resumed": "Đã tiếp tục!",
+                "skipped": "Đã bỏ qua!",
+                "stopped": "Đã dừng!"
+            },
+            "error": {
+                "invalid_index": "Số thứ tự không hợp lệ!",
+                "no_music": "Không có nhạc nào đang phát!",
+                "no_queue": "Không có nhạc nào trong hàng đợi!"
+            }
+        },
+        "queue": "Hàng đợi",
+        "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
+    }
 }
