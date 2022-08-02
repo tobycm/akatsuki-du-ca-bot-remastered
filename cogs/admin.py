@@ -1,6 +1,6 @@
 from discord import app_commands, Interaction
 from discord.ext import commands
-from discord.ext.commands import GroupCog, Cog, Context
+from discord.ext.commands import GroupCog, Cog, Context, Bot
 
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
@@ -8,7 +8,7 @@ from modules.log_utils import command_log
 from modules.vault import get_channel_config
 
 class PrefixCog(GroupCog, name = "prefix"):
-    def __init__(self, bot):
+    def __init__(self, bot : Bot):
         self.bot = bot
         super().__init__()
         
@@ -55,7 +55,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         return await error_channel.send(f"{author} tried to reset prefix but failed. Error: {result}")
     
 class BotAdminCog(Cog):
-    def __init__(self, bot):
+    def __init__(self, bot : Bot):
         self.bot = bot
         
     @commands.command(name = "resetguildprefix")

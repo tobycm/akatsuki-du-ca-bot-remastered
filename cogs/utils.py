@@ -1,5 +1,5 @@
 from discord import AllowedMentions, Embed, app_commands, Interaction
-from discord.ext.commands import Cog, GroupCog
+from discord.ext.commands import Cog, GroupCog, Bot
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
@@ -9,7 +9,7 @@ from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
 
 class UtilsCog(Cog):
-    def __init__(self, bot):
+    def __init__(self, bot : Bot):
         self.bot = bot
 
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
@@ -73,7 +73,7 @@ class UtilsCog(Cog):
         return await bug_channel.send(f"User ID: {author.id} | Guild ID: {author.guild.id}")
     
 class MinecraftCog(GroupCog, name = "minecraft"):
-    def __init__(self, bot):
+    def __init__(self, bot : Bot):
         self.bot = bot
         super().__init__()
         

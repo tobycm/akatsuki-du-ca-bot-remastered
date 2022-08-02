@@ -1,12 +1,12 @@
 from random import randint
 from discord import Interaction, app_commands
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, Bot
 
 from modules.checks_and_utils import user_cooldown_check
 from modules.log_utils import command_log
 
 class ToysCog(Cog):
-    def __init__(self, bot) -> None:
+    def __init__(self, bot : Bot) -> None:
         self.bot = bot
         
     @app_commands.checks.cooldown(1, 0.25, key = user_cooldown_check)

@@ -1,5 +1,5 @@
 from discord import Embed, Interaction, app_commands
-from discord.ext.commands import GroupCog
+from discord.ext.commands import GroupCog, Bot
 
 from modules.embed_process import rich_embeds
 from modules.log_utils import command_log
@@ -7,7 +7,7 @@ from modules.nsfw import get_nsfw
 from modules.checks_and_utils import user_cooldown_check, return_user_lang
 
 class NSFWCog(GroupCog, name = "nsfw"):
-    def __init__(self, bot) -> None:
+    def __init__(self, bot : Bot) -> None:
         self.bot = bot
         super().__init__()
     
