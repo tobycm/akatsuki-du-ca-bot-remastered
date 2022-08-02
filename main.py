@@ -53,10 +53,10 @@ async def on_ready():
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
-    
+
 @bot.command(name = "sc", hidden = True)
+@command_log
 async def sc(ctx : Context):
-    command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
     if not await check_owners(bot.redis_ins, ctx):
         return
     await tree.sync()
