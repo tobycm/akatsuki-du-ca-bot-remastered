@@ -1,5 +1,4 @@
 import logging
-from turtle import color
 from typing import List
 from unittest import result
 from discord import Color, Embed, Interaction, app_commands
@@ -7,7 +6,7 @@ from discord.ext.commands import GroupCog, Cog, Bot
 from discord.ui import Select, View
 import wavelink
 
-from modules.checks_and_utils import return_user_lang, user_cooldown_check
+from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
 from modules.embed_process import rich_embeds
 from modules.vault import get_lavalink_nodes
 
@@ -65,16 +64,23 @@ class MusicCog(Cog):
         Event fired when a track ends.
         """
 
+        await self.bot.music_channel[player.guild.id].send(f"{track.title} has ended")
         if player.queue.is_empty:
             return await player.disconnect()
         next_track : wavelink.YouTubeTrack = await player.queue.get_wait()
         await player.play(next_track)
+        
+    @Cog.listener()
+    async def on_wavelink_track_start(self, player: wavelink.Player, track: wavelink.Track):
+        """
+        Event fired when a track starts.
+        """
+
         embed = Embed(
             title = "Now playing",
-            description = f"**{next_track.title}**",
+            description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
             color = Color.random()
-        )
-        embed.set_thumbnail(url = next_track.thumbnail)
+        ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg")
         await self.bot.music_channel[player.guild.id].send(embed = embed)
         
     async def _connect1(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> wavelink.Player or None or str("error"):
@@ -164,7 +170,14 @@ class MusicCog(Cog):
         await player.queue.put_wait(track)
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
-        return await interaction.edit_original_message(content = lang["music"]["misc"]["action"]["music"]["playing"])
+        await interaction.edit_original_message(embed = rich_embeds(
+            Embed(
+                title = lang["music"]["misc"]["action"]["queue"]["added"],
+                description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
+            ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
+            interaction.user,
+            lang["main"]
+        ))
     
     @app_commands.checks.cooldown(1, 1.75, key = user_cooldown_check)
     @app_commands.command(name = "search")
@@ -191,6 +204,14 @@ class MusicCog(Cog):
                 await player.queue.put_wait(track)
                 if not player.is_playing():
                     await player.play(await player.queue.get_wait())
+                    await interaction.channel.send(embed = rich_embeds(
+                        Embed(
+                            title = lang["music"]["misc"]["action"]["queue"]["added"],
+                            description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
+                        ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
+                        interaction.user,
+                        lang["main"]
+                    ))
                 return
         
         embed = Embed(
@@ -262,15 +283,16 @@ class MusicCog(Cog):
     @app_commands.command(name = "stop")
     async def stop(self, interaction : Interaction):
         """
-        Stop a song.
+        Stop playing music.
         """
 
         lang = await return_user_lang(self, interaction.user.id)
         
         vcl : wavelink.Player = await self._connect2(interaction, lang)
-        await vcl.queue.clear()
+        if not vcl.queue.is_empty:
+            vcl.queue.clear()
         await vcl.stop()
-        return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["stopped"])
+        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["stopped"])
     
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "queue")
@@ -297,4 +319,27 @@ class MusicCog(Cog):
         for track in vcl.queue:
             embed.description += f"{counter}. {track.title}\n"
             counter += 1
+        return await interaction.response.send_message(embed = embed)
+    
+    @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
+    @app_commands.command(name = "nowplaying")
+    async def nowplaying(self, interaction : Interaction):
+        """
+        Show the now playing song.
+        """
+
+        lang = await return_user_lang(self, interaction.user.id)
+        
+        vcl : wavelink.Player = await self._connect2(interaction, lang)
+        if not vcl.is_playing():
+            return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_music"])
+        
+        embed = rich_embeds(
+            Embed(
+                title = lang["music"]["misc"]["now_playing"],
+                description = f"[**{vcl.track.title}**]({vcl.track.uri}) - {vcl.track.author}\nDuration: {seconds_to_time(vcl.position)}/{seconds_to_time(vcl.track.duration)}",
+            ),
+            interaction.user,
+            lang["main"]
+        )
         return await interaction.response.send_message(embed = embed)

@@ -30,7 +30,6 @@
             },
             "music": {
                 "searching": "Searching...",
-                "playing": "Playing!",
                 "paused": "Paused!",
                 "resumed": "Resumed!",
                 "skipped": "Skipped!",
@@ -44,6 +43,7 @@
         },
         "queue": "Queue",
         "result": "Results",
+        "now_playing": "Now Playing",
         "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
     }
 }

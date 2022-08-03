@@ -30,7 +30,6 @@
             },
             "music": {
                 "searching": "Đang tìm...",
-                "playing": "Đang phát!",
                 "paused": "Đã tạm dừng!",
                 "resumed": "Đã tiếp tục!",
                 "skipped": "Đã bỏ qua!",
@@ -44,6 +43,7 @@
         },
         "queue": "Hàng đợi",
         "result": "Kết quả",
+        "now_playing": "Đang phát",
         "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
     }
 }

@@ -1,10 +1,10 @@
 {
     "voice_client": {
         "status": {
-            "connecting": "Đang kết nối...",
-            "connected": "Đã kết nối!",
-            "disconnecting": "Đang ngắt kết nối...",
-            "disconnected": "Đã ngắt kết nối!"
+            "connecting": "接続しています...",
+            "connected": "接続しました。",
+            "disconnecting": "接続を切断中...",
+            "disconnected": "切断されました!"
         },
         "error": {
             "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
@@ -29,21 +29,21 @@
                 "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
             },
             "music": {
-                "searching": "Đang tìm...",
-                "playing": "Đang phát!",
-                "paused": "Đã tạm dừng!",
-                "resumed": "Đã tiếp tục!",
-                "skipped": "Đã bỏ qua!",
-                "stopped": "Đã dừng!"
+                "searching": "検索中...",
+                "paused": "一時停止しました!",
+                "resumed": "再開しました!",
+                "skipped": "スキップされました!",
+                "stopped": "停止しました!"
             },
             "error": {
-                "invalid_index": "Số thứ tự không hợp lệ!",
-                "no_music": "Không có nhạc nào đang phát!",
-                "no_queue": "Không có nhạc nào trong hàng đợi!"
+                "invalid_index": "インデックスが無効です!",
+                "no_music": "何も再生されていません",
+                "no_queue": "キューが空です!"
             }
         },
-        "queue": "Hàng đợi",
-        "result": "Kết quả",
+        "queue": "キュー",
+        "result": "結果",
+        "now_playing": "지금 재생 중",
         "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
     }
 }

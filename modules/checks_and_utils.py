@@ -18,3 +18,8 @@ def guild_cooldown_check(interaction : Interaction):
 async def return_user_lang(self, id):
     lang_option = await get_user_lang(self.bot.redis_ins, id)
     return self.bot.lang[lang_option]
+
+def seconds_to_time(seconds : int) -> str:
+    minutes = int(seconds // 60)
+    seconds = int(seconds % 60)
+    return f"{minutes}:{seconds:02d}"
