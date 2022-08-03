@@ -60,6 +60,16 @@ class MusicCog(Cog):
         bot_logger.info(f"Connected to {node.host}:{node.port}")
         
     @Cog.listener()
+    async def on_wavelink_websocket_closed(self, player : wavelink.Player, reason : str, code : int):
+        """
+        Event fired when the Node websocket has been closed by Lavalink.
+        """
+        
+        bot_logger = logging.getLogger('discord')
+        bot_logger.info(f"Disconnected from {player.node.host}:{player.node.port}")
+        bot_logger.info(f"Reason: {reason} | Code: {code}")
+        
+    @Cog.listener()
     async def on_wavelink_track_end(self, player: wavelink.Player, track: wavelink.Track, reason: str):
         """
         Event fired when a track ends.
@@ -84,21 +94,39 @@ class MusicCog(Cog):
         ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg")
         await self.bot.music_channel[player.guild.id].send(embed = embed)
         
-    async def _connect1(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> wavelink.Player or None or str("error"):
-        if not interaction.user.voice: # author not in voice channel
+    @Cog.listener()
+    async def on_wavelink_track_exception(self, player: wavelink.Player, track: wavelink.Track, error):
+        """
+        Event fired when a track encounters an exception.
+        """
+
+        bot_logger = logging.getLogger('discord')
+        bot_logger.info(f"Track {track.title} encountered an exception: {error}")
+        print(type(error))
+        
+    @Cog.listener()
+    async def on_wavelink_track_stuck(self, player : wavelink.Player, track : wavelink.Track, *args):
+        """
+        Event fired when a track is stuck.
+        """
+
+        bot_logger = logging.getLogger('discord')
+        bot_logger.info(f"Track {track.title} is stuck")
+        await self.bot.music_channel[player.guild.id].send(f"{track.title} is stuck")
+                
+    async def connect_check(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> wavelink.Player or None or str("error"):
+        usr_voice = interaction.user.voice
+        if not usr_voice: # author not in voice channel
             await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
             return "error"
-        if interaction.guild.voice_client:
-            if interaction.guild.voice_client.channel is not interaction.user.voice.channel:
-                await interaction.response.send_message(lang["music"]["voice_client"]["error"]["playing_in_another_channel"])
-                return "error"
-            elif interaction.guild.voice_client.channel is interaction.user.voice.channel and cnt_cmd:
+        vcl = interaction.guild.voice_client
+        if vcl:
+            if vcl.channel is usr_voice.channel and cnt_cmd:
                 await interaction.response.send_message(lang["music"]["voice_client"]["error"]["already_connected"])
-            return interaction.guild.voice_client
-        return None
+        return vcl
     
-    async def _connect2(self, interaction : Interaction, lang : dict, cnt_cmd : bool = False) -> wavelink.Player:
-        player = await self._connect1(interaction, lang, cnt_cmd)
+    async def _connect(self, interaction : Interaction, lang : dict, cnt_cmd : bool = False) -> wavelink.Player:
+        player = await self.connect_check(interaction, lang, cnt_cmd)
         if player == "error":
             return
         elif player is None:
@@ -111,7 +139,7 @@ class MusicCog(Cog):
                 )
         return player
         
-    async def _disconnect1(self, interaction : Interaction, lang : dict) -> None or True:
+    async def disconnect_check(self, interaction : Interaction, lang : dict) -> None or True:
         if not interaction.user.voice: # author not in voice channel
             await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
         if not interaction.guild.voice_client: # bot didn't even connect lol
@@ -120,7 +148,7 @@ class MusicCog(Cog):
             await interaction.response.send_message(lang["music"]["voice_client"]["error"]["playing_in_another_channel"])
         return True
     
-    async def _disconnect2(self, interaction : Interaction, lang : dict) -> None or True:
+    async def _disconnect(self, interaction : Interaction, lang : dict) -> None or True:
         if not result:
             return
         await interaction.response.send_message(lang["music"]["voice_client"]["status"]["disconnecting"])
@@ -139,7 +167,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        await self._connect2(interaction, lang, True)
+        await self._connect(interaction, lang, True)
         return
         
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
@@ -151,7 +179,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        await self._disconnect2(interaction, lang)
+        await self._disconnect(interaction, lang)
         return
     
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
@@ -164,7 +192,7 @@ class MusicCog(Cog):
         lang = await return_user_lang(self, interaction.user.id)
         
         self.bot.music_channel[interaction.guild.id] = interaction.channel
-        player : wavelink.Player = await self._connect2(interaction, lang)
+        player : wavelink.Player = await self._connect(interaction, lang)
         await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         track : wavelink.YouTubeTrack = await wavelink.YouTubeTrack.search(query = query, return_first=True)
 
