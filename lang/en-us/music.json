@@ -29,6 +29,7 @@
                 "removed": "Removed %sth song in queue!"
             },
             "music": {
+                "searching": "Searching...",
                 "playing": "Playing!",
                 "paused": "Paused!",
                 "resumed": "Resumed!",

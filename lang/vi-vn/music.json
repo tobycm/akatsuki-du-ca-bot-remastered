@@ -29,6 +29,7 @@
                 "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
             },
             "music": {
+                "searching": "Đang tìm...",
                 "playing": "Đang phát!",
                 "paused": "Đã tạm dừng!",
                 "resumed": "Đã tiếp tục!",

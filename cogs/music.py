@@ -1,14 +1,14 @@
-import asyncio
 import logging
+from turtle import color
 from typing import List
 from unittest import result
-from discord import Embed, Interaction, Message, app_commands
+from discord import Color, Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog, Cog, Bot
-from discord.ui import Select
+from discord.ui import Select, View
 import wavelink
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
-from modules.log_utils import command_log
+from modules.embed_process import rich_embeds
 from modules.vault import get_lavalink_nodes
 
 class RadioMusic(GroupCog, name = "radio"):
@@ -34,6 +34,7 @@ class MusicCog(Cog):
 
     def __init__(self, bot : Bot):
         self.bot = bot
+        bot.music_channel : dict = {}
         bot.loop.create_task(self.connect_nodes())
 
     async def connect_nodes(self):
@@ -57,6 +58,24 @@ class MusicCog(Cog):
         """
         bot_logger = logging.getLogger('discord')
         bot_logger.info(f"Connected to {node.host}:{node.port}")
+        
+    @Cog.listener()
+    async def on_wavelink_track_end(self, player: wavelink.Player, track: wavelink.Track, reason: str):
+        """
+        Event fired when a track ends.
+        """
+
+        if player.queue.is_empty:
+            return await player.disconnect()
+        next_track : wavelink.YouTubeTrack = await player.queue.get_wait()
+        await player.play(next_track)
+        embed = Embed(
+            title = "Now playing",
+            description = f"**{next_track.title}**",
+            color = Color.random()
+        )
+        embed.set_thumbnail(url = next_track.thumbnail)
+        await self.bot.music_channel[player.guild.id].send(embed = embed)
         
     async def _connect1(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> wavelink.Player or None or str("error"):
         if not interaction.user.voice: # author not in voice channel
@@ -137,11 +156,15 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
+        self.bot.music_channel[interaction.guild.id] = interaction.channel
         player : wavelink.Player = await self._connect2(interaction, lang)
+        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         track : wavelink.YouTubeTrack = await wavelink.YouTubeTrack.search(query = query, return_first=True)
 
-        await player.play(track)
-        return await interaction.response.send_message(lang["music"]["voice_client"]["status"]["playing"])
+        await player.queue.put_wait(track)
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
+        return await interaction.edit_original_message(content = lang["music"]["misc"]["action"]["music"]["playing"])
     
     @app_commands.checks.cooldown(1, 1.75, key = user_cooldown_check)
     @app_commands.command(name = "search")
@@ -152,8 +175,23 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
 
+        self.bot.music_channel[interaction.guild.id] = interaction.channel
         player : wavelink.Player = await self._connect2(interaction, lang)
+        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
+        
         tracks : List[wavelink.Track] = await wavelink.YouTubeTrack.search(query = query)
+        
+        class music_select(Select):
+            def __init__(self) -> None:
+                super().__init__(placeholder = "Make your music selection")
+        
+            async def callback(self, interaction : Interaction):
+                track = tracks[int(self.values[0]) - 1]
+                await interaction.response.send_message(content = f"You have selected {track.title}.")
+                await player.queue.put_wait(track)
+                if not player.is_playing():
+                    await player.play(await player.queue.get_wait())
+                return
         
         embed = Embed(
             title = lang["music"]["misc"]["result"],
@@ -162,27 +200,24 @@ class MusicCog(Cog):
         )
         counter = 1
         
-        select_menu = Select()
+        select_menu : music_select = music_select()
+        view = View(timeout = 30)
         
         for track in tracks:
+            if counter == 6:
+                break
             embed.description += f"{counter}. {track.title}\n"
             select_menu.add_option(label = f"{counter}. {track.title}", value = counter)
             counter += 1
             
-        await interaction.response.send_message(embed = embed, view = select_menu.view)
-        
-        def check(msg : Message):
-            return msg.author == interaction.user and msg.content.isdigit()
+        view.add_item(select_menu)
+            
+        await interaction.edit_original_message(content = lang["music"]["misc"]["result"], embed = embed, view = view)
 
-        try:
-            msg = await self.bot.wait_for('message', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            return await interaction.edit_original_message("Your request has timed out.")
-        
-        track = tracks[int(msg.content) - 1]
-        await interaction.edit_original_message(f"You have selected {track.title}.")
-        await player.play(track)
-    
+        if await view.wait() and view.is_finished():
+            view.children[0].disabled = True
+            return await interaction.edit_original_message(view = view)
+
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "pause")
     async def pause(self, interaction : Interaction):
@@ -208,3 +243,58 @@ class MusicCog(Cog):
         vcl : wavelink.Player = await self._connect2(interaction, lang)
         await vcl.resume()
         return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["resumed"])
+    
+    @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
+    @app_commands.command(name = "skip")
+    async def skip(self, interaction : Interaction):
+        """
+        Skip a song
+        """
+        
+        lang = await return_user_lang(self, interaction.user.id)
+        
+        vcl : wavelink.Player = await self._connect2(interaction, lang)
+        await vcl.stop()
+        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["skipped"])
+        return
+    
+    @app_commands.checks.cooldown(1, 2, key = user_cooldown_check)
+    @app_commands.command(name = "stop")
+    async def stop(self, interaction : Interaction):
+        """
+        Stop a song.
+        """
+
+        lang = await return_user_lang(self, interaction.user.id)
+        
+        vcl : wavelink.Player = await self._connect2(interaction, lang)
+        await vcl.queue.clear()
+        await vcl.stop()
+        return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["stopped"])
+    
+    @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
+    @app_commands.command(name = "queue")
+    async def queue(self, interaction : Interaction):
+        """
+        Show the queue.
+        """
+
+        lang = await return_user_lang(self, interaction.user.id)
+        
+        vcl : wavelink.Player = await self._connect2(interaction, lang)
+        if vcl.queue.is_empty:
+            return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
+        
+        embed = rich_embeds(
+            Embed(
+                title = lang["music"]["misc"]["queue"],
+                description = "",
+            ),
+            interaction.user,
+            lang["main"]
+        )
+        counter = 1
+        for track in vcl.queue:
+            embed.description += f"{counter}. {track.title}\n"
+            counter += 1
+        return await interaction.response.send_message(embed = embed)
