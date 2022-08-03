@@ -1,3 +1,4 @@
+from datetime import timedelta
 from aioredis import Redis
 from discord import Interaction
 from discord.ext.commands import Context
@@ -20,6 +21,4 @@ async def return_user_lang(self, id):
     return self.bot.lang[lang_option]
 
 def seconds_to_time(seconds : int) -> str:
-    minutes = int(seconds // 60)
-    seconds = int(seconds % 60)
-    return f"{minutes}:{seconds:02d}"
+    return str(timedelta(seconds = seconds))

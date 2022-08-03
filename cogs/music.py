@@ -200,18 +200,17 @@ class MusicCog(Cog):
         
             async def callback(self, interaction : Interaction):
                 track = tracks[int(self.values[0]) - 1]
-                await interaction.response.send_message(content = f"You have selected {track.title}.")
                 await player.queue.put_wait(track)
                 if not player.is_playing():
                     await player.play(await player.queue.get_wait())
-                    await interaction.channel.send(embed = rich_embeds(
-                        Embed(
-                            title = lang["music"]["misc"]["action"]["queue"]["added"],
-                            description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
-                        ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
-                        interaction.user,
-                        lang["main"]
-                    ))
+                await interaction.response.send_message(embed = rich_embeds(
+                    Embed(
+                        title = lang["music"]["misc"]["action"]["queue"]["added"],
+                        description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
+                    ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
+                    interaction.user,
+                    lang["main"]
+                ))
                 return
         
         embed = Embed(
@@ -227,8 +226,13 @@ class MusicCog(Cog):
         for track in tracks:
             if counter == 6:
                 break
+            if len(track.title) > 50:
+                title = track.title[:50] + "..."
+            else:
+                title = track.title
+            
             embed.description += f"{counter}. {track.title}\n"
-            select_menu.add_option(label = f"{counter}. {track.title}", value = counter)
+            select_menu.add_option(label = f"{counter}. {title}", value = counter)
             counter += 1
             
         view.add_item(select_menu)
