@@ -45,6 +45,13 @@ bot = Bot(
 tree = bot.tree
 
 bot_logger = logging.getLogger('discord')
+logging.basicConfig(
+    filename="log/full_bot_log.txt",
+    filemode='a',
+    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+    datefmt='%H:%M:%S',
+    level=logging.INFO
+)
 
 @bot.event
 async def on_ready():
