@@ -14,11 +14,18 @@ from modules.vault import get_bot_config
 from modules.database_utils import return_redis_instance, get_prefix
 from modules.load_lang import get_lang
 
-<<<<<<< Updated upstream
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
 # -------------------------------------------------
-=======
->>>>>>> Stashed changes
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
+
+from cogs.fun import FunCog, GIFCog
+from cogs.music import RadioMusic, MusicCog
+from cogs.nsfw import NSFWCog
+from cogs.toys import ToysCog
+from cogs.utils import UtilsCog, MinecraftCog
+from cogs.admin import PrefixCog, BotAdminCog
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot settings
 
@@ -76,7 +83,6 @@ async def start_up():
     bot.lang = await get_lang()
     bot.quotes = await get_quotes()
     bot.quotes_added = time()
-<<<<<<< Updated upstream
     
     await bot.load_extension('jishaku')
     bot_logger.info("Loaded jishaku")
@@ -98,11 +104,6 @@ async def start_up():
     bot_logger.info(" -> Prefix cog added <-")
     await bot.add_cog(BotAdminCog(bot))
     bot_logger.info(" -> Bot admin cog added <-")
-=======
-    for i in os.listdir("./cogs"):
-        if i.endswith(".py"):
-            await bot.load_extension(f"cogs.{i[:-3]}")
->>>>>>> Stashed changes
 
 bot.setup_hook = start_up
     

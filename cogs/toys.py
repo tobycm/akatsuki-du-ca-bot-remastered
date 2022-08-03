@@ -47,7 +47,3 @@ class ToysCog(Cog):
         command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         
         await interaction.response.send_message(randint(1, 6))
-        
-async def setup(bot):
-    await bot.add_cog(ToysCog(bot))
-    print("ToysCog loaded")

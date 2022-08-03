@@ -35,7 +35,3 @@ class NSFWCog(GroupCog, name = "nsfw"):
                 lang["main"]
             ).set_image(url = url)
         )
-        
-async def setup(bot):
-    await bot.add_cog(NSFWCog(bot))
-    print("NSFWCog loaded")
