@@ -3,9 +3,10 @@ from typing import List
 from unittest import result
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog, Cog, Bot
-from discord.ui import Select, View
+from discord.ui import View
 import wavelink
 
+from models.music_models import music_select
 from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
 from modules.embed_process import rich_embeds
 from modules.vault import get_lavalink_nodes
@@ -194,25 +195,6 @@ class MusicCog(Cog):
         
         tracks : List[wavelink.Track] = await wavelink.YouTubeTrack.search(query = query)
         
-        class music_select(Select):
-            def __init__(self) -> None:
-                super().__init__(placeholder = "Make your music selection")
-        
-            async def callback(self, interaction : Interaction):
-                track = tracks[int(self.values[0]) - 1]
-                await player.queue.put_wait(track)
-                if not player.is_playing():
-                    await player.play(await player.queue.get_wait())
-                await interaction.response.send_message(embed = rich_embeds(
-                    Embed(
-                        title = lang["music"]["misc"]["action"]["queue"]["added"],
-                        description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
-                    ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
-                    interaction.user,
-                    lang["main"]
-                ))
-                return
-        
         embed = Embed(
             title = lang["music"]["misc"]["result"],
             description = "",
@@ -220,7 +202,7 @@ class MusicCog(Cog):
         )
         counter = 1
         
-        select_menu : music_select = music_select()
+        select_menu : music_select = music_select(tracks, player, lang)
         view = View(timeout = 30)
         
         for track in tracks:
@@ -231,7 +213,7 @@ class MusicCog(Cog):
             else:
                 title = track.title
             
-            embed.description += f"{counter}. {track.title}\n"
+            embed.description += f"{counter}. [{track.title}]({track.uri})\n"
             select_menu.add_option(label = f"{counter}. {title}", value = counter)
             counter += 1
             
@@ -239,7 +221,7 @@ class MusicCog(Cog):
             
         await interaction.edit_original_message(content = lang["music"]["misc"]["result"], embed = embed, view = view)
 
-        if await view.wait() and view.is_finished():
+        if await view.wait():
             view.children[0].disabled = True
             return await interaction.edit_original_message(view = view)
 
