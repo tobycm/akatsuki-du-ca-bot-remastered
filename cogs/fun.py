@@ -317,4 +317,9 @@ class FunCog(Cog):
             author,
             lang["main"]),
             ephemeral = True)
-        
+
+async def setup(bot):
+    await bot.add_cog(FunCog(bot))
+    print("Fun Cog loaded")
+    await bot.add_cog(GifCog(bot))
+    print("Gif Cog loaded")

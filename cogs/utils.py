@@ -25,8 +25,7 @@ class UtilsCog(Cog):
         
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
-            await interaction.response.send_message(lang["utils"]["osuUserNotFound"])
-            return
+            return await interaction.response.send_message(lang["utils"]["osuUserNotFound"])
         
         lang_desc = lang["utils"]["osuStatsDescription"]
         i = 0
@@ -45,6 +44,7 @@ class UtilsCog(Cog):
                   .set_author(name = "osu! user data", icon_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png"),
             author,
             lang["main"]
+<<<<<<< Updated upstream
         )
         
         return await interaction.response.send_message(embed = embed)
@@ -134,5 +134,9 @@ class MinecraftCog(GroupCog, name = "minecraft"):
                 )
         
         return await interaction.response.send_message(embed = embed)
-    
-    
+=======
+
+async def setup(bot):
+    await bot.add_cog(UtilsCog(bot))
+    print("UtilsCog loaded")
+>>>>>>> Stashed changes

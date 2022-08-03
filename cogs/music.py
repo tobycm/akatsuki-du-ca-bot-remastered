@@ -28,6 +28,7 @@ class RadioMusic(GroupCog, name = "radio"):
         
         await suggests_channel.send(f"{interaction.user} suggested {song} \n User ID: {interaction.user.id}, Guild ID: {interaction.guild.id}")
         await interaction.response.send_message(lang["music"]["SuggestionSent"])
+<<<<<<< Updated upstream
         
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
@@ -298,3 +299,10 @@ class MusicCog(Cog):
             embed.description += f"{counter}. {track.title}\n"
             counter += 1
         return await interaction.response.send_message(embed = embed)
+=======
+
+async def setup(bot):
+    await bot.add_cog(RadioMusic(bot))
+    print("RadioMusic loaded")
+     
+>>>>>>> Stashed changes
