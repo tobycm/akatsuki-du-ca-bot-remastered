@@ -1,6 +1,6 @@
 from typing import List
-from discord import Embed, Interaction
-from discord.ui import Select, View
+from discord import Embed, Interaction, TextChannel, Thread
+from discord.ui import Select
 from wavelink import Track, Player, YouTubePlaylist, WaitQueue
 
 from modules.checks_and_utils import seconds_to_time
@@ -94,3 +94,7 @@ def make_queue_embed(queue : WaitQueue, lang : dict) -> List[Embed]:
         embeds.append(embed)
     
     return embeds
+
+class custom_player(Player):
+    text_channel : TextChannel or Thread
+    loop_mode : str or None
