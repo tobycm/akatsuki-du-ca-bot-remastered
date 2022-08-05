@@ -18,14 +18,15 @@
     },
     "misc": {
         "action": {
+            "loop": {
+                "queue": "Looping queue!",
+                "song": "Looping song!",
+                "off": "Loop mode off!"
+            },
             "queue": {
                 "cleared": "Queue cleared!",
                 "shuffled": "Queue shuffled!",
                 "added": "Added to queue!",
-                "loop": {
-                    "enabled": "Loop on!",
-                    "disabled": "Loop off!"
-                },
                 "removed": "Removed %sth song in queue!"
             },
             "music": {

@@ -3,7 +3,7 @@ from discord.ext.commands import Cog, GroupCog, Bot
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
-from modules.log_utils import command_log
+
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
@@ -20,7 +20,7 @@ class UtilsCog(Cog):
         """
 
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        
         lang = await return_user_lang(self, author.id)
         
         osu_user_data = await get_osu_user_info(user)
@@ -57,7 +57,7 @@ class UtilsCog(Cog):
         """
         
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        
         bug_channel = self.bot.get_channel(get_channel_config("bug"))
         
         await interaction.response.send_message("Thank you for your bug report. It will be reviewed shortly.")
@@ -85,7 +85,7 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         """
         
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        
         lang = await return_user_lang(self, author.id)
         
         uuid, image, thumbnail = await get_minecraft_user_embed(user)
@@ -111,7 +111,7 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         """
         
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        
         lang = await return_user_lang(self, author.id)
         
         data = await get_minecraft_server_info(server_ip)

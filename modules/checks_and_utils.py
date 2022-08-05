@@ -1,7 +1,9 @@
 from datetime import timedelta
+from typing import List
 from aioredis import Redis
 from discord import Interaction
 from discord.ext.commands import Context
+
 from modules.database_utils import get_user_lang
 
 async def check_owners(redis_ins : Redis, ctx : Context or Interaction) -> bool:
@@ -20,5 +22,5 @@ async def return_user_lang(self, id):
     lang_option = await get_user_lang(self.bot.redis_ins, id)
     return self.bot.lang[lang_option]
 
-def seconds_to_time(seconds : int) -> str:
-    return str(timedelta(seconds = seconds))
+def seconds_to_time(seconds) -> str:
+    return str(timedelta(seconds = int(seconds)))

@@ -2,7 +2,6 @@ from discord import Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog, Bot
 
 from modules.embed_process import rich_embeds
-from modules.log_utils import command_log
 from modules.nsfw import get_nsfw
 from modules.checks_and_utils import user_cooldown_check, return_user_lang
 
@@ -18,9 +17,7 @@ class NSFWCog(GroupCog, name = "nsfw"):
         Good nsfw art huh?
         """
         
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        
+        author = interaction.user        
         lang = await return_user_lang(self, author.id)
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral = True)

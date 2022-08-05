@@ -18,14 +18,15 @@
     },
     "misc": {
         "action": {
+            "loop": {
+                "queue": "Đã bật chế độ lặp lại hàng đợi!",
+                "song": "Đã bật chế độ lặp lại bài hát!",
+                "off": "Đã tắt chế độ lặp lại!"
+            },
             "queue": {
                 "cleared": "Đã xóa hàng đợi!",
                 "shuffled": "Đã xáo trộn hàng đợi!",
                 "added": "Đã thêm vào hàng đợi!",
-                "loop": {
-                    "enabled": "Đã bật chế độ lặp lại!",
-                    "disabled": "Đã tắt chế độ lặp lại!"
-                },
                 "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
             },
             "music": {

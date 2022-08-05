@@ -8,7 +8,7 @@ from modules.checks_and_utils import user_cooldown_check, return_user_lang
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.gif_api import construct_gif_embed
-from modules.log_utils import command_log
+
 from modules.quote_api import get_quotes
 from modules.waifu_api import get_waifu_image_url
 
@@ -25,9 +25,7 @@ class GIFCog(GroupCog, name = "gif"):
         """
         
         method = interaction.command.name
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
-        
+        author = interaction.user        
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
         
@@ -51,7 +49,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -76,7 +74,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -101,7 +99,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -126,7 +124,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -151,7 +149,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -176,7 +174,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -201,7 +199,7 @@ class GIFCog(GroupCog, name = "gif"):
         
         method = interaction.command.name
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, method)
+        
         
         if target is self.bot.user:
             return await interaction.response.send_message("etou...", ephemeral = True)
@@ -225,7 +223,6 @@ class FunCog(Cog):
     @app_commands.command(name = "alarm")
     async def alarm(self, interaction : Interaction):
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, "alarm")
         
         lang = await return_user_lang(self, author.id)
         lang_option = await get_user_lang(self.bot.redis_ins, author.id)
@@ -248,7 +245,6 @@ class FunCog(Cog):
         """
         
         author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, "waifu")
         lang = await return_user_lang(self, author.id)
         
         (url, source) = await get_waifu_image_url()
@@ -269,9 +265,7 @@ class FunCog(Cog):
         OMG free NITRO!!1! gotta claim fast
         """
         
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, "freenitro")
-        
+        author = interaction.user        
         code = ""
         for i in range(0, 23):
             code += choice(ascii_letters)
@@ -294,9 +288,7 @@ class FunCog(Cog):
         A good quote for the day
         """
         
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, "quote")
-        
+        author = interaction.user        
         lang = await return_user_lang(self, author.id)
         time_now = time()
         

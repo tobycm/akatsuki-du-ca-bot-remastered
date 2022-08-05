@@ -4,7 +4,6 @@ from discord.ext.commands import GroupCog, Cog, Context, Bot
 
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
-from modules.log_utils import command_log
 from modules.vault import get_channel_config
 
 class PrefixCog(GroupCog, name = "prefix"):
@@ -20,9 +19,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         Set the bot's prefix
         """
         
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        
+        author = interaction.user        
         result = await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
         
         if result:
@@ -41,9 +38,7 @@ class PrefixCog(GroupCog, name = "prefix"):
         Reset the bot's prefix
         """
         
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        
+        author = interaction.user        
         result = await delete_prefix(self.bot.redis_ins, author.guild.id)
         
         if result:
@@ -67,7 +62,6 @@ class BotAdminCog(Cog):
         if not await check_owners(self.bot.redis_ins, ctx):
             raise app_commands.MissingPermissions(["manage_guild"])
         
-        command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, ctx.command.name)
         
         result = await delete_prefix(self.bot.redis_ins, guild_id)
         

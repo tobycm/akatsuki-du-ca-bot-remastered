@@ -3,7 +3,7 @@ from discord import Interaction, app_commands
 from discord.ext.commands import Cog, Bot
 
 from modules.checks_and_utils import user_cooldown_check
-from modules.log_utils import command_log
+
 
 class ToysCog(Cog):
     def __init__(self, bot : Bot) -> None:
@@ -15,9 +15,6 @@ class ToysCog(Cog):
         """
         Feeling lucky?
         """
-        
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         await interaction.response.send_message(randint(min, max))
         
     @app_commands.checks.cooldown(1, 0.25, key = user_cooldown_check)
@@ -26,9 +23,6 @@ class ToysCog(Cog):
         """
         Flip a coin
         """
-        
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
         
         if randint(0, 1) == 0:
             coin = "Heads"
@@ -42,8 +36,4 @@ class ToysCog(Cog):
         """
         Roll a dice
         """
-        
-        author = interaction.user
-        command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
-        
         await interaction.response.send_message(randint(1, 6))

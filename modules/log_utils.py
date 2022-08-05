@@ -13,7 +13,7 @@ def _command_log(author_id : int, guild_id : int, channel_id : int, command : st
 def command_log(func):
     async def wrapper(interaction : Interaction or Context, *args, **kwargs):
         author = interaction.user if isinstance(interaction, Interaction) else interaction.author
-        _command_log(author.id, author.guild.id, interaction.channel.id, interaction.command.name)
+        _
         
         result = await func(*args, interaction, **kwargs)
         return result
