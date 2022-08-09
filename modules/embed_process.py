@@ -9,5 +9,5 @@ def rich_embeds(embed : Embed, author : User, lang : dict = {"EmbedFooter": "Req
     footer = lang["EmbedFooter"]
     embed.color = random_color()
     text = f"{footer} {author.name}#{author.discriminator}"
-    embed.set_footer(text = lang["EmbedFooter"], icon_url = author.display_avatar)
+    embed.set_footer(text = text, icon_url = author.display_avatar)
     return embed
