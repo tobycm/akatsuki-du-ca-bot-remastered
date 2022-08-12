@@ -1,5 +1,8 @@
+"""
+Just some checks and utils function
+"""
+
 from datetime import timedelta
-from typing import List
 from aioredis import Redis
 from discord import Interaction
 from discord.ext.commands import Context
@@ -12,10 +15,18 @@ async def check_owners(redis_ins : Redis, ctx : Context or Interaction) -> bool:
        return False
    return True
 
-def user_cooldown_check(interaction : Interaction):
+def user_cooldown_check(interaction : Interaction) -> bool:
+    """
+    User cooldown check
+    """
+
     return interaction.user.id
 
-def guild_cooldown_check(interaction : Interaction):
+def guild_cooldown_check(interaction : Interaction) -> bool:
+    """
+    Guild cooldown check
+    """
+
     return interaction.guild.id
 
 async def return_user_lang(self, id):
@@ -23,4 +34,8 @@ async def return_user_lang(self, id):
     return self.bot.lang[lang_option]
 
 def seconds_to_time(seconds) -> str:
+    """
+    Convert seconds to time in format hh:mm:ss
+    """
+
     return str(timedelta(seconds = int(seconds)))

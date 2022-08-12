@@ -1,13 +1,15 @@
-import re
+"""
+This is the music cog.
+"""
+
 import logging
 from typing import List, Literal
-from unittest import result
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog, Cog, Bot
 from discord.ui import View
 from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node
 
-from models.music_models import added_a_track_embed, added_a_playlist_embed, custom_player, music_select, queue_page_select, make_queue_embed
+from models.music_models import Player, NewPlaylist, MusicSel, PageSel, NewTrack, make_queue
 from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
 from modules.embed_process import rich_embeds
 from modules.vault import get_lavalink_nodes
@@ -60,7 +62,7 @@ class MusicCog(Cog):
         bot_logger.info(f"Connected to {node.host}:{node.port}")
         
     @Cog.listener()
-    async def on_wavelink_websocket_closed(self, player : custom_player, reason : str, code : int):
+    async def on_wavelink_websocket_closed(self, player : Player, reason : str, code : int):
         """
         Event fired when the Node websocket has been closed by Lavalink.
         """
@@ -70,7 +72,7 @@ class MusicCog(Cog):
         bot_logger.info(f"Reason: {reason} | Code: {code}")
         
     @Cog.listener()
-    async def on_wavelink_track_end(self, player: custom_player, track: Track, reason: str):
+    async def on_wavelink_track_end(self, player: Player, track: Track, *args):
         """
         Event fired when a track ends.
         """
@@ -84,7 +86,7 @@ class MusicCog(Cog):
         await player.play(next_track)
         
     @Cog.listener()
-    async def on_wavelink_track_start(self, player: custom_player, track: Track):
+    async def on_wavelink_track_start(self, player: Player, track: Track):
         """
         Event fired when a track starts.
         """
@@ -104,26 +106,30 @@ class MusicCog(Cog):
         await player.text_channel.send(embed = embed)
         
     @Cog.listener()
-    async def on_wavelink_track_exception(self, player: custom_player, track: Track, error):
+    async def on_wavelink_track_exception(self, player: Player, track: Track, error):
         """
         Event fired when a track encounters an exception.
         """
 
         bot_logger = logging.getLogger('discord')
-        bot_logger.info(f"Track {track.title} encountered an exception: {error}")
+        bot_logger.info(f"Track {track.title} encountered an exception: {error}. Guild: {player.guild.id}")
         print(type(error))
         
     @Cog.listener()
-    async def on_wavelink_track_stuck(self, player : custom_player, track : Track, *args):
+    async def on_wavelink_track_stuck(self, player : Player, track : Track, *args):
         """
         Event fired when a track is stuck.
         """
 
         bot_logger = logging.getLogger('discord')
-        bot_logger.info(f"Track {track.title} is stuck")
+        bot_logger.info(f"Track {track.title} is stuck. Guild: {player.guild.id}")
         await player.text_channel.send(f"{track.title} is stuck")
                 
-    async def connect_check(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> custom_player or None or str("error"):
+    async def connect_check(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> Player or None:
+        """
+        Connect checks
+        """
+
         usr_voice = interaction.user.voice
         if not usr_voice: # author not in voice channel
             await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
@@ -134,14 +140,21 @@ class MusicCog(Cog):
                 await interaction.response.send_message(lang["music"]["voice_client"]["error"]["already_connected"])
         return vcl
     
-    async def _connect(self, interaction : Interaction, lang : dict, cnt_cmd : bool = False) -> custom_player:
+    async def _connect(self, interaction : Interaction, lang : dict, cnt_cmd : bool = False) -> Player:
+        """
+        Initialize a player and connect to a voice channel if there are none.
+        """
+
         player = await self.connect_check(interaction, lang, cnt_cmd)
         if player == "error":
             return
         elif player is None:
             if cnt_cmd:
                 await interaction.response.send_message(lang["music"]["voice_client"]["status"]["connecting"])
-            player = await interaction.user.voice.channel.connect(self_deaf = True, cls = custom_player)
+            player = await interaction.user.voice.channel.connect(
+                self_deaf = True,
+                cls = Player
+            )
             if cnt_cmd:
                 await interaction.edit_original_message(
                     content = lang["music"]["voice_client"]["status"]["connected"]
@@ -149,6 +162,10 @@ class MusicCog(Cog):
         return player
         
     async def disconnect_check(self, interaction : Interaction, lang : dict) -> None or True:
+        """
+        Disconnect checks
+        """
+
         if not interaction.user.voice: # author not in voice channel
             await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
         if not interaction.guild.voice_client: # bot didn't even connect lol
@@ -158,7 +175,7 @@ class MusicCog(Cog):
         return True
     
     async def _disconnect(self, interaction : Interaction, lang : dict) -> None or True:
-        if not result:
+        if not self.disconnect_check(interaction, lang):
             return
         await interaction.response.send_message(lang["music"]["voice_client"]["status"]["disconnecting"])
         await interaction.guild.voice_client.disconnect()
@@ -200,14 +217,14 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        player : custom_player = await self._connect(interaction, lang)
+        player : Player = await self._connect(interaction, lang)
         player.text_channel = interaction.channel
         await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         
         try:
             track : YouTubeTrack = await YouTubeTrack.search(query = query, return_first=True)
             playlist = False
-        except:
+        except AttributeError:
             playlist : YouTubePlaylist = await YouTubePlaylist.search(query = query)
         
         if playlist:
@@ -216,7 +233,7 @@ class MusicCog(Cog):
                 if not player.is_playing():
                     await player.play(await player.queue.get_wait())
             await interaction.edit_original_message(content = "", embed = rich_embeds(
-                added_a_playlist_embed(playlist, lang, query),
+                NewPlaylist(playlist, lang, query),
                 interaction.user,
                 lang["main"]
             ))
@@ -226,7 +243,7 @@ class MusicCog(Cog):
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
         await interaction.edit_original_message(content = "", embed = rich_embeds(
-            added_a_track_embed(track, lang),
+            NewTrack(track, lang),
             interaction.user,
             lang["main"]
         ))
@@ -240,7 +257,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
 
-        player : custom_player = await self._connect(interaction, lang)
+        player : Player = await self._connect(interaction, lang)
         player.text_channel = interaction.channel
         await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         
@@ -253,7 +270,7 @@ class MusicCog(Cog):
         )
         counter = 1
         
-        select_menu : music_select = music_select(tracks, player, lang)
+        select_menu = MusicSel(tracks, player, lang)
         view = View(timeout = 30)
         
         for track in tracks:
@@ -270,7 +287,11 @@ class MusicCog(Cog):
             
         view.add_item(select_menu)
             
-        await interaction.edit_original_message(content = lang["music"]["misc"]["result"], embed = embed, view = view)
+        await interaction.edit_original_message(
+            content = lang["music"]["misc"]["result"],
+            embed = embed,
+            view = view
+        )
 
         if await view.wait():
             view.children[0].disabled = True
@@ -285,7 +306,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         await vcl.pause()
         return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["paused"])
     
@@ -298,7 +319,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         await vcl.resume()
         return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["resumed"])
     
@@ -311,7 +332,7 @@ class MusicCog(Cog):
         
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         await vcl.stop()
         await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["skipped"])
         return
@@ -325,7 +346,7 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         if not vcl.queue.is_empty:
             vcl.queue.clear()
         await vcl.stop()
@@ -340,13 +361,18 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         if vcl.queue.is_empty:
             return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
         
-        queue_embeds = make_queue_embed(vcl.queue, lang)
+        queue_embeds = make_queue(vcl.queue, lang)
         if len(queue_embeds) > 1:
-            select_menu : queue_page_select = queue_page_select(len(queue_embeds), queue_embeds, lang, interaction)
+            select_menu = PageSel(
+                len(queue_embeds),
+                queue_embeds,
+                lang,
+                interaction
+            )
             for i in range(len(queue_embeds)):
                 select_menu.add_option(label = i + 1, value = i + 1)
             view = View(timeout = 60).add_item(select_menu)
@@ -375,14 +401,15 @@ class MusicCog(Cog):
 
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         if not vcl.is_playing():
             return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_music"])
         
+        track : YouTubeTrack = vcl.track
         embed = rich_embeds(
             Embed(
                 title = lang["music"]["misc"]["now_playing"],
-                description = f"[**{vcl.track.title}**]({vcl.track.uri}) - {vcl.track.author}\nDuration: {seconds_to_time(vcl.position)}/{seconds_to_time(vcl.track.duration)}",
+                description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(vcl.position)}/{seconds_to_time(track.duration)}",
             ),
             interaction.user,
             lang["main"]
@@ -398,7 +425,7 @@ class MusicCog(Cog):
         
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         if vcl.queue.is_empty:
             return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
         
@@ -414,7 +441,7 @@ class MusicCog(Cog):
         
         lang = await return_user_lang(self, interaction.user.id)
         
-        vcl : custom_player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(interaction, lang)
         if mode == "song":
             vcl.queue.put_at_front(vcl.track)
         elif mode == "off" and vcl.loop_mode == "song":
