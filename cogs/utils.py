@@ -1,12 +1,15 @@
 from discord import AllowedMentions, Embed, app_commands, Interaction
 from discord.ext.commands import Cog, GroupCog, Bot
+from discord.ui import View
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
-
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
+from modules.load_lang import lang_list
+
+from models.utils_models import ChangeLang
 
 class UtilsCog(Cog):
     def __init__(self, bot : Bot):
@@ -71,7 +74,40 @@ class UtilsCog(Cog):
                 )
             )
         return await bug_channel.send(f"User ID: {author.id} | Guild ID: {author.guild.id}")
-    
+
+    @app_commands.checks.cooldown(1, 30, key = user_cooldown_check)
+    @app_commands.command(name = "change_language")
+    async def change_language(self, interaction : Interaction):
+        """
+        Start an interactive language change session. hehe
+        """
+
+        select_menu = ChangeLang(
+            bot = self.bot,
+            author = interaction.user
+        )
+
+        for option in lang_list:
+            select_menu.add_option(label = option, value = option)
+
+        view = View(timeout = 30).add_item(select_menu)
+
+        await interaction.response.send_message(
+            content = "Please select a language",
+            view = view
+        )
+
+        if await view.wait():
+            select_menu : ChangeLang = view.children[0]
+            select_menu.disabled = True
+            try:
+                select_menu.values[0]
+            except AttributeError:
+                return await interaction.edit_original_message(
+                        content = "The session timed out LOL"
+                    )
+            return await interaction.edit_original_message(view = view)
+
 class MinecraftCog(GroupCog, name = "minecraft"):
     def __init__(self, bot : Bot):
         self.bot = bot
@@ -134,5 +170,3 @@ class MinecraftCog(GroupCog, name = "minecraft"):
                 )
         
         return await interaction.response.send_message(embed = embed)
-    
-    

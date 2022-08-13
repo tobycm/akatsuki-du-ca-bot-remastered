@@ -1,7 +1,13 @@
 import json
 from aioredis import Redis, ConnectionPool
 
-def return_redis_instance(host : str = "localhost", port : int = 6379, username : str = None, password : str = None, db : int = 0) -> Redis:
+def return_redis_instance(
+    host : str = "localhost",
+    port : int = 6379,
+    username : str = None,
+    password : str = None,
+    db : int = 0
+) -> Redis:
     pool = ConnectionPool.from_url(
             f"redis://{host}:{port}/{db}",
             max_connections=2,

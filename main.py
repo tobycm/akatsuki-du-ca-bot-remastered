@@ -87,7 +87,7 @@ async def on_guild_remove(guild):
 
 async def start_up():
     bot.redis_ins = return_redis_instance()
-    bot.lang = await get_lang()
+    bot.lang = get_lang()
     bot.quotes = await get_quotes()
     bot.quotes_added = time()
     
