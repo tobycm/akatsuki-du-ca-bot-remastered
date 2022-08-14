@@ -1,6 +1,10 @@
+"""
+Main bot file.
+"""
+
 from time import time
 import logging
-from discord import Game, Intents
+from discord import Game, Intents, Message
 from discord.ext.commands import Context, Bot
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
@@ -31,17 +35,22 @@ from cogs.admin import PrefixCog, BotAdminCog
 
 DEFAULT_PREFIX = get_bot_config("prefix")
 
-async def get_prefix_for_bot(bot, message):
+
+async def get_prefix_for_bot(bot: Bot, message: Message): # pylint: disable=redefined-outer-name
+    """
+    Return the prefix for the bot.
+    """
+
     prefix = await get_prefix(bot.redis_ins, message.guild.id)
     if prefix is None:
         return DEFAULT_PREFIX
     return prefix
 
 bot = Bot(
-    command_prefix = get_prefix_for_bot,
-    activity = Game(name="Hibiki Ban Mai"),
-    intents = Intents.all()
-         )
+    command_prefix=get_prefix_for_bot,
+    activity=Game(name="Hibiki Ban Mai"),
+    intents=Intents.all()
+)
 tree = bot.tree
 
 bot_logger = logging.getLogger('discord')
@@ -53,17 +62,27 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+
 @bot.event
 async def on_ready():
+    """
+    Run on ready (don't touch pls).
+    """
+
     bot_logger.info(f"Logged in as {bot.user}")
-    
+
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
 
-@bot.command(name = "sc", hidden = True)
+
+@bot.command(name="sc", hidden=True)
 @command_log
-async def sc(ctx : Context):
+async def sync_command(ctx: Context):
+    """
+    Sync commands to global.
+    """
+
     if not await check_owners(bot.redis_ins, ctx):
         return
     await tree.sync()
@@ -73,27 +92,42 @@ async def sc(ctx : Context):
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for events code
 
+
 @bot.event
 async def on_guild_join(guild):
+    """
+    Run on guild join.
+    """
+
     bot_logger.info(f"Joined {guild.name}")
-    
+
+
 @bot.event
 async def on_guild_remove(guild):
+    """
+    Run on guild leave.
+    """
+
     bot_logger.info(f"Left {guild.name}")
-    
+
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for events code
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
+
 async def start_up():
+    """
+    Run on startup (yes you can touch this).
+    """
+
     bot.redis_ins = return_redis_instance()
     bot.lang = get_lang()
     bot.quotes = await get_quotes()
     bot.quotes_added = time()
-    
+
     await bot.load_extension('jishaku')
     bot_logger.info("Loaded jishaku")
-    
+
     await bot.add_cog(FunCog(bot))
     await bot.add_cog(GIFCog(bot))
     bot_logger.info("-> Fun and GIF Cog added <-")
@@ -113,5 +147,5 @@ async def start_up():
     bot_logger.info(" -> Bot admin cog added <-")
 
 bot.setup_hook = start_up
-    
+
 bot.run(get_bot_config("token"))
