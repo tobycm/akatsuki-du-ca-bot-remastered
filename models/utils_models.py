@@ -18,19 +18,19 @@ class ChangeLang(Select):
 
         super().__init__(placeholder = "Choose language")
 
-    async def callback(self, interaction : Interaction):
-        if interaction.user != self.author:
-            return await interaction.response.send_message(content = "This is not for you LUL")
+    async def callback(self, itr : Interaction):
+        if itr.user != self.author:
+            return await itr.response.send_message(content = "This is not for you LUL")
 
         result = self.values[0]
-        result = await set_user_lang(self.redis_ins, interaction.user.id, result)
+        result = await set_user_lang(self.redis_ins, itr.user.id, result)
 
         if result:
-            await interaction.response.send_message("\U0001f44c")
+            await itr.response.send_message("\U0001f44c")
             return
 
         error_channel = self.bot.fetch_channel(get_channel_config("error"))
         error_channel.send(
-            f"Error changing language, user: {interaction.user.id}, guild: {interaction.guild.id}\n{result}"
+            f"Error changing language, user: {itr.user.id}, guild: {itr.guild.id}\n{result}"
         )
         return

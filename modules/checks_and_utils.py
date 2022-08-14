@@ -15,19 +15,19 @@ async def check_owners(redis_ins : Redis, ctx : Context or Interaction) -> bool:
        return False
    return True
 
-def user_cooldown_check(interaction : Interaction) -> bool:
+def user_cooldown_check(itr : Interaction) -> bool:
     """
     User cooldown check
     """
 
-    return interaction.user.id
+    return itr.user.id
 
-def guild_cooldown_check(interaction : Interaction) -> bool:
+def guild_cooldown_check(itr : Interaction) -> bool:
     """
     Guild cooldown check
     """
 
-    return interaction.guild.id
+    return itr.guild.id
 
 async def return_user_lang(self, id):
     lang_option = await get_user_lang(self.bot.redis_ins, id)

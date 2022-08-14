@@ -14,18 +14,18 @@ class PrefixCog(GroupCog, name = "prefix"):
     @app_commands.checks.cooldown(1, 1, key = guild_cooldown_check)
     @app_commands.checks.has_permissions(manage_guild = True)
     @app_commands.command(name = "set")
-    async def setprefix(self, interaction : Interaction, prefix : str):
+    async def setprefix(self, itr : Interaction, prefix : str):
         """
         Set the bot's prefix
         """
         
-        author = interaction.user        
+        author = itr.user        
         result = await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
         
         if result:
-            return await interaction.response.send_message(f"Prefix set to `{prefix}`")
+            return await itr.response.send_message(f"Prefix set to `{prefix}`")
         
-        await interaction.response.send_message("Fail to set prefix")
+        await itr.response.send_message("Fail to set prefix")
         
         error_channel = self.bot.get_channel(get_channel_config("error"))
         return await error_channel.send(f"{author} tried to set prefix to `{prefix}` but failed. Error: {result}")
@@ -33,18 +33,18 @@ class PrefixCog(GroupCog, name = "prefix"):
     @app_commands.checks.cooldown(1, 1, key = guild_cooldown_check)
     @app_commands.checks.has_permissions(manage_guild = True)
     @app_commands.command(name = "reset")
-    async def resetprefix(self, interaction : Interaction):
+    async def resetprefix(self, itr : Interaction):
         """
         Reset the bot's prefix
         """
         
-        author = interaction.user        
+        author = itr.user        
         result = await delete_prefix(self.bot.redis_ins, author.guild.id)
         
         if result:
-            return await interaction.response.send_message("Prefix reseted!")
+            return await itr.response.send_message("Prefix reseted!")
         
-        await interaction.response.send_message("Fail to set prefix")
+        await itr.response.send_message("Fail to set prefix")
         
         error_channel = self.bot.get_channel(get_channel_config("error"))
         return await error_channel.send(f"{author} tried to reset prefix but failed. Error: {result}")

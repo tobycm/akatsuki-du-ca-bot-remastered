@@ -22,17 +22,17 @@ class MusicSel(Select):
         
         super().__init__(placeholder = "Make your music selection")
 
-    async def callback(self, interaction : Interaction):
+    async def callback(self, itr : Interaction):
         track = self.tracks[int(self.values[0]) - 1]
         await self.player.queue.put_wait(track)
         if not self.player.is_playing():
             await self.player.play(await self.player.queue.get_wait())
-        await interaction.response.send_message(embed = rich_embeds(
+        await itr.response.send_message(embed = rich_embeds(
             Embed(
                 title = self.lang["music"]["misc"]["action"]["queue"]["added"],
                 description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(track.duration)}",
             ).set_thumbnail(url = f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"),
-            interaction.user,
+            itr.user,
             self.lang["main"]
         ))
         return
@@ -43,22 +43,22 @@ class PageSel(Select):
     class queue_page_select(Select):
     """
     
-    def __init__(self, embed_size : int, embeds : List[Embed], lang : dict, interaction : Interaction) -> None:
+    def __init__(self, embed_size : int, embeds : List[Embed], lang : dict, itr : Interaction) -> None:
         self.embed_size : int = embed_size
         self.embeds : List[Embed] = embeds
         self.lang : dict = lang
-        self.interaction : Interaction = interaction
+        self.itr : Interaction = itr
         
         super().__init__(placeholder = "Choose page")
 
-    async def callback(self, interaction : Interaction):
+    async def callback(self, itr : Interaction):
         page = int(self.values[0]) - 1
         
-        await interaction.response.defer()
-        await self.interaction.edit_original_message(
+        await itr.response.defer()
+        await self.itr.edit_original_message(
             embed = rich_embeds(
                 self.embeds[page],
-                interaction.user,
+                itr.user,
                 self.lang["main"]
             )
         )

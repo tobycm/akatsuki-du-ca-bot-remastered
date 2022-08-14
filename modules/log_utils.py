@@ -11,10 +11,10 @@ def _command_log(author_id : int, guild_id : int, channel_id : int, command : st
         f.write(f"{author_id} used {command} at {int(time())} in {channel_id} in {guild_id}\n") # write command in
         
 def command_log(func):
-    async def wrapper(interaction : Interaction or Context, *args, **kwargs):
-        author = interaction.user if isinstance(interaction, Interaction) else interaction.author
+    async def wrapper(itr : Interaction or Context, *args, **kwargs):
+        author = itr.user if isinstance(itr, Interaction) else itr.author
         
-        result = await func(*args, interaction, **kwargs)
+        result = await func(*args, itr, **kwargs)
         return result
         
     return wrapper

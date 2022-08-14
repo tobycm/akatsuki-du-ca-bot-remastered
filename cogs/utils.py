@@ -17,18 +17,18 @@ class UtilsCog(Cog):
 
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "osu")
-    async def osu(self, interaction : Interaction, user : str):
+    async def osu(self, itr : Interaction, user : str):
         """
         Get osu! stats for a user
         """
 
-        author = interaction.user
+        author = itr.user
         
         lang = await return_user_lang(self, author.id)
         
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
-            await interaction.response.send_message(lang["utils"]["osuUserNotFound"])
+            await itr.response.send_message(lang["utils"]["osuUserNotFound"])
             return
         
         lang_desc = lang["utils"]["osuStatsDescription"]
@@ -50,20 +50,20 @@ class UtilsCog(Cog):
             lang["main"]
         )
         
-        return await interaction.response.send_message(embed = embed)
+        return await itr.response.send_message(embed = embed)
             
     @app_commands.checks.cooldown(1, 2.5, key = user_cooldown_check)
     @app_commands.command(name = "bugreport")
-    async def bugreport(self, interaction : Interaction, bug_description : str):
+    async def bugreport(self, itr : Interaction, bug_description : str):
         """
         Report a bug. Use wisely
         """
         
-        author = interaction.user
+        author = itr.user
         
         bug_channel = self.bot.get_channel(get_channel_config("bug"))
         
-        await interaction.response.send_message("Thank you for your bug report. It will be reviewed shortly.")
+        await itr.response.send_message("Thank you for your bug report. It will be reviewed shortly.")
         
         await bug_channel.send(
             f"{author} báo lỗi: {bug_description}",
@@ -77,14 +77,14 @@ class UtilsCog(Cog):
 
     @app_commands.checks.cooldown(1, 30, key = user_cooldown_check)
     @app_commands.command(name = "change_language")
-    async def change_language(self, interaction : Interaction):
+    async def change_language(self, itr : Interaction):
         """
         Start an interactive language change session. hehe
         """
 
         select_menu = ChangeLang(
             bot = self.bot,
-            author = interaction.user
+            author = itr.user
         )
 
         for option in lang_list:
@@ -92,7 +92,7 @@ class UtilsCog(Cog):
 
         view = View(timeout = 30).add_item(select_menu)
 
-        await interaction.response.send_message(
+        await itr.response.send_message(
             content = "Please select a language",
             view = view
         )
@@ -103,10 +103,10 @@ class UtilsCog(Cog):
             try:
                 select_menu.values[0]
             except AttributeError:
-                return await interaction.edit_original_message(
+                return await itr.edit_original_message(
                         content = "The session timed out LOL"
                     )
-            return await interaction.edit_original_message(view = view)
+            return await itr.edit_original_message(view = view)
 
 class MinecraftCog(GroupCog, name = "minecraft"):
     def __init__(self, bot : Bot):
@@ -115,12 +115,12 @@ class MinecraftCog(GroupCog, name = "minecraft"):
         
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "java_user")
-    async def java_user(self, interaction : Interaction, user : str):
+    async def java_user(self, itr : Interaction, user : str):
         """
         Find info (mostly skin) about a Minecraft Java player
         """
         
-        author = interaction.user
+        author = itr.user
         
         lang = await return_user_lang(self, author.id)
         
@@ -137,23 +137,23 @@ class MinecraftCog(GroupCog, name = "minecraft"):
                 author,
                 lang["main"])
         
-        return await interaction.response.send_message(embed = embed)
+        return await itr.response.send_message(embed = embed)
     
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "java_server")
-    async def java_server(self, interaction : Interaction, server_ip : str):
+    async def java_server(self, itr : Interaction, server_ip : str):
         """
         Find info about a Minecraft Java server
         """
         
-        author = interaction.user
+        author = itr.user
         
         lang = await return_user_lang(self, author.id)
         
         data = await get_minecraft_server_info(server_ip)
         
         if data is False:
-            return await interaction.response.send_message(lang["utils"]["MinecraftServer"]["NotFound"])
+            return await itr.response.send_message(lang["utils"]["MinecraftServer"]["NotFound"])
         
         motd = "```" + '\n'.join([i for i in data['motd']]) + "```"
         server_info = lang['utils']['MinecraftServer']['server_info'] + server_ip
@@ -169,4 +169,4 @@ class MinecraftCog(GroupCog, name = "minecraft"):
                     lang["main"]
                 )
         
-        return await interaction.response.send_message(embed = embed)
+        return await itr.response.send_message(embed = embed)

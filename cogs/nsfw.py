@@ -12,19 +12,19 @@ class NSFWCog(GroupCog, name = "nsfw"):
     
     @app_commands.checks.cooldown(1, 1, key = user_cooldown_check)
     @app_commands.command(name = "art")
-    async def nsfw(self, interaction : Interaction):
+    async def nsfw(self, itr : Interaction):
         """
         Good nsfw art huh?
         """
         
-        author = interaction.user        
+        author = itr.user        
         lang = await return_user_lang(self, author.id)
-        if not interaction.channel.is_nsfw():
-            await interaction.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral = True)
+        if not itr.channel.is_nsfw():
+            await itr.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral = True)
         
         url, source = await get_nsfw()
         
-        await interaction.response.send_message(
+        await itr.response.send_message(
             embed = rich_embeds(
                 Embed(title = "0.0",
                       description = f"{lang['fun']['PoweredByWaifuim']}\nSource: [{source}]({source})"),

@@ -21,16 +21,16 @@ class RadioMusic(GroupCog, name = "radio"):
 
     @app_commands.checks.cooldown(1, 10, key = user_cooldown_check)
     @app_commands.command(name = "suggest")
-    async def suggest(self, interaction : Interaction, song : str):
+    async def suggest(self, itr : Interaction, song : str):
         """
         Got new songs for my radio? Thank you so much ♥
         """
 
         suggests_channel = self.bot.get_channel(957341782721585223)
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        await suggests_channel.send(f"{interaction.user} suggested {song} \n User ID: {interaction.user.id}, Guild ID: {interaction.guild.id}")
-        await interaction.response.send_message(lang["music"]["SuggestionSent"])
+        await suggests_channel.send(f"{itr.user} suggested {song} \n User ID: {itr.user.id}, Guild ID: {itr.guild.id}")
+        await itr.response.send_message(lang["music"]["SuggestionSent"])
         
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
@@ -125,101 +125,101 @@ class MusicCog(Cog):
         bot_logger.info(f"Track {track.title} is stuck. Guild: {player.guild.id}")
         await player.text_channel.send(f"{track.title} is stuck")
                 
-    async def connect_check(self, interaction : Interaction, lang : dict, cnt_cmd : bool) -> Player or None:
+    async def connect_check(self, itr : Interaction, lang : dict, cnt_cmd : bool) -> Player or None:
         """
         Connect checks
         """
 
-        usr_voice = interaction.user.voice
+        usr_voice = itr.user.voice
         if not usr_voice: # author not in voice channel
-            await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
+            await itr.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
             return "error"
-        vcl = interaction.guild.voice_client
+        vcl = itr.guild.voice_client
         if vcl:
             if vcl.channel is usr_voice.channel and cnt_cmd:
-                await interaction.response.send_message(lang["music"]["voice_client"]["error"]["already_connected"])
+                await itr.response.send_message(lang["music"]["voice_client"]["error"]["already_connected"])
         return vcl
     
-    async def _connect(self, interaction : Interaction, lang : dict, cnt_cmd : bool = False) -> Player:
+    async def _connect(self, itr : Interaction, lang : dict, cnt_cmd : bool = False) -> Player:
         """
         Initialize a player and connect to a voice channel if there are none.
         """
 
-        player = await self.connect_check(interaction, lang, cnt_cmd)
+        player = await self.connect_check(itr, lang, cnt_cmd)
         if player == "error":
             return
         elif player is None:
             if cnt_cmd:
-                await interaction.response.send_message(lang["music"]["voice_client"]["status"]["connecting"])
-            player = await interaction.user.voice.channel.connect(
+                await itr.response.send_message(lang["music"]["voice_client"]["status"]["connecting"])
+            player = await itr.user.voice.channel.connect(
                 self_deaf = True,
                 cls = Player
             )
             if cnt_cmd:
-                await interaction.edit_original_message(
+                await itr.edit_original_message(
                     content = lang["music"]["voice_client"]["status"]["connected"]
                 )
         return player
         
-    async def disconnect_check(self, interaction : Interaction, lang : dict) -> None or True:
+    async def disconnect_check(self, itr : Interaction, lang : dict) -> None or True:
         """
         Disconnect checks
         """
 
-        if not interaction.user.voice: # author not in voice channel
-            await interaction.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
-        if not interaction.guild.voice_client: # bot didn't even connect lol
-            await interaction.response.send_message(lang["music"]["voice_client"]["error"]["not_connected"])
-        if interaction.guild.voice_client.channel != interaction.user.voice.channel:
-            await interaction.response.send_message(lang["music"]["voice_client"]["error"]["playing_in_another_channel"])
+        if not itr.user.voice: # author not in voice channel
+            await itr.response.send_message(lang["music"]["voice_client"]["error"]["user_no_voice"])
+        if not itr.guild.voice_client: # bot didn't even connect lol
+            await itr.response.send_message(lang["music"]["voice_client"]["error"]["not_connected"])
+        if itr.guild.voice_client.channel != itr.user.voice.channel:
+            await itr.response.send_message(lang["music"]["voice_client"]["error"]["playing_in_another_channel"])
         return True
     
-    async def _disconnect(self, interaction : Interaction, lang : dict) -> None or True:
-        if not self.disconnect_check(interaction, lang):
+    async def _disconnect(self, itr : Interaction, lang : dict) -> None or True:
+        if not self.disconnect_check(itr, lang):
             return
-        await interaction.response.send_message(lang["music"]["voice_client"]["status"]["disconnecting"])
-        await interaction.guild.voice_client.disconnect()
-        await interaction.edit_original_message(
+        await itr.response.send_message(lang["music"]["voice_client"]["status"]["disconnecting"])
+        await itr.guild.voice_client.disconnect()
+        await itr.edit_original_message(
             content = lang["music"]["voice_client"]["status"]["disconnected"]
         )
         return True
 
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "connect")
-    async def connect(self, interaction : Interaction):
+    async def connect(self, itr : Interaction):
         """
         Connect to a voice channel.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        await self._connect(interaction, lang, True)
+        await self._connect(itr, lang, True)
         return
         
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "disconnect")
-    async def disconnect(self, interaction : Interaction):
+    async def disconnect(self, itr : Interaction):
         """
         Disconnect from a voice channel.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        await self._disconnect(interaction, lang)
+        await self._disconnect(itr, lang)
         return
     
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "play")
-    async def play(self, interaction : Interaction, query : str):
+    async def play(self, itr : Interaction, query : str):
         """
         Play a song.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        player : Player = await self._connect(interaction, lang)
-        player.text_channel = interaction.channel
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
+        player : Player = await self._connect(itr, lang)
+        player.text_channel = itr.channel
+        await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         
         try:
             track : YouTubeTrack = await YouTubeTrack.search(query = query, return_first=True)
@@ -232,9 +232,9 @@ class MusicCog(Cog):
                 await player.queue.put_wait(track)
                 if not player.is_playing():
                     await player.play(await player.queue.get_wait())
-            await interaction.edit_original_message(content = "", embed = rich_embeds(
+            await itr.edit_original_message(content = "", embed = rich_embeds(
                 NewPlaylist(playlist, lang, query),
-                interaction.user,
+                itr.user,
                 lang["main"]
             ))
             return
@@ -242,24 +242,24 @@ class MusicCog(Cog):
         await player.queue.put_wait(track)
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
-        await interaction.edit_original_message(content = "", embed = rich_embeds(
+        await itr.edit_original_message(content = "", embed = rich_embeds(
             NewTrack(track, lang),
-            interaction.user,
+            itr.user,
             lang["main"]
         ))
     
     @app_commands.checks.cooldown(1, 1.75, key = user_cooldown_check)
     @app_commands.command(name = "search")
-    async def search(self, interaction : Interaction, query : str):
+    async def search(self, itr : Interaction, query : str):
         """
         Search for a song.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
 
-        player : Player = await self._connect(interaction, lang)
-        player.text_channel = interaction.channel
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
+        player : Player = await self._connect(itr, lang)
+        player.text_channel = itr.channel
+        await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["searching"])
         
         tracks : List[Track] = await YouTubeTrack.search(query = query)
         tracks = tracks[:5]
@@ -287,7 +287,7 @@ class MusicCog(Cog):
             
         view.add_item(select_menu)
             
-        await interaction.edit_original_message(
+        await itr.edit_original_message(
             content = lang["music"]["misc"]["result"],
             embed = embed,
             view = view
@@ -295,75 +295,75 @@ class MusicCog(Cog):
 
         if await view.wait():
             view.children[0].disabled = True
-            return await interaction.edit_original_message(view = view)
+            return await itr.edit_original_message(view = view)
 
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "pause")
-    async def pause(self, interaction : Interaction):
+    async def pause(self, itr : Interaction):
         """
         Pause a song.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         await vcl.pause()
-        return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["paused"])
+        return await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["paused"])
     
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "resume")
-    async def resume(self, interaction : Interaction):
+    async def resume(self, itr : Interaction):
         """
         Resume a song.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         await vcl.resume()
-        return await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["resumed"])
+        return await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["resumed"])
     
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "skip")
-    async def skip(self, interaction : Interaction):
+    async def skip(self, itr : Interaction):
         """
         Skip a song
         """
         
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         await vcl.stop()
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["skipped"])
+        await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["skipped"])
         return
     
     @app_commands.checks.cooldown(1, 2, key = user_cooldown_check)
     @app_commands.command(name = "stop")
-    async def stop(self, interaction : Interaction):
+    async def stop(self, itr : Interaction):
         """
         Stop playing music.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         if not vcl.queue.is_empty:
             vcl.queue.clear()
         await vcl.stop()
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["music"]["stopped"])
+        await itr.response.send_message(lang["music"]["misc"]["action"]["music"]["stopped"])
     
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "queue")
-    async def queue(self, interaction : Interaction):
+    async def queue(self, itr : Interaction):
         """
         Show the queue.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         if vcl.queue.is_empty:
-            return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
+            return await itr.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
         
         queue_embeds = make_queue(vcl.queue, lang)
         if len(queue_embeds) > 1:
@@ -371,7 +371,7 @@ class MusicCog(Cog):
                 len(queue_embeds),
                 queue_embeds,
                 lang,
-                interaction
+                itr
             )
             for i in range(len(queue_embeds)):
                 select_menu.add_option(label = i + 1, value = i + 1)
@@ -379,10 +379,10 @@ class MusicCog(Cog):
         else:
             view = None
         
-        await interaction.response.send_message(
+        await itr.response.send_message(
             embed = rich_embeds(
                 queue_embeds[0],
-                interaction.user,
+                itr.user,
                 lang["main"]
             ),
             view = view if view is not None else None
@@ -390,20 +390,20 @@ class MusicCog(Cog):
         
         if await view.wait():
             view.children[0].disabled = True
-            await interaction.edit_original_message(view = view)
+            await itr.edit_original_message(view = view)
     
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "nowplaying")
-    async def nowplaying(self, interaction : Interaction):
+    async def nowplaying(self, itr : Interaction):
         """
         Show the now playing song.
         """
 
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         if not vcl.is_playing():
-            return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_music"])
+            return await itr.response.send_message(lang["music"]["misc"]["action"]["error"]["no_music"])
         
         track : YouTubeTrack = vcl.track
         embed = rich_embeds(
@@ -411,41 +411,41 @@ class MusicCog(Cog):
                 title = lang["music"]["misc"]["now_playing"],
                 description = f"[**{track.title}**]({track.uri}) - {track.author}\nDuration: {seconds_to_time(vcl.position)}/{seconds_to_time(track.duration)}",
             ),
-            interaction.user,
+            itr.user,
             lang["main"]
         )
-        return await interaction.response.send_message(embed = embed)
+        return await itr.response.send_message(embed = embed)
     
     @app_commands.checks.cooldown(1, 1.75, key = user_cooldown_check)
     @app_commands.command(name = "clear_queue")
-    async def clear_queue(self, interaction : Interaction):
+    async def clear_queue(self, itr : Interaction):
         """
         Clear the queue
         """
         
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         if vcl.queue.is_empty:
-            return await interaction.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
+            return await itr.response.send_message(lang["music"]["misc"]["action"]["error"]["no_queue"])
         
         vcl.queue.clear()
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["queue"]["cleared"])
+        await itr.response.send_message(lang["music"]["misc"]["action"]["queue"]["cleared"])
         
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "loop")
-    async def loop(self, interaction : Interaction, mode : Literal["off", "queue", "song"]):
+    async def loop(self, itr : Interaction, mode : Literal["off", "queue", "song"]):
         """
         Loop queue, song or turn loop off
         """
         
-        lang = await return_user_lang(self, interaction.user.id)
+        lang = await return_user_lang(self, itr.user.id)
         
-        vcl : Player = await self._connect(interaction, lang)
+        vcl : Player = await self._connect(itr, lang)
         if mode == "song":
             vcl.queue.put_at_front(vcl.track)
         elif mode == "off" and vcl.loop_mode == "song":
             await vcl.queue.get_wait()
         vcl.loop_mode = mode if mode != "off" else None
             
-        await interaction.response.send_message(lang["music"]["misc"]["action"]["loop"][mode])
+        await itr.response.send_message(lang["music"]["misc"]["action"]["loop"][mode])
