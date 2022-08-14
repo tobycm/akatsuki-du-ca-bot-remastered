@@ -49,7 +49,8 @@ async def get_prefix_for_bot(bot: Bot, message: Message): # pylint: disable=rede
 bot = Bot(
     command_prefix=get_prefix_for_bot,
     activity=Game(name="Hibiki Ban Mai"),
-    intents=Intents.all()
+    intents=Intents.all(),
+    help_command=None
 )
 tree = bot.tree
 
