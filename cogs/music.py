@@ -156,7 +156,7 @@ class MusicCog(Cog):
                 cls = Player
             )
             if cnt_cmd:
-                await itr.edit_original_message(
+                await itr.edit_original_response(
                     content = lang["music"]["voice_client"]["status"]["connected"]
                 )
         return player
@@ -179,7 +179,7 @@ class MusicCog(Cog):
             return
         await itr.response.send_message(lang["music"]["voice_client"]["status"]["disconnecting"])
         await itr.guild.voice_client.disconnect()
-        await itr.edit_original_message(
+        await itr.edit_original_response(
             content = lang["music"]["voice_client"]["status"]["disconnected"]
         )
         return True
@@ -232,7 +232,7 @@ class MusicCog(Cog):
                 await player.queue.put_wait(track)
                 if not player.is_playing():
                     await player.play(await player.queue.get_wait())
-            await itr.edit_original_message(content = "", embed = rich_embeds(
+            await itr.edit_original_response(content = "", embed = rich_embeds(
                 NewPlaylist(playlist, lang, query),
                 itr.user,
                 lang["main"]
@@ -242,7 +242,7 @@ class MusicCog(Cog):
         await player.queue.put_wait(track)
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
-        await itr.edit_original_message(content = "", embed = rich_embeds(
+        await itr.edit_original_response(content = "", embed = rich_embeds(
             NewTrack(track, lang),
             itr.user,
             lang["main"]
@@ -287,7 +287,7 @@ class MusicCog(Cog):
             
         view.add_item(select_menu)
             
-        await itr.edit_original_message(
+        await itr.edit_original_response(
             content = lang["music"]["misc"]["result"],
             embed = embed,
             view = view
@@ -295,7 +295,7 @@ class MusicCog(Cog):
 
         if await view.wait():
             view.children[0].disabled = True
-            return await itr.edit_original_message(view = view)
+            return await itr.edit_original_response(view = view)
 
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "pause")
@@ -390,7 +390,7 @@ class MusicCog(Cog):
         
         if await view.wait():
             view.children[0].disabled = True
-            await itr.edit_original_message(view = view)
+            await itr.edit_original_response(view = view)
     
     @app_commands.checks.cooldown(1, 1.25, key = user_cooldown_check)
     @app_commands.command(name = "nowplaying")

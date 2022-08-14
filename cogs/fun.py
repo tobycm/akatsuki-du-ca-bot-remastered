@@ -235,7 +235,7 @@ class FunCog(Cog):
             await itr.channel.send(content = "Bạn may mắn thật đấy, bạn được Ban Mai gọi dậy nè :))", file = File("assets/banmai.mp4"))
         else:
             await itr.channel.send(content = "Ngủ nhiều là không tốt đâu đó nha :D \n - Du Ca said - ", file = File("assets/duca.mp4"))
-        return await itr.edit_original_message(content = "Đã gửi :D")
+        return await itr.edit_original_response(content = "Đã gửi :D")
 
     @app_commands.checks.cooldown(1, 1.5, key = user_cooldown_check)
     @app_commands.command(name = "waifu")

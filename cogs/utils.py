@@ -94,19 +94,14 @@ class UtilsCog(Cog):
 
         await itr.response.send_message(
             content = "Please select a language",
-            view = view
+            view = view,
+            ephemeral = True
         )
 
         if await view.wait():
             select_menu : ChangeLang = view.children[0]
             select_menu.disabled = True
-            try:
-                select_menu.values[0]
-            except AttributeError:
-                return await itr.edit_original_message(
-                        content = "The session timed out LOL"
-                    )
-            return await itr.edit_original_message(view = view)
+            return await itr.edit_original_response(view = view)
 
 class MinecraftCog(GroupCog, name = "minecraft"):
     def __init__(self, bot : Bot):

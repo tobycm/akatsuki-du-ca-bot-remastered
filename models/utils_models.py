@@ -19,14 +19,11 @@ class ChangeLang(Select):
         super().__init__(placeholder = "Choose language")
 
     async def callback(self, itr : Interaction):
-        if itr.user != self.author:
-            return await itr.response.send_message(content = "This is not for you LUL")
-
         result = self.values[0]
         result = await set_user_lang(self.redis_ins, itr.user.id, result)
 
         if result:
-            await itr.response.send_message("\U0001f44c")
+            await itr.response.send_message("\U0001f44c", ephemeral = True)
             return
 
         error_channel = self.bot.fetch_channel(get_channel_config("error"))

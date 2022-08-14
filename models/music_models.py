@@ -55,7 +55,7 @@ class PageSel(Select):
         page = int(self.values[0]) - 1
         
         await itr.response.defer()
-        await self.itr.edit_original_message(
+        await self.itr.edit_original_response(
             embed = rich_embeds(
                 self.embeds[page],
                 itr.user,
