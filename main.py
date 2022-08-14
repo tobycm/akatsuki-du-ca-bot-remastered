@@ -95,6 +95,17 @@ async def sync_command(ctx: Context):
 
 
 @bot.event
+async def on_message(message: Message):
+    """
+    Run on new message.
+    """
+
+    if message.author.bot:
+        return
+
+    await bot.process_commands(message)
+
+@bot.event
 async def on_guild_join(guild):
     """
     Run on guild join.

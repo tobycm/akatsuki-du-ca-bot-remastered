@@ -83,7 +83,7 @@ class MusicCog(Cog):
         bot_logger.info(f"Reason: {reason} | Code: {code}")
 
     @Cog.listener()
-    async def on_wavelink_track_end(self, player: Player, track: Track, *args):
+    async def on_wavelink_track_end(self, player: Player, track: Track, **_):
         """
         Event fired when a track ends.
         """
@@ -128,7 +128,7 @@ class MusicCog(Cog):
         print(type(error))
 
     @Cog.listener()
-    async def on_wavelink_track_stuck(self, player: Player, track: Track, *args):
+    async def on_wavelink_track_stuck(self, player: Player, track: Track, **_):
         """
         Event fired when a track is stuck.
         """
@@ -269,6 +269,35 @@ class MusicCog(Cog):
             return
 
         await player.queue.put_wait(track)
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
+        await itr.edit_original_response(content="", embed=rich_embeds(
+            NewTrack(track, lang),
+            itr.user,
+            lang["main"]
+        ))
+
+    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @app_commands.command(name="playtop")
+    async def playtop(self, itr: Interaction, query: str):
+        """
+        Play or add a song on top of the queue
+        """
+
+        lang = await return_user_lang(self, itr.user.id)
+
+        player: Player = await self._connect(itr, lang)
+        player.text_channel = itr.channel
+        await itr.response.send_message(
+            lang["music"]["misc"]["action"]["music"]["searching"]
+        )
+
+        try:
+            track: YouTubeTrack = await YouTubeTrack.search(query=query, return_first=True)
+        except AttributeError:
+            return await itr.edit_original_response(content="No playlist pls 0.0")
+
+        player.queue.put_at_front(track)
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
         await itr.edit_original_response(content="", embed=rich_embeds(
@@ -481,7 +510,7 @@ class MusicCog(Cog):
 
     @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
     @app_commands.command(name="loop")
-    async def loop(self, itr: Interaction, mode: Literal["off", "queue", "song"]):
+    async def loop_music(self, itr: Interaction, mode: Literal["off", "queue", "song"]):
         """
         Loop queue, song or turn loop off
         """
@@ -491,7 +520,7 @@ class MusicCog(Cog):
         vcl: Player = await self._connect(itr, lang)
         if mode == "song":
             vcl.queue.put_at_front(vcl.track)
-        elif mode == "off" and vcl.loop_mode == "song":
+        if mode == "off" and vcl.loop_mode == "song":
             await vcl.queue.get_wait()
         vcl.loop_mode = mode if mode != "off" else None
 
