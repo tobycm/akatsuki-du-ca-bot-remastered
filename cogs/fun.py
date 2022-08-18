@@ -299,7 +299,7 @@ class FunCog(Cog):
 
         embed = Embed(
             title=lang["fun"]["NitroFree"]["Title"],
-            description=f"{lang['fun']['NitroFree']['Description']}\n[https://discord.gift/{code}](http://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
+            description=f"{lang['fun']['NitroFree']['Description']}\n[https://discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
             color=0x2F3136
         )
         embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
