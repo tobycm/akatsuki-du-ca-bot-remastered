@@ -7,7 +7,7 @@ from typing import List, Literal
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog, Cog, Bot
 from discord.ui import View
-from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node
+from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node, SoundCloudTrack
 
 from models.music_models import Player, NewPlaylist, MusicSel, PageSel, NewTrack, make_queue
 from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
@@ -298,6 +298,31 @@ class MusicCog(Cog):
             return await itr.edit_original_response(content="No playlist pls 0.0")
 
         player.queue.put_at_front(track)
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
+        await itr.edit_original_response(content="", embed=rich_embeds(
+            NewTrack(track, lang),
+            itr.user,
+            lang["main"]
+        ))
+
+    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @app_commands.command(name="soundcloud")
+    async def soundcloud(self, itr: Interaction, query: str):
+        """
+        Search and play a Soundcloud song
+        """
+
+        lang = await return_user_lang(self, itr.user.id)
+
+        player: Player = await self._connect(itr, lang)
+        player.text_channel = itr.channel
+        await itr.response.send_message(
+            lang["music"]["misc"]["action"]["music"]["searching"]
+        )
+
+        track: SoundCloudTrack = await SoundCloudTrack.search(query=query, return_first=True)
+        await player.queue.put_wait(track)
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
         await itr.edit_original_response(content="", embed=rich_embeds(
