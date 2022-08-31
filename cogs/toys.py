@@ -4,7 +4,8 @@ Toys for kids lmao
 
 from random import randint
 from discord import Interaction, app_commands
-from discord.ext.commands import Cog, Bot
+from discord.ext.commands import Cog
+from models.bot_models import CustomBot
 
 from modules.checks_and_utils import user_cooldown_check
 
@@ -14,7 +15,7 @@ class ToysCog(Cog):
     Lots of toys xD
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: CustomBot) -> None:
         self.bot = bot
 
     @app_commands.checks.cooldown(1, 0.25, key=user_cooldown_check)

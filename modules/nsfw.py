@@ -5,6 +5,7 @@ NSFW backend functions for NSFW cog.
 from random import choice
 from aiohttp import ClientSession
 
+
 async def get_nsfw() -> tuple(("url", "source")):
     """
     Return a random NSFW image url and source.

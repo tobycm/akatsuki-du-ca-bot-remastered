@@ -3,7 +3,8 @@ Not Safe for Work commands. 0_0
 """
 
 from discord import Embed, Interaction, app_commands
-from discord.ext.commands import GroupCog, Bot
+from discord.ext.commands import GroupCog
+from models.bot_models import CustomBot
 
 from modules.embed_process import rich_embeds
 from modules.nsfw import get_nsfw
@@ -15,7 +16,7 @@ class NSFWCog(GroupCog, name="nsfw"):
     NSFW related commands.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: CustomBot) -> None:
         self.bot = bot
         super().__init__()
 

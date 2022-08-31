@@ -5,9 +5,10 @@ This is the music cog.
 import logging
 from typing import List, Literal
 from discord import Color, Embed, Interaction, app_commands
-from discord.ext.commands import GroupCog, Cog, Bot
+from discord.ext.commands import GroupCog, Cog
 from discord.ui import View
 from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node, SoundCloudTrack
+from models.bot_models import CustomBot
 
 from models.music_models import Player, NewPlaylist, MusicSel, PageSel, NewTrack, make_queue
 from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
@@ -20,7 +21,7 @@ class RadioMusic(GroupCog, name="radio"):
     Radio commands for bot
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: CustomBot):
         self.bot = bot
         super().__init__()
 
@@ -45,7 +46,7 @@ class RadioMusic(GroupCog, name="radio"):
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: CustomBot):
         self.bot = bot
         bot.loop.create_task(self.connect_nodes())
 
@@ -552,3 +553,20 @@ class MusicCog(Cog):
         await itr.response.send_message(
             lang["music"]["misc"]["action"]["loop"][mode]
         )
+
+    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @app_commands.command(name="seek")
+    async def seek(self, itr: Interaction, position: int):
+        """
+        Seeks to a certain point in the current track.
+        """
+
+        lang = await return_user_lang(self, itr.user.id)
+
+        vcl: Player = await self._connect(itr, lang)
+        if vcl.track.length < position:
+            # lmao seek over track
+            return await itr.response.send_message("Lmao how to seek over track")
+
+        await vcl.seek(position=position)
+        return await itr.response.send_message("Done!")

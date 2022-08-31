@@ -4,6 +4,7 @@ Waifu APi backend functions.
 from random import choice
 from aiohttp import ClientSession
 
+
 async def get_waifu_image_url() -> tuple(("url", "source")):
     """
     Get a random waifu image url and source.

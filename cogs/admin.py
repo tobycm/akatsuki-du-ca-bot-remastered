@@ -4,7 +4,8 @@ Admin commands for bot in guild.
 
 from discord import app_commands, Interaction
 from discord.ext import commands
-from discord.ext.commands import GroupCog, Cog, Context, Bot
+from discord.ext.commands import GroupCog, Cog, Context
+from models.bot_models import CustomBot
 
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
@@ -16,7 +17,7 @@ class PrefixCog(GroupCog, name="prefix"):
     Prefix related commands.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: CustomBot):
         self.bot = bot
         super().__init__()
 
@@ -68,7 +69,7 @@ class BotAdminCog(Cog):
     Commands only bot owners can use.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: CustomBot):
         self.bot = bot
 
     @commands.command(name="resetguildprefix")

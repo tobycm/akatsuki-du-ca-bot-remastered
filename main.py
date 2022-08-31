@@ -2,10 +2,10 @@
 Main bot file.
 """
 
-from time import time
 import logging
-from discord import Game, Intents, Message
-from discord.ext.commands import Context, Bot
+from discord import Game, Intents, Message, Forbidden
+from discord.ext.commands import Context
+from discord.ui import View
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------
@@ -15,10 +15,16 @@ from modules.checks_and_utils import check_owners
 from modules.log_utils import command_log
 from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
-from modules.database_utils import return_redis_instance, get_prefix
-from modules.load_lang import get_lang
+from modules.database_utils import get_user_lang, get_prefix
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
+# -------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv models import
+
+from models.main_models import LangSel
+from models.bot_models import CustomBot
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ models import
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
 
@@ -36,7 +42,7 @@ from cogs.admin import PrefixCog, BotAdminCog
 DEFAULT_PREFIX = get_bot_config("prefix")
 
 
-async def get_prefix_for_bot(bot: Bot, message: Message): # pylint: disable=redefined-outer-name
+async def get_prefix_for_bot(bot: CustomBot, message: Message):  # pylint: disable=redefined-outer-name
     """
     Return the prefix for the bot.
     """
@@ -46,7 +52,7 @@ async def get_prefix_for_bot(bot: Bot, message: Message): # pylint: disable=rede
         return DEFAULT_PREFIX
     return prefix
 
-bot = Bot(
+bot = CustomBot(
     command_prefix=get_prefix_for_bot,
     activity=Game(name="Hibiki Ban Mai"),
     intents=Intents.all(),
@@ -105,6 +111,7 @@ async def on_message(message: Message):
 
     await bot.process_commands(message)
 
+
 @bot.event
 async def on_guild_join(guild):
     """
@@ -124,6 +131,37 @@ async def on_guild_remove(guild):
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for events code
 # -----------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv before command run
+
+
+@bot.before_invoke
+async def check_lang(ctx: Context):
+    """
+    First time use bot so check lang
+    """
+
+    if await get_user_lang(bot.redis_ins, ctx.author.id) is not None:
+        return
+    select_menu = LangSel(bot.lang)
+    view = View(timeout=45)
+    for lang in bot.lang:
+        for lang_name, _ in lang:
+            select_menu.add_option(label=lang_name, value=lang_name)
+    view.add_item(select_menu)
+    usr_dm = ctx.author.dm_channel
+    try:
+        await usr_dm.send(
+            content="Có vẻ như đây là lần đầu bạn sử dụng bot này, mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n Looks like this is your first time using this bot, I will help you to set up your language.",
+            view=view
+        )
+    except Forbidden:
+        await ctx.send(
+            content="Có vẻ như đây là lần đầu bạn sử dụng bot này, mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n Looks like this is your first time using this bot, I will help you to set up your language.",
+            view=view
+        )
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ before command run
+# -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
 
@@ -132,10 +170,7 @@ async def start_up():
     Run on startup (yes you can touch this).
     """
 
-    bot.redis_ins = return_redis_instance()
-    bot.lang = get_lang()
     bot.quotes = await get_quotes()
-    bot.quotes_added = time()
 
     await bot.load_extension('jishaku')
     bot_logger.info("Loaded jishaku")

@@ -6,4 +6,4 @@ aiodns
 jishaku
 pynacl
 wavelink
-git+git://github.com/Rapptz/discord.py.git@master#egg=discord.py
+discord.py
