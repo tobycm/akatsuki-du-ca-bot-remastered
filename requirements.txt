@@ -3,3 +3,7 @@ redis
 aiohttp
 cchardet
 aiodns
+jishaku
+pynacl
+wavelink
+discord.py

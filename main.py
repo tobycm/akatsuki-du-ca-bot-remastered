@@ -1,6 +1,11 @@
-from time import time
-from discord import Game, Intents
-from discord.ext.commands import Context, Bot
+"""
+Main bot file.
+"""
+
+import logging
+from discord import Game, Intents, Message, Forbidden
+from discord.ext.commands import Context
+from discord.ui import View
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ other modules import
 # -------------------------------------------------
@@ -10,48 +15,81 @@ from modules.checks_and_utils import check_owners
 from modules.log_utils import command_log
 from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
-from modules.database_utils import return_redis_instance, get_prefix
-from modules.load_lang import get_lang
+from modules.database_utils import get_user_lang, get_prefix
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ self-coded modules import
+# -------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv models import
+
+from models.main_models import LangSel
+from models.bot_models import CustomBot
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ models import
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv cog import
 
 from cogs.fun import FunCog, GIFCog
-from cogs.music import RadioMusic
+from cogs.music import RadioMusic, MusicCog
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
+from cogs.utils import UtilsCog, MinecraftCog
+from cogs.admin import PrefixCog, BotAdminCog
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot settings
 
-default_prefix = "$"
+DEFAULT_PREFIX = get_bot_config("prefix")
 
-async def get_prefix_for_bot(bot, message):
+
+async def get_prefix_for_bot(bot: CustomBot, message: Message):  # pylint: disable=redefined-outer-name
+    """
+    Return the prefix for the bot.
+    """
+
     prefix = await get_prefix(bot.redis_ins, message.guild.id)
     if prefix is None:
-        return default_prefix
+        return DEFAULT_PREFIX
     return prefix
 
-bot = Bot(
-    command_prefix = get_prefix_for_bot,
-    activity = Game(name="Hibiki Ban Mai"),
-    intents = Intents.all()
-         )
+bot = CustomBot(
+    command_prefix=get_prefix_for_bot,
+    activity=Game(name="Hibiki Ban Mai"),
+    intents=Intents.all(),
+    help_command=None
+)
 tree = bot.tree
+
+bot_logger = logging.getLogger('discord')
+logging.basicConfig(
+    filename="log/full_bot_log.txt",
+    filemode='a',
+    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+    datefmt='%H:%M:%S',
+    level=logging.INFO
+)
+
 
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user}")
-    
+    """
+    Run on ready (don't touch pls).
+    """
+
+    bot_logger.info(f"Logged in as {bot.user}")
+
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
-    
-@bot.command(name = "sc", hidden = True)
-async def sc(ctx : Context):
-    command_log(ctx.author.id, ctx.guild.id, ctx.channel.id, "sc")
+
+
+@bot.command(name="sc", hidden=True)
+@command_log
+async def sync_command(ctx: Context):
+    """
+    Sync commands to global.
+    """
+
     if not await check_owners(bot.redis_ins, ctx):
         return
     await tree.sync()
@@ -61,34 +99,100 @@ async def sc(ctx : Context):
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for events code
 
+
+@bot.event
+async def on_message(message: Message):
+    """
+    Run on new message.
+    """
+
+    if message.author.bot:
+        return
+
+    await bot.process_commands(message)
+
+
 @bot.event
 async def on_guild_join(guild):
-    print(f"Joined {guild.name}")
-    
+    """
+    Run on guild join.
+    """
+
+    bot_logger.info(f"Joined {guild.name}")
+
+
 @bot.event
 async def on_guild_remove(guild):
-    print(f"Left {guild.name}")
-    
+    """
+    Run on guild leave.
+    """
+
+    bot_logger.info(f"Left {guild.name}")
+
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for events code
+# -----------------------------------------------------
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv before command run
+
+
+@bot.before_invoke
+async def check_lang(ctx: Context):
+    """
+    First time use bot so check lang
+    """
+
+    if await get_user_lang(bot.redis_ins, ctx.author.id) is not None:
+        return
+    select_menu = LangSel(bot.lang)
+    view = View(timeout=45)
+    for lang in bot.lang:
+        for lang_name, _ in lang:
+            select_menu.add_option(label=lang_name, value=lang_name)
+    view.add_item(select_menu)
+    usr_dm = ctx.author.dm_channel
+    try:
+        await usr_dm.send(
+            content="Có vẻ như đây là lần đầu bạn sử dụng bot này, mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n Looks like this is your first time using this bot, I will help you to set up your language.",
+            view=view
+        )
+    except Forbidden:
+        await ctx.send(
+            content="Có vẻ như đây là lần đầu bạn sử dụng bot này, mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n Looks like this is your first time using this bot, I will help you to set up your language.",
+            view=view
+        )
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ before command run
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
+
 async def start_up():
-    bot.redis_ins = return_redis_instance()
-    bot.lang = await get_lang()
+    """
+    Run on startup (yes you can touch this).
+    """
+
     bot.quotes = await get_quotes()
-    bot.quotes_added = time()
+
+    await bot.load_extension('jishaku')
+    bot_logger.info("Loaded jishaku")
+
     await bot.add_cog(FunCog(bot))
     await bot.add_cog(GIFCog(bot))
-    print(" -> Fun and GIF cog added <-")
+    bot_logger.info("-> Fun and GIF Cog added <-")
     await bot.add_cog(RadioMusic(bot))
-    print(" -> Radio music cog added <-")
+    await bot.add_cog(MusicCog(bot))
+    bot_logger.info(" -> Radio and Music cog added <-")
     await bot.add_cog(NSFWCog(bot))
-    print(" -> NSFW cog added <-")
+    bot_logger.info(" -> NSFW cog added <-")
     await bot.add_cog(ToysCog(bot))
-    print(" -> Toys cog added <-")
+    bot_logger.info(" -> Toys cog added <-")
+    await bot.add_cog(UtilsCog(bot))
+    await bot.add_cog(MinecraftCog(bot))
+    bot_logger.info(" -> Utils and Minecraft cog added <-")
+    await bot.add_cog(PrefixCog(bot))
+    bot_logger.info(" -> Prefix cog added <-")
+    await bot.add_cog(BotAdminCog(bot))
+    bot_logger.info(" -> Bot admin cog added <-")
 
-    
 bot.setup_hook = start_up
-    
-bot.run(get_bot_config("discord_token"))
+
+bot.run(get_bot_config("token"))

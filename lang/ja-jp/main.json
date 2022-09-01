@@ -22,5 +22,6 @@
         "help` để xem lại loại thông số nhé!"
     ],
     "MissingGuildPermission": "Hong có quyền đâu nha bạn iu!",
-    "EmbedFooter": "依頼者: "
+    "EmbedFooter": "依頼者: ",
+    "LangSwitched": "あなたの言語はに設定されています "
 }

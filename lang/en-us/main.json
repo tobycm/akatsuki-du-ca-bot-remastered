@@ -22,5 +22,6 @@
         "help` to see where did you type the wrong argument!"
     ],
     "MissingGuildPermission": "Uh oh, no permissions for you :)",
-    "EmbedFooter": "Requested by: "
+    "EmbedFooter": "Requested by: ",
+    "LangSwitched": "Changed language to "
 }

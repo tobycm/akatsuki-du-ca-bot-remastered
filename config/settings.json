@@ -1,7 +1,26 @@
 {
-    "discord_token": "",
-    "guild_id": 1234567890,
-    "osu_token": "",
-    "tenor_token": "",
-    "client_secret": ""
+    "bot": {
+        "token": "",
+        "secret": "",
+        "prefix": "!",
+        "home_guild_id": 1234567890,
+        "home_guild_invite": "https://discord.gg/",
+        "channels": {
+            "error": 1234567890,
+            "bug": 1234567890
+        }
+    },
+
+    "api_keys": {
+        "osu": "",
+        "tenor": ""
+    },
+
+    "lavalink_nodes": [
+        {
+            "host": "localhost",
+            "port": "8080",
+            "password": "youshallnotpass"
+        }
+    ]
 }

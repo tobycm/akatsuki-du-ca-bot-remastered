@@ -1,13 +1,33 @@
 {
+    "osuUserNotFound": "Player not found bruh",
+    "osuStatsTitle": "%s osu! player info",
+    "osuStatsDescription": [
+        "Username: ",
+        "User ID: ",
+        "Join date: ",
+        "Total playcount: ",
+        "Total score: ",
+        "Global rank: ",
+        "Level: ",
+        "PP: ",
+        "Accuracy: ",
+        "SS: ",
+        "S: ",
+        "A: ",
+        "Country: ",
+        "Total seconds played: ",
+        "Country rank: "
+    ],
     "ChangeLanguage": "Select your language:",
     "MinecraftAccount": [
         "Minecraft stats for ",
         "Minecraft Stats\nUsername:"
     ],
-    "MinecraftServer": [
-        " is offline",
-        " is online",
-        "Minecraft Server Status\n Server IP: ",
-        "Has %d players online"
-    ]
+    "MinecraftServer": {
+        "NotFound": "Not Found",
+        "online": "is online",
+        "server_info": "Minecraft Server Status\n Server IP: ",
+        "version": "Version: ",
+        "players": "Players: "
+    }
 }

@@ -1,13 +1,33 @@
 {
+    "osuUserNotFound": "Không tìm thấy người chơi 0.0",
+    "osuStatsTitle": "Thông tin người chơi osu! %s",
+    "osuStatsDescription": [
+        "Tên người chơi: ",
+        "ID người chơi: ",
+        "Ngày tạo tài khoản: ",
+        "Tổng lượt chơi: ",
+        "Tổng điểm: ",
+        "Rank thế giới: ",
+        "レベル: ",
+        "PP: ",
+        "精度: ",
+        "SS: ",
+        "S: ",
+        "A: ",
+        "国: ",
+        "Tổng giây đã chơi: ",
+        "Rank quốc gia: "
+    ],
     "ChangeLanguage": "言語を選択：",
     "MinecraftAccount": [
         "Minecraftプレーヤー情報： ",
         "Minecraftプレーヤー情報\n名前："
     ],
-    "MinecraftServer": [
-        " オフラインです",
-        " 現在オンライン",
-        "Minecraftサーバー情報\nサーバーIP： ",
-        "オンラインに%d人のプレイヤーがいます"
-    ]
+    "MinecraftServer": {
+        "NotFound": "Không tìm thấy",
+        "online": "đang online",
+        "server_info": "Thông tin máy chủ Minecraft\nIP máy chủ: ",
+        "version": "Phiên bản: ",
+        "players": "Người chơi: "
+    }
 }
