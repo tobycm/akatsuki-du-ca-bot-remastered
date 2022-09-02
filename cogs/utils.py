@@ -35,7 +35,7 @@ class UtilsCog(Cog):
 
         author = itr.user
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
@@ -124,7 +124,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 2, key=user_cooldown_check)
     @command(name="ping")
-    async def bot_ping(self, itr: Interaction):
+    async def ping_bot(self, itr: Interaction):
         """
         Check and send bot ping/latency
         """
@@ -152,7 +152,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         author = itr.user
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         uuid, image, thumbnail = await get_minecraft_user_embed(user)
         embed = rich_embeds(
@@ -178,7 +178,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         author = itr.user
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         data = await get_minecraft_server_info(server_ip)
 

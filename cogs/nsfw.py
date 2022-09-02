@@ -29,7 +29,7 @@ class NSFWCog(GroupCog, name="nsfw"):
         """
 
         author = itr.user
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
         if not itr.channel.is_nsfw():
             await itr.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral=True)
 

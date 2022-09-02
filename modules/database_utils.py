@@ -5,9 +5,6 @@ Database functions module.
 import json
 from aioredis import Redis, ConnectionPool
 
-# pylint: disable=broad-except
-
-
 def return_redis_instance(
     host: str = "localhost",
     port: int = 6379,
@@ -32,31 +29,22 @@ def return_redis_instance(
 # --------------------------------------------- prefix ---------------------------------------------
 
 
-async def set_prefix(redis_ins: Redis, server_id: int, prefix: str) -> True or Exception:
+async def set_prefix(redis_ins: Redis, server_id: int, prefix: str) -> None:
     """
     Set a user prefix in database
     """
 
-    try:
-        await redis_ins.hset("prefix", server_id, prefix)
-    except Exception as error:
-        return error
-    return True
+    await redis_ins.hset("prefix", server_id, prefix)
 
 
-async def delete_prefix(redis_ins: Redis, server_id: int) -> True or Exception:
+async def delete_prefix(redis_ins: Redis, server_id: int) -> None:
     """
     Delete a user prefix in database
     """
 
-    try:
-        await redis_ins.hdel("prefix", server_id)
-    except Exception as error:
-        return error
-    return True
+    await redis_ins.hdel("prefix", server_id)
 
-
-async def get_prefix(redis_ins: Redis, server_id: int) -> str("prefix"):
+async def get_prefix(redis_ins: Redis, server_id: int) -> str:
     """
     Get a user prefix from database
     """
@@ -67,29 +55,19 @@ async def get_prefix(redis_ins: Redis, server_id: int) -> str("prefix"):
 # ------------------------------------------- op ----------------------------------------------
 
 
-async def set_op(redis_ins: Redis, new_op_id: int, reason: str, adder_id: int) -> True or Exception:
+async def set_op(redis_ins: Redis, new_op_id: int, reason: str, adder_id: int) -> None:
     """
     Save the new OP Discord ID in database
     """
 
-    try:
-        await redis_ins.hset("op", new_op_id, str({"reason": reason, "adder_id": adder_id}))
-    except Exception as error:
-        return error
-    return True
+    await redis_ins.hset("op", new_op_id, str({"reason": reason, "adder_id": adder_id}))
 
-
-async def del_op(redis_ins: Redis, del_op_id: int) -> True or Exception:
+async def del_op(redis_ins: Redis, del_op_id: int) -> None:
     """
     Delete OP Discord ID from database
     """
 
-    try:
-        await redis_ins.hdel("op", del_op_id)
-    except Exception as error:
-        return error
-    return True
-
+    await redis_ins.hdel("op", del_op_id)
 
 async def get_op(redis_ins: Redis, op_id: int) -> dict:
     """
@@ -102,17 +80,12 @@ async def get_op(redis_ins: Redis, op_id: int) -> dict:
 # ------------------------------------------ user lang --------------------------------------------
 
 
-async def set_user_lang(redis_ins: Redis, user_id: int, lang: str) -> True or Exception:
+async def set_user_lang(redis_ins: Redis, user_id: int, lang: str) -> None:
     """
     Set a user language in database
     """
 
-    try:
-        await redis_ins.hset("user_lang", user_id, lang)
-    except Exception as error:
-        return error
-    return True
-
+    await redis_ins.hset("user_lang", user_id, lang)
 
 async def get_user_lang(redis_ins: Redis, user_id: int) -> str:
     """

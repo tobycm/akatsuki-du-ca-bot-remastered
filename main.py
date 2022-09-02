@@ -11,7 +11,7 @@ from discord.ui import View
 # -------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv self-coded modules import
 
-from modules.checks_and_utils import check_owners
+from modules.checks_and_utils import check_owners, return_user_lang
 from modules.log_utils import command_log
 from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
@@ -109,6 +109,13 @@ async def on_message(message: Message):
 
     if message.author.bot:
         return
+
+    if message.content == f"<@{bot.user.id}>":
+        lang = await return_user_lang(bot, message.author.id)
+        prefix = await get_prefix(bot.redis_ins, message.guild.id)
+        await message.reply(
+            lang["main"]["PingForPrefix"][0] + prefix + lang["main"]["PingForPrefix"][1]
+        )
 
     await bot.process_commands(message)
 

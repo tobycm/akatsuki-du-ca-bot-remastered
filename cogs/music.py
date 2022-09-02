@@ -34,7 +34,7 @@ class RadioMusic(GroupCog, name="radio"):
         """
 
         suggests_channel = self.bot.get_channel(957341782721585223)
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         await suggests_channel.send(
             f"{itr.user} suggested {song} \n User ID: {itr.user.id}, Guild ID: {itr.guild.id}"
@@ -220,7 +220,7 @@ class MusicCog(Cog):
         Connect to a voice channel.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         await self._connect(itr, lang, True)
         return
@@ -232,7 +232,7 @@ class MusicCog(Cog):
         Disconnect from a voice channel.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         await self._disconnect(itr, lang)
         return
@@ -244,7 +244,7 @@ class MusicCog(Cog):
         Play a song.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         player: Player = await self._connect(itr, lang)
         player.text_channel = itr.channel
@@ -286,7 +286,7 @@ class MusicCog(Cog):
         Play or add a song on top of the queue
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         player: Player = await self._connect(itr, lang)
         player.text_channel = itr.channel
@@ -315,7 +315,7 @@ class MusicCog(Cog):
         Search and play a Soundcloud song
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         player: Player = await self._connect(itr, lang)
         player.text_channel = itr.channel
@@ -340,7 +340,7 @@ class MusicCog(Cog):
         Search for a song.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         player: Player = await self._connect(itr, lang)
         player.text_channel = itr.channel
@@ -391,7 +391,7 @@ class MusicCog(Cog):
         Pause a song.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         await vcl.pause()
@@ -406,7 +406,7 @@ class MusicCog(Cog):
         Resume a song.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         await vcl.resume()
@@ -421,7 +421,7 @@ class MusicCog(Cog):
         Skip a song
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         await vcl.stop()
@@ -437,7 +437,7 @@ class MusicCog(Cog):
         Stop playing music.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if not vcl.queue.is_empty:
@@ -454,7 +454,7 @@ class MusicCog(Cog):
         Show the queue.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if vcl.queue.is_empty:
@@ -496,7 +496,7 @@ class MusicCog(Cog):
         Show the now playing song.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if not vcl.is_playing():
@@ -522,7 +522,7 @@ class MusicCog(Cog):
         Clear the queue
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if vcl.queue.is_empty:
@@ -542,7 +542,7 @@ class MusicCog(Cog):
         Loop queue, song or turn loop off
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if mode == "song":
@@ -562,7 +562,7 @@ class MusicCog(Cog):
         Seeks to a certain point in the current track.
         """
 
-        lang = await return_user_lang(self, itr.user.id)
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         vcl: Player = await self._connect(itr, lang)
         if vcl.track.length < position:

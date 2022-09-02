@@ -40,7 +40,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -65,7 +65,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -90,7 +90,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -115,7 +115,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -140,7 +140,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -165,7 +165,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -190,7 +190,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -215,7 +215,7 @@ class GIFCog(GroupCog, name="gif"):
         if target is self.bot.user:
             return await itr.response.send_message("etou...", ephemeral=True)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = await construct_gif_embed(
             author,
@@ -245,7 +245,7 @@ class FunCog(Cog):
 
         author = itr.user
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
         lang_option = await get_user_lang(self.bot.redis_ins, author.id)
         if lang_option != "vi-vn":
             return await itr.response.send_message(lang["main"]["NotAvailableLanguage"])
@@ -272,7 +272,7 @@ class FunCog(Cog):
         """
 
         author = itr.user
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         (url, source) = await get_waifu_image_url()
 
@@ -297,7 +297,7 @@ class FunCog(Cog):
         for _ in range(0, 23):
             code += choice(ascii_letters)
 
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
 
         embed = Embed(
             title=lang["fun"]["NitroFree"]["Title"],
@@ -316,7 +316,7 @@ class FunCog(Cog):
         """
 
         author = itr.user
-        lang = await return_user_lang(self, author.id)
+        lang = await return_user_lang(self.bot, author.id)
         time_now = time()
 
         if (time_now - self.bot.quotes_added) > 900:

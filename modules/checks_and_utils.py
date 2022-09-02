@@ -6,6 +6,7 @@ from datetime import timedelta
 from aioredis import Redis
 from discord import Interaction
 from discord.ext.commands import Context
+from models.bot_models import CustomBot
 
 from modules.database_utils import get_user_lang
 
@@ -37,13 +38,13 @@ def guild_cooldown_check(itr: Interaction) -> bool:
     return itr.guild.id
 
 
-async def return_user_lang(self, user_id) -> dict:
+async def return_user_lang(bot: CustomBot, user_id: int) -> dict:
     """
     Return user language as a dict
     """
 
-    lang_option = await get_user_lang(self.bot.redis_ins, user_id)
-    return self.bot.lang[lang_option]
+    lang_option = await get_user_lang(bot.redis_ins, user_id)
+    return bot.lang[lang_option]
 
 
 def seconds_to_time(seconds) -> str:
