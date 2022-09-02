@@ -34,6 +34,7 @@ from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
 from cogs.utils import UtilsCog, MinecraftCog
 from cogs.admin import PrefixCog, BotAdminCog
+from cogs.legacy_commands import LegacyCommands
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cog import
 # -------------------------------------------------
@@ -192,6 +193,8 @@ async def start_up():
     bot_logger.info(" -> Prefix cog added <-")
     await bot.add_cog(BotAdminCog(bot))
     bot_logger.info(" -> Bot admin cog added <-")
+    await bot.add_cog(LegacyCommands(bot))
+    bot_logger.info(" -> Toby sus cog added <-")
 
 bot.setup_hook = start_up
 

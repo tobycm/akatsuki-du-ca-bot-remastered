@@ -14,6 +14,10 @@ class MissingGuildPermission(Exception):
     Raised when the user is missing guild permission.
     """
 
+class NotOwnerLMAO(Exception):
+    """
+    Raised when user is not owner
+    """
 
 class MusicException():
     """
