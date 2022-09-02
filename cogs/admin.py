@@ -2,7 +2,8 @@
 Admin commands for bot in guild.
 """
 
-from discord import app_commands, Interaction
+from discord import Interaction
+from discord.app_commands import command, checks, MissingPermissions
 from discord.ext import commands
 from discord.ext.commands import GroupCog, Cog, Context
 from models.bot_models import CustomBot
@@ -21,9 +22,9 @@ class PrefixCog(GroupCog, name="prefix"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.checks.cooldown(1, 1, key=guild_cooldown_check)
-    @app_commands.checks.has_permissions(manage_guild=True)
-    @app_commands.command(name="set")
+    @checks.cooldown(1, 1, key=guild_cooldown_check)
+    @checks.has_permissions(manage_guild=True)
+    @command(name="set")
     async def setprefix(self, itr: Interaction, prefix: str):
         """
         Set the bot's prefix
@@ -42,9 +43,9 @@ class PrefixCog(GroupCog, name="prefix"):
             f"{author} tried to set prefix to `{prefix}` but failed. Error: {result}"
         )
 
-    @app_commands.checks.cooldown(1, 1, key=guild_cooldown_check)
-    @app_commands.checks.has_permissions(manage_guild=True)
-    @app_commands.command(name="reset")
+    @checks.cooldown(1, 1, key=guild_cooldown_check)
+    @checks.has_permissions(manage_guild=True)
+    @command(name="reset")
     async def resetprefix(self, itr: Interaction):
         """
         Reset the bot's prefix
@@ -79,7 +80,7 @@ class BotAdminCog(Cog):
         """
 
         if not await check_owners(self.bot.redis_ins, ctx):
-            raise app_commands.MissingPermissions(["manage_guild"])
+            raise MissingPermissions(["manage_guild"])
 
         result = await delete_prefix(self.bot.redis_ins, guild_id)
 

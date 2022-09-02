@@ -2,7 +2,8 @@
 Utilities for the bot.
 """
 
-from discord import AllowedMentions, Embed, app_commands, Interaction
+from discord import AllowedMentions, Embed, Interaction
+from discord.app_commands import command, checks
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
 from models.bot_models import CustomBot
@@ -25,8 +26,8 @@ class UtilsCog(Cog):
     def __init__(self, bot: CustomBot):
         self.bot = bot
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="osu")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="osu")
     async def osu(self, itr: Interaction, user: str):
         """
         Get osu! stats for a user
@@ -68,8 +69,8 @@ class UtilsCog(Cog):
 
         return await itr.response.send_message(embed=embed)
 
-    @app_commands.checks.cooldown(1, 2.5, key=user_cooldown_check)
-    @app_commands.command(name="bugreport")
+    @checks.cooldown(1, 2.5, key=user_cooldown_check)
+    @command(name="bugreport")
     async def bugreport(self, itr: Interaction, bug_description: str):
         """
         Report a bug. Use wisely
@@ -93,8 +94,8 @@ class UtilsCog(Cog):
         )
         return await bug_channel.send(f"User ID: {author.id} | Guild ID: {author.guild.id}")
 
-    @app_commands.checks.cooldown(1, 30, key=user_cooldown_check)
-    @app_commands.command(name="change_language")
+    @checks.cooldown(1, 30, key=user_cooldown_check)
+    @command(name="change_language")
     async def change_language(self, itr: Interaction):
         """
         Start an interactive language change session. hehe
@@ -121,6 +122,17 @@ class UtilsCog(Cog):
             select_menu.disabled = True
             return await itr.edit_original_response(view=view)
 
+    @checks.cooldown(1, 2, key=user_cooldown_check)
+    @command(name="ping")
+    async def bot_ping(self, itr: Interaction):
+        """
+        Check and send bot ping/latency
+        """
+
+        await itr.response.send_message(
+            content=f"\U0001f3d3 Pong! `{round(self.bot.latency * 1000)}ms`"
+        )
+
 
 class MinecraftCog(GroupCog, name="minecraft"):
     """
@@ -131,8 +143,8 @@ class MinecraftCog(GroupCog, name="minecraft"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="java_user")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="java_user")
     async def java_user(self, itr: Interaction, user: str):
         """
         Find info (mostly skin) about a Minecraft Java player
@@ -157,8 +169,8 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         return await itr.response.send_message(embed=embed)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="java_server")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="java_server")
     async def java_server(self, itr: Interaction, server_ip: str):
         """
         Find info about a Minecraft Java server

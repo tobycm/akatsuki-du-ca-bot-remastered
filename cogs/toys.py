@@ -3,7 +3,8 @@ Toys for kids lmao
 """
 
 from random import randint
-from discord import Interaction, app_commands
+from discord import Interaction
+from discord.app_commands import command, checks
 from discord.ext.commands import Cog
 from models.bot_models import CustomBot
 
@@ -18,16 +19,16 @@ class ToysCog(Cog):
     def __init__(self, bot: CustomBot) -> None:
         self.bot = bot
 
-    @app_commands.checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @app_commands.command(name="random")
+    @checks.cooldown(1, 0.25, key=user_cooldown_check)
+    @command(name="random")
     async def random(self, itr: Interaction, min_num: int = 0, max_num: int = 10):
         """
         Feeling lucky?
         """
         await itr.response.send_message(randint(min_num, max_num))
 
-    @app_commands.checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @app_commands.command(name="coinflip")
+    @checks.cooldown(1, 0.25, key=user_cooldown_check)
+    @command(name="coinflip")
     async def coinflip(self, itr: Interaction):
         """
         Flip a coin
@@ -39,8 +40,8 @@ class ToysCog(Cog):
             coin = "Tails"
         await itr.response.send_message(coin)
 
-    @app_commands.checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @app_commands.command(name="dice")
+    @checks.cooldown(1, 0.25, key=user_cooldown_check)
+    @command(name="dice")
     async def dice(self, itr: Interaction):
         """
         Roll a dice

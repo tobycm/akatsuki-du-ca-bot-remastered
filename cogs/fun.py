@@ -5,7 +5,8 @@ Fun cog for the bot.
 from random import randint, choice
 from string import ascii_letters
 from time import time
-from discord import Embed, User, app_commands, Interaction, File
+from discord import Embed, User, Interaction, File
+from discord.app_commands import command, checks
 from discord.ext.commands import GroupCog, Cog
 from models.bot_models import CustomBot
 
@@ -27,8 +28,8 @@ class GIFCog(GroupCog, name="gif"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="slap")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="slap")
     async def slap(self, itr: Interaction, target: User):
         """
         Slap someone xD
@@ -51,8 +52,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="hug")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="hug")
     async def hug(self, itr: Interaction, target: User):
         """
         Hug someone xD
@@ -76,8 +77,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="pat")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="pat")
     async def pat(self, itr: Interaction, target: User):
         """
         Pat someone xD
@@ -101,8 +102,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="punch")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="punch")
     async def punch(self, itr: Interaction, target: User):
         """
         Punch someone xD
@@ -126,8 +127,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="kick")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="kick")
     async def kick(self, itr: Interaction, target: User):
         """
         Kick someone xD
@@ -151,8 +152,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="bite")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="bite")
     async def bite(self, itr: Interaction, target: User):
         """
         Bite someone xD
@@ -176,8 +177,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="cuddle")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="cuddle")
     async def cuddle(self, itr: Interaction, target: User):
         """
         Cuddle someone xD
@@ -201,8 +202,8 @@ class GIFCog(GroupCog, name="gif"):
         await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="poke")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="poke")
     async def poke(self, itr: Interaction, target: User):
         """
         Poke someone xD
@@ -235,8 +236,8 @@ class FunCog(Cog):
     def __init__(self, bot: CustomBot) -> None:
         self.bot = bot
 
-    @app_commands.checks.cooldown(1, 5, key=user_cooldown_check)
-    @app_commands.command(name="alarm")
+    @checks.cooldown(1, 5, key=user_cooldown_check)
+    @command(name="alarm")
     async def alarm(self, itr: Interaction):
         """
         Send an alarm >:)
@@ -263,8 +264,8 @@ class FunCog(Cog):
             )
         return await itr.edit_original_response(content="Đã gửi :D")
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="waifu")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="waifu")
     async def waifu(self, itr: Interaction):
         """
         Wan sum waifu?
@@ -284,8 +285,8 @@ class FunCog(Cog):
         embed.set_image(url=url)
         return await itr.channel.send(embed=embed)
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="freenitro")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="freenitro")
     async def freenitro(self, itr: Interaction):
         """
         OMG free NITRO!!1! gotta claim fast
@@ -307,8 +308,8 @@ class FunCog(Cog):
         await itr.response.send_message("Getting sweet free nitro for you <3", ephemeral=True)
         return await itr.channel.send(embed=embed)
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="quote")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="quote")
     async def quote(self, itr: Interaction):
         """
         A good quote for the day

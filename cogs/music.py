@@ -4,7 +4,8 @@ This is the music cog.
 
 import logging
 from typing import List, Literal
-from discord import Color, Embed, Interaction, app_commands
+from discord import Color, Embed, Interaction
+from discord.app_commands import command, checks
 from discord.ext.commands import GroupCog, Cog
 from discord.ui import View
 from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node, SoundCloudTrack
@@ -25,8 +26,8 @@ class RadioMusic(GroupCog, name="radio"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.checks.cooldown(1, 10, key=user_cooldown_check)
-    @app_commands.command(name="suggest")
+    @checks.cooldown(1, 10, key=user_cooldown_check)
+    @command(name="suggest")
     async def suggest(self, itr: Interaction, song: str):
         """
         Got new songs for my radio? Thank you so much ♥
@@ -212,8 +213,8 @@ class MusicCog(Cog):
         )
         return True
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="connect")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="connect")
     async def connect(self, itr: Interaction):
         """
         Connect to a voice channel.
@@ -224,8 +225,8 @@ class MusicCog(Cog):
         await self._connect(itr, lang, True)
         return
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="disconnect")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="disconnect")
     async def disconnect(self, itr: Interaction):
         """
         Disconnect from a voice channel.
@@ -236,8 +237,8 @@ class MusicCog(Cog):
         await self._disconnect(itr, lang)
         return
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="play")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="play")
     async def play(self, itr: Interaction, query: str):
         """
         Play a song.
@@ -278,8 +279,8 @@ class MusicCog(Cog):
             lang["main"]
         ))
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="playtop")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="playtop")
     async def playtop(self, itr: Interaction, query: str):
         """
         Play or add a song on top of the queue
@@ -307,8 +308,8 @@ class MusicCog(Cog):
             lang["main"]
         ))
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="soundcloud")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="soundcloud")
     async def soundcloud(self, itr: Interaction, query: str):
         """
         Search and play a Soundcloud song
@@ -332,8 +333,8 @@ class MusicCog(Cog):
             lang["main"]
         ))
 
-    @app_commands.checks.cooldown(1, 1.75, key=user_cooldown_check)
-    @app_commands.command(name="search")
+    @checks.cooldown(1, 1.75, key=user_cooldown_check)
+    @command(name="search")
     async def search(self, itr: Interaction, query: str):
         """
         Search for a song.
@@ -383,8 +384,8 @@ class MusicCog(Cog):
             view.children[0].disabled = True
             return await itr.edit_original_response(view=view)
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="pause")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="pause")
     async def pause(self, itr: Interaction):
         """
         Pause a song.
@@ -398,8 +399,8 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["music"]["paused"]
         )
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="resume")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="resume")
     async def resume(self, itr: Interaction):
         """
         Resume a song.
@@ -413,8 +414,8 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["music"]["resumed"]
         )
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="skip")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="skip")
     async def skip(self, itr: Interaction):
         """
         Skip a song
@@ -429,8 +430,8 @@ class MusicCog(Cog):
         )
         return
 
-    @app_commands.checks.cooldown(1, 2, key=user_cooldown_check)
-    @app_commands.command(name="stop")
+    @checks.cooldown(1, 2, key=user_cooldown_check)
+    @command(name="stop")
     async def stop(self, itr: Interaction):
         """
         Stop playing music.
@@ -446,8 +447,8 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["music"]["stopped"]
         )
 
-    @app_commands.checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @app_commands.command(name="queue")
+    @checks.cooldown(1, 1.5, key=user_cooldown_check)
+    @command(name="queue")
     async def queue(self, itr: Interaction):
         """
         Show the queue.
@@ -488,8 +489,8 @@ class MusicCog(Cog):
             view.children[0].disabled = True
             await itr.edit_original_response(view=view)
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="nowplaying")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="nowplaying")
     async def nowplaying(self, itr: Interaction):
         """
         Show the now playing song.
@@ -514,8 +515,8 @@ class MusicCog(Cog):
         )
         return await itr.response.send_message(embed=embed)
 
-    @app_commands.checks.cooldown(1, 1.75, key=user_cooldown_check)
-    @app_commands.command(name="clear_queue")
+    @checks.cooldown(1, 1.75, key=user_cooldown_check)
+    @command(name="clear_queue")
     async def clear_queue(self, itr: Interaction):
         """
         Clear the queue
@@ -534,8 +535,8 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["queue"]["cleared"]
         )
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="loop")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="loop")
     async def loop_music(self, itr: Interaction, mode: Literal["off", "queue", "song"]):
         """
         Loop queue, song or turn loop off
@@ -554,8 +555,8 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["loop"][mode]
         )
 
-    @app_commands.checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @app_commands.command(name="seek")
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="seek")
     async def seek(self, itr: Interaction, position: int):
         """
         Seeks to a certain point in the current track.

@@ -2,7 +2,8 @@
 Not Safe for Work commands. 0_0
 """
 
-from discord import Embed, Interaction, app_commands
+from discord import Embed, Interaction
+from discord.app_commands import command, checks
 from discord.ext.commands import GroupCog
 from models.bot_models import CustomBot
 
@@ -20,8 +21,8 @@ class NSFWCog(GroupCog, name="nsfw"):
         self.bot = bot
         super().__init__()
 
-    @app_commands.checks.cooldown(1, 1, key=user_cooldown_check)
-    @app_commands.command(name="art")
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="art")
     async def nsfw(self, itr: Interaction):
         """
         Good nsfw art huh?
