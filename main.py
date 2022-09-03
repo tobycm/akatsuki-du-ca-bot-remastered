@@ -138,8 +138,8 @@ async def on_message(message: Message):
     if message.author.bot:
         return
 
-    if not await check_lang(message):
-        return
+    # if not await check_lang(message):
+    #     return
 
     if message.content == f"<@{bot.user.id}>":
         lang = await return_user_lang(bot, message.author.id)
