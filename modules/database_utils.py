@@ -75,7 +75,7 @@ async def get_op(redis_ins: Redis, op_id: int) -> dict:
     """
 
     result = await redis_ins.hget("op", op_id)
-    return json.loads(result.decode())
+    return json.loads(result.decode()) if result is not None else None
 
 # ------------------------------------------ user lang --------------------------------------------
 
@@ -93,4 +93,4 @@ async def get_user_lang(redis_ins: Redis, user_id: int) -> str:
     """
 
     result = await redis_ins.hget("user_lang", user_id)
-    return result.decode()
+    return result.decode() if result is not None else None
