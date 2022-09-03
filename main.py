@@ -119,7 +119,10 @@ async def check_lang(message: Message):
 
     print("here")
     await message.reply(
-        content="Có vẻ như đây là lần đầu bạn sử dụng bot này, mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n Looks like this is your first time using this bot, I will help you to set up your language.",
+        content="Có vẻ như đây là lần đầu bạn sử dụng bot này, " +
+                "mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n" +
+                "Looks like this is your first time using this bot, " +
+                "I will help you to set up your language.",
         view=view
     )
     return False

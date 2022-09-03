@@ -2,12 +2,11 @@
 These commands are for Toby for trolling only xd
 """
 
-from discord.ext.commands import command, Context, Cog, MissingRequiredArgument
+from discord.ext.commands import command, Context, Cog, MissingRequiredArgument, NotOwner
 
 from models.bot_models import CustomBot
 
 from modules.checks_and_utils import check_owners
-from modules.exceptions import NotOwnerLMAO
 
 class LegacyCommands(Cog):
     """
@@ -25,7 +24,7 @@ class LegacyCommands(Cog):
         """
 
         if not await check_owners(self.bot.redis_ins, ctx):
-            raise NotOwnerLMAO
+            raise NotOwner
         if value == "":
             raise MissingRequiredArgument
 
