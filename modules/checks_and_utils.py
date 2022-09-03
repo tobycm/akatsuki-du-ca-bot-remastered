@@ -44,7 +44,7 @@ async def return_user_lang(bot: CustomBot, user_id: int) -> dict:
     """
 
     lang_option = await get_user_lang(bot.redis_ins, user_id)
-    return bot.lang[lang_option]
+    return bot.lang[lang_option] if lang_option is not None else bot.lang["en-us"]
 
 
 def seconds_to_time(seconds) -> str:

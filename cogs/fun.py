@@ -283,7 +283,7 @@ class FunCog(Cog):
             author,
             lang["main"])
         embed.set_image(url=url)
-        return await itr.channel.send(embed=embed)
+        return await itr.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="freenitro")
