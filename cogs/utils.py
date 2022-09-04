@@ -2,11 +2,11 @@
 Utilities for the bot.
 """
 
-from discord import AllowedMentions, Embed, Interaction
+from typing import Optional
+from discord import AllowedMentions, Embed, Interaction, Member
 from discord.app_commands import command, checks
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
-from models.bot_models import CustomBot
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
@@ -15,6 +15,7 @@ from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
 from modules.load_lang import lang_list
 
+from models.bot_models import CustomBot
 from models.utils_models import ChangeLang
 
 
@@ -133,6 +134,99 @@ class UtilsCog(Cog):
             content=f"\U0001f3d3 Pong! `{round(self.bot.latency * 1000)}ms`"
         )
 
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="server_info")
+    async def server_info(self, itr: Interaction):
+        """
+        Send server info
+        """
+        guild = itr.guild
+
+        embed = Embed(title="Server Info", description="")
+
+        embed.add_field(name="Server Name", value=guild.name)
+        embed.add_field(name="Server ID", value=guild.id)
+        embed.add_field(name="Server Owner", value=guild.owner)
+        embed.add_field(name="Server Age", value=guild.created_at)
+        embed.add_field(name="Server Member Count", value=guild.member_count)
+        embed.add_field(name="Server Verification Level", value=guild.verification_level)
+        embed.set_thumbnail(url=guild.icon.url)
+
+        await itr.response.send_message(
+            embed=rich_embeds(
+                embed=embed,
+                author=itr.user,
+                lang=await return_user_lang(self.bot, itr.user.id)
+            )
+        )
+
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="user_info")
+    async def user_info(self, itr: Interaction, user: Optional[Member] = None):
+        """
+        Send user info
+        """
+
+        if user is None:
+            user: Member = itr.user
+
+        embed = Embed(title="User Info", description="")
+
+        embed.add_field(name="User Name", value=user.name)
+        embed.add_field(name="User ID", value=user.id)
+        embed.add_field(name="User Status", value=user.status)
+        embed.add_field(name="User Activity", value=user.activity)
+        embed.add_field(name="User Joined", value=user.joined_at)
+        embed.add_field(name="User Creation Date", value=user.created_at)
+        embed.add_field(name="User Roles", value=len(user.roles))
+        embed.set_thumbnail(url=user.avatar.url)
+
+        await itr.response.send_message(
+            embed=rich_embeds(
+                embed=embed,
+                author=user,
+                lang=await return_user_lang(self.bot, itr.user.id)
+            )
+        )
+
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="avatar")
+    async def avatar(self, itr: Interaction, user: Optional[Member] = None):
+        """
+        Get a user avatar
+        """
+
+        if user is None:
+            user: Member = itr.user
+
+        embed = rich_embeds(
+            embed = Embed(
+                title = "Avatar"
+            ),
+            author = itr.user,
+            lang=await return_user_lang(self.bot, itr.user.id)
+        )
+
+        embed.set_image(url = user.avatar.url)
+        await itr.response.send_message(embed=embed)
+
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="server_icon")
+    async def server_icon(self, itr: Interaction):
+        """
+        Get a user avatar
+        """
+
+        embed = rich_embeds(
+            embed = Embed(
+                title = "Server Icon",
+            ),
+            author = itr.user,
+            lang=await return_user_lang(self.bot, itr.user.id)
+        )
+
+        embed.set_image(url = itr.guild.icon.url)
+        await itr.response.send_message(embed=embed)
 
 class MinecraftCog(GroupCog, name="minecraft"):
     """
