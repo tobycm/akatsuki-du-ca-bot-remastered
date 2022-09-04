@@ -32,7 +32,7 @@ class LegacyCommands(Cog):
         await ctx.message.delete()
         return await ctx.send(value)
 
-    @command(name="say")
+    @command(name="sayemoji")
     async def sayemoji(self, ctx: Context, emoji_name: str = None, guild_id: int = None):
         """
         Find the emoji and send it
