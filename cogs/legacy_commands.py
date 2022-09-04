@@ -47,5 +47,5 @@ class LegacyCommands(Cog):
             guild_emojis = self.bot.get_guild(guild_id).emojis
 
         emoji = utils.get(guild_emojis, name=emoji_name)
-        await ctx.send(emoji if emoji is not None else "lmao")
         await ctx.message.delete()
+        await ctx.send(emoji if emoji is not None else "lmao")

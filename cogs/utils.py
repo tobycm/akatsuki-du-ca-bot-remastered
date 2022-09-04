@@ -141,7 +141,7 @@ class UtilsCog(Cog):
         Send server info
         """
         guild = itr.guild
-
+        lang = await return_user_lang(self.bot, itr.user.id)
         embed = Embed(title="Server Info", description="")
 
         embed.add_field(name="Server Name", value=guild.name)
@@ -156,7 +156,7 @@ class UtilsCog(Cog):
             embed=rich_embeds(
                 embed=embed,
                 author=itr.user,
-                lang=await return_user_lang(self.bot, itr.user.id)
+                lang=lang["main"]
             )
         )
 
@@ -166,6 +166,8 @@ class UtilsCog(Cog):
         """
         Send user info
         """
+
+        lang = await return_user_lang(self.bot, itr.user.id)
 
         if user is None:
             user: Member = itr.user
@@ -185,7 +187,7 @@ class UtilsCog(Cog):
             embed=rich_embeds(
                 embed=embed,
                 author=user,
-                lang=await return_user_lang(self.bot, itr.user.id)
+                lang=lang["main"]
             )
         )
 
@@ -196,6 +198,8 @@ class UtilsCog(Cog):
         Get a user avatar
         """
 
+        lang = await return_user_lang(self.bot, itr.user.id)
+
         if user is None:
             user: Member = itr.user
 
@@ -204,7 +208,7 @@ class UtilsCog(Cog):
                 title = "Avatar"
             ),
             author = itr.user,
-            lang=await return_user_lang(self.bot, itr.user.id)
+            lang=lang["main"]
         )
 
         embed.set_image(url = user.avatar.url)
@@ -217,12 +221,14 @@ class UtilsCog(Cog):
         Get a user avatar
         """
 
+        lang = await return_user_lang(self.bot, itr.user.id)
+
         embed = rich_embeds(
             embed = Embed(
                 title = "Server Icon",
             ),
             author = itr.user,
-            lang=await return_user_lang(self.bot, itr.user.id)
+            lang=lang["main"]
         )
 
         embed.set_image(url = itr.guild.icon.url)
