@@ -4,9 +4,9 @@ Just some checks and utils function
 
 from datetime import timedelta
 from aioredis import Redis
+
 from discord import Interaction
-from discord.ext.commands import Context
-from models.bot_models import CustomBot
+from discord.ext.commands import Context, Bot
 
 from modules.database_utils import get_user_lang
 
@@ -38,7 +38,7 @@ def guild_cooldown_check(itr: Interaction) -> bool:
     return itr.guild.id
 
 
-async def return_user_lang(bot: CustomBot, user_id: int) -> dict:
+async def return_user_lang(bot: Bot, user_id: int) -> dict:
     """
     Return user language as a dict
     """

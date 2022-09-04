@@ -3,18 +3,19 @@ Models for utils cog
 """
 
 from aioredis import Redis
+
 from discord import Interaction, User
 from discord.ui import Select
-from models.bot_models import CustomBot
+from discord.ext.commands import Bot
 
 from modules.database_utils import set_user_lang
 from modules.vault import get_channel_config
 
 
 class ChangeLang(Select):
-    def __init__(self, bot: CustomBot, author: User):
+    def __init__(self, bot: Bot, author: User):
         self.redis_ins: Redis = bot.redis_ins
-        self.bot: CustomBot = bot
+        self.bot: Bot = bot
         self.author: User = author
 
         super().__init__(placeholder="Choose language")

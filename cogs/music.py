@@ -4,14 +4,15 @@ This is the music cog.
 
 import logging
 from typing import List, Literal
+
 from discord import Color, Embed, Interaction
 from discord.app_commands import command, checks
-from discord.ext.commands import GroupCog, Cog
+from discord.ext.commands import GroupCog, Cog, Bot
 from discord.ui import View
 from wavelink import Track, YouTubePlaylist, YouTubeTrack, NodePool, Node, SoundCloudTrack
-from models.bot_models import CustomBot
 
 from models.music_models import Player, NewPlaylist, MusicSel, PageSel, NewTrack, make_queue
+
 from modules.checks_and_utils import return_user_lang, user_cooldown_check, seconds_to_time
 from modules.embed_process import rich_embeds
 from modules.vault import get_lavalink_nodes
@@ -22,7 +23,7 @@ class RadioMusic(GroupCog, name="radio"):
     Radio commands for bot
     """
 
-    def __init__(self, bot: CustomBot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         super().__init__()
 
@@ -47,7 +48,7 @@ class RadioMusic(GroupCog, name="radio"):
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
-    def __init__(self, bot: CustomBot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         bot.loop.create_task(self.connect_nodes())
 

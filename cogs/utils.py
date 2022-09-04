@@ -3,9 +3,10 @@ Utilities for the bot.
 """
 
 from typing import Optional
+
 from discord import AllowedMentions, Embed, Interaction, Member
 from discord.app_commands import command, checks
-from discord.ext.commands import Cog, GroupCog
+from discord.ext.commands import Cog, GroupCog, Bot
 from discord.ui import View
 
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
@@ -15,7 +16,6 @@ from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
 from modules.load_lang import lang_list
 
-from models.bot_models import CustomBot
 from models.utils_models import ChangeLang
 
 
@@ -24,7 +24,7 @@ class UtilsCog(Cog):
     Utilities commands for user.
     """
 
-    def __init__(self, bot: CustomBot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -239,7 +239,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
     Minecraft related commands.
     """
 
-    def __init__(self, bot: CustomBot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         super().__init__()
 

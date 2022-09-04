@@ -3,9 +3,7 @@ These commands are for Toby for trolling only xd
 """
 
 from discord import utils
-from discord.ext.commands import command, Context, Cog, MissingRequiredArgument, NotOwner
-
-from models.bot_models import CustomBot
+from discord.ext.commands import command, Context, Cog, MissingRequiredArgument, NotOwner, Bot
 
 from modules.checks_and_utils import check_owners
 
@@ -14,7 +12,7 @@ class LegacyCommands(Cog):
     Commands Toby use with bots
     """
 
-    def __init__(self, bot: CustomBot) -> None:
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         super().__init__()
 

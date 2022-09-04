@@ -5,10 +5,10 @@ Fun cog for the bot.
 from random import randint, choice
 from string import ascii_letters
 from time import time
+
 from discord import Embed, User, Interaction, File
 from discord.app_commands import command, checks
-from discord.ext.commands import GroupCog, Cog
-from models.bot_models import CustomBot
+from discord.ext.commands import GroupCog, Cog, Bot
 
 from modules.checks_and_utils import user_cooldown_check, return_user_lang
 from modules.database_utils import get_user_lang
@@ -24,7 +24,7 @@ class GIFCog(GroupCog, name="gif"):
     GIF related commands.
     """
 
-    def __init__(self, bot: CustomBot) -> None:
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         super().__init__()
 
@@ -233,7 +233,7 @@ class FunCog(Cog):
     Other fun commands.
     """
 
-    def __init__(self, bot: CustomBot) -> None:
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @checks.cooldown(1, 5, key=user_cooldown_check)
