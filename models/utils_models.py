@@ -9,10 +9,13 @@ from discord.ui import Select
 from discord.ext.commands import Bot
 
 from modules.database_utils import set_user_lang
-from modules.vault import get_channel_config
 
 
 class ChangeLang(Select):
+    """
+    Change language Select menu class
+    """
+
     def __init__(self, bot: Bot, author: User):
         self.redis_ins: Redis = bot.redis_ins
         self.bot: Bot = bot
@@ -24,12 +27,5 @@ class ChangeLang(Select):
         result = self.values[0]
         result = await set_user_lang(self.redis_ins, interaction.user.id, result)
 
-        if result:
-            await interaction.response.send_message("\U0001f44c", ephemeral=True)
-            return
-
-        error_channel = self.bot.fetch_channel(get_channel_config("error"))
-        error_channel.send(
-            f"Error changing language, user: {interaction.user.id}, guild: {interaction.guild.id}\n{result}"
-        )
+        await interaction.response.send_message("\U0001f44c", ephemeral=True)
         return
