@@ -8,6 +8,7 @@ from typing import List
 from aioredis import Redis
 from discord import Intents, Message, Guild
 from discord.ext.commands import Bot, Context, MissingPermissions, CommandInvokeError
+from discord.ext.ipc.server import Server
 
 from modules.database_utils import get_prefix, get_user_lang, return_redis_instance
 from modules.load_lang import get_lang
@@ -22,6 +23,7 @@ from cogs.utils import UtilsCog, MinecraftCog
 from cogs.admin import PrefixCog, BotAdminCog
 from cogs.legacy_commands import LegacyCommands
 
+from api.ipc import Routes
 
 class CustomBot(Bot):
     """
@@ -36,6 +38,7 @@ class CustomBot(Bot):
     quotes: List[dict]
     quotes_added: float = time()
     logger: logging.Logger = logging.getLogger('discord')
+    ipc: Server
 
     logging.basicConfig(
         filename="log/full_bot_log.txt",
@@ -90,6 +93,9 @@ class CustomBot(Bot):
         """
 
         self.quotes = await get_quotes()
+
+        await self.add_cog(Routes(self))
+        self.logger.info("IPC Cog and Server started")
 
         await self.load_extension('jishaku')
         self.logger.info("Loaded jishaku")

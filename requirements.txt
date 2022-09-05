@@ -1,8 +1,6 @@
 aioredis
 redis
 aiohttp
-cchardet
-aiodns
 jishaku
 pynacl
 wavelink
