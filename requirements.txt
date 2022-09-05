@@ -7,3 +7,4 @@ jishaku
 pynacl
 wavelink
 discord.py
+better-ipc

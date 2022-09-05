@@ -7,11 +7,12 @@ from time import time
 from typing import List
 from aioredis import Redis
 from discord import Intents, Message, Guild
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, Context, MissingPermissions, CommandInvokeError
 
 from modules.database_utils import get_prefix, get_user_lang, return_redis_instance
 from modules.load_lang import get_lang
 from modules.quote_api import get_quotes
+from modules.checks_and_utils import get_prefix_for_bot, return_user_lang
 
 from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic, MusicCog
@@ -112,3 +113,25 @@ class CustomBot(Bot):
         self.logger.info(" -> Bot admin cog added <-")
         await self.add_cog(LegacyCommands(self))
         self.logger.info(" -> Toby sus cog added <-")
+
+    async def on_command_error(self, ctx: Context, exception: Exception) -> None: # pylint: disable=arguments-differ
+        """
+        Command error handler
+        """
+
+        lang = await return_user_lang(self, ctx.author.id)
+        prefix = await get_prefix_for_bot(self, ctx.message)
+
+        if isinstance(exception, CommandInvokeError):
+            exception = exception.original
+
+        def user_no_perms():
+            return lang["MissingGuildPermission"]
+
+        mapping = {
+            MissingPermissions: user_no_perms
+        }
+
+        await ctx.send(
+            content = mapping[exception]()
+        )

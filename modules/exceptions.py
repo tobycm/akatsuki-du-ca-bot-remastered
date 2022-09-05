@@ -9,14 +9,9 @@ class WrongTypeArgument(Exception):
     """
 
 
-class MissingGuildPermission(Exception):
+class LangNotAvailable(Exception):
     """
-    Raised when the user is missing guild permission.
-    """
-
-class NotOwnerLMAO(Exception):
-    """
-    Raised when user is not owner
+    Raised when content isn't available in user language.
     """
 
 class MusicException():

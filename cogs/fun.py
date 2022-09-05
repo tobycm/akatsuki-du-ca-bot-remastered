@@ -6,13 +6,14 @@ from random import randint, choice
 from string import ascii_letters
 from time import time
 
-from discord import Embed, User, Interaction, File
+from discord import Embed, Member, Interaction, File
 from discord.app_commands import command, checks
 from discord.ext.commands import GroupCog, Cog, Bot
 
 from modules.checks_and_utils import user_cooldown_check, return_user_lang
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
+from modules.exceptions import LangNotAvailable
 from modules.gif_api import construct_gif_embed
 
 from modules.quote_api import get_quotes
@@ -28,205 +29,95 @@ class GIFCog(GroupCog, name="gif"):
         self.bot = bot
         super().__init__()
 
+    async def _gif(self, itr: Interaction, target: Member):
+        method = itr.command.name
+        author = itr.user
+        if target is self.bot.user:
+            return await itr.response.send_message("etou...", ephemeral=True)
+
+        lang = await return_user_lang(self.bot, author.id)
+
+        embed = await construct_gif_embed(
+            author,
+            target,
+            method,
+            lang["gif"]
+        )
+
+        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
+        return await itr.response.send_message("Sent!", ephemeral=True)
+
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="slap")
-    async def slap(self, itr: Interaction, target: User):
+    async def slap(self, itr: Interaction, target: Member):
         """
         Slap someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="hug")
-    async def hug(self, itr: Interaction, target: User):
+    async def hug(self, itr: Interaction, target: Member):
         """
         Hug someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="pat")
-    async def pat(self, itr: Interaction, target: User):
+    async def pat(self, itr: Interaction, target: Member):
         """
         Pat someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="punch")
-    async def punch(self, itr: Interaction, target: User):
+    async def punch(self, itr: Interaction, target: Member):
         """
         Punch someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="kick")
-    async def kick(self, itr: Interaction, target: User):
+    async def kick(self, itr: Interaction, target: Member):
         """
         Kick someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="bite")
-    async def bite(self, itr: Interaction, target: User):
+    async def bite(self, itr: Interaction, target: Member):
         """
         Bite someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="cuddle")
-    async def cuddle(self, itr: Interaction, target: User):
+    async def cuddle(self, itr: Interaction, target: Member):
         """
         Cuddle someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
+        await self._gif(itr, target)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="poke")
-    async def poke(self, itr: Interaction, target: User):
+    async def poke(self, itr: Interaction, target: Member):
         """
         Poke someone xD
         """
 
-        method = itr.command.name
-        author = itr.user
-
-        if target is self.bot.user:
-            return await itr.response.send_message("etou...", ephemeral=True)
-
-        lang = await return_user_lang(self.bot, author.id)
-
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
-
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
-        return await itr.response.send_message("Sent!", ephemeral=True)
-
+        await self._gif(itr, target)
 
 class FunCog(Cog):
     """
@@ -245,10 +136,9 @@ class FunCog(Cog):
 
         author = itr.user
 
-        lang = await return_user_lang(self.bot, author.id)
         lang_option = await get_user_lang(self.bot.redis_ins, author.id)
         if lang_option != "vi-vn":
-            return await itr.response.send_message(lang["main"]["NotAvailableLanguage"])
+            raise LangNotAvailable
 
         await itr.response.send_message("Đang gửi...", ephemeral=True)
         if randint(1, 50) == 25:

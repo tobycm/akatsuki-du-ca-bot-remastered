@@ -7,27 +7,14 @@ from discord.ext.commands import Context
 from discord.ui import View
 
 
-from modules.checks_and_utils import check_owners
+from modules.checks_and_utils import check_owners, get_prefix_for_bot
 from modules.vault import get_bot_config
-from modules.database_utils import get_user_lang, get_prefix
+from modules.database_utils import get_user_lang
 
 
 from models.main_models import LangSel
 from models.bot_models import CustomBot
 
-
-DEFAULT_PREFIX = get_bot_config("prefix")
-
-
-async def get_prefix_for_bot(bot: CustomBot, message: Message):  # pylint: disable=redefined-outer-name
-    """
-    Return the prefix for the bot.
-    """
-
-    prefix = await get_prefix(bot.redis_ins, message.guild.id)
-    if prefix is None:
-        return DEFAULT_PREFIX
-    return prefix
 
 bot = CustomBot(
     command_prefix=get_prefix_for_bot,
