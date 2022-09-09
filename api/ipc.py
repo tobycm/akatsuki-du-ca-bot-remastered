@@ -3,6 +3,7 @@ IPC and routing for bot.
 """
 
 from typing import Dict
+from json import dumps
 
 from discord.ext.commands import Bot, Cog
 from discord.ext.ipc.server import Server
@@ -30,10 +31,21 @@ class Routes(Cog):
         self.bot.ipc = None
 
     @Server.route()
-    async def get_user_data(self, data: ClientPayload) -> Dict:
+    async def get_user_mutual_server(self, data: ClientPayload) -> Dict:
         """
-        Get user data
+        Get user mutual servers
         """
 
         user = self.bot.get_user(data.user_id)
-        return user._to_minimal_user_json()
+        mutual_servers = user.mutual_guilds
+        return dumps(
+            {"servers": mutual_servers}
+        )
+
+    @Server.route()
+    async def user_join_through_oauth(self, data: ClientPayload) -> Dict:
+        """
+        An event telling the bot to apoligize when user get force-added :troll:
+        """
+
+        # doesn't do anything yet
