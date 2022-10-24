@@ -179,7 +179,7 @@ class FunCog(Cog):
     @command(name="freenitro")
     async def freenitro(self, itr: Interaction):
         """
-        OMG free NITRO!!1! gotta claim fast
+        OMG free NITRO!!!! gotta claim fast
         """
 
         author = itr.user
