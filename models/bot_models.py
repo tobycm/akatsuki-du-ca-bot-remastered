@@ -65,7 +65,7 @@ class CustomBot(Bot):
 
         if message.content == f"<@{self.user.id}>":
             lang_option = await get_user_lang(self.redis_ins, message.author.id)
-            lang = self.lang[lang_option]
+            lang = self.lang.get(lang_option if lang_option else "en-us")
             prefix = await get_prefix(self.redis_ins, message.guild.id)
             await message.reply(
                 lang["main"]["PingForPrefix"][0] + prefix + lang["main"]["PingForPrefix"][1]
