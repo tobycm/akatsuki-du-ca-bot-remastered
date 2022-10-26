@@ -1,7 +1,3 @@
-#!/usr/bin/bash
+#!/usr/bin/sh
 
-if [ -d ".venv" ]; then
-    .venv/bin/python3 main.py
-else
-    python3 main.py
-fi
+/usr/bin/env python3 main.py

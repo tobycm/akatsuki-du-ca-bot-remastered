@@ -49,3 +49,11 @@ class Routes(Cog):
         """
 
         # doesn't do anything yet
+
+    @Server.route()
+    async def alive(self, *_) -> Dict:
+        """
+        Check if bot is alive lmao
+        """
+
+        return dumps({"alive": True})

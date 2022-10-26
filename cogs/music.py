@@ -256,7 +256,7 @@ class MusicCog(Cog):
         try:
             track: YouTubeTrack = await YouTubeTrack.search(query=query, return_first=True)
             playlist = False
-        except AttributeError:
+        except TypeError:
             playlist: YouTubePlaylist = await YouTubePlaylist.search(query=query)
 
         if playlist:
