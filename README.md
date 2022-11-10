@@ -8,7 +8,7 @@
 
 # What is this?
 ### History
-One day, Toby saw his friend (stranger 👨 at that moment) with his Discord bot 🤖 being advertise on Facebook 😱. Toby thought it is so cool 🤯 to make a Discord bot 🤖 so he DMed 📧 the owner of that bot ([@KenjiKobayashi126](https://github.com/KenjiKobayashi126)) and asked for permission 👍 to code 💻 the Discord bot with him. Luckily 🍀 and sadly 😭, he accepted ✅. The sad 😭 part is I only know 🧠 Python 🐍 at that moment and no Javascript 💀. Toby decided to create 🔧 his own Discord bot 🤖 and named it "Akatsuki Du Ca". (LETS GO BIG TOBY W)
+One day, Toby saw his friend (stranger 👨 at that moment) with his Discord bot 🤖 being advertise on Facebook 😱. Toby thought it is so cool 🤯 to make a Discord bot 🤖 so he DMed 📧 the owner of that bot ([@KenjiKobayashi126](https://github.com/KenjiKobayashi126)) and asked for permission 👍 to code 💻 the Discord bot with him. Luckily 🍀 and sadly 😭, he accepted ✅. The sad 😭 part is that I only know 🧠 Python 🐍 at that moment 🕒 and no Javascript 💀. Toby decided to create 🔧 his own Discord bot 🤖 and named it "Akatsuki Du Ca". (LETS GO BIG TOBY W 😎)
 
 ### How to use my bot
 After you have added ➕ my bot (if you didn't just click [here](https://discord.com/api/oauth2/authorize?client_id=897216814096990308&permissions=8&redirect_uri=https%3A%2F%2Fakatsukiduca.tk%2Fjoin&response_type=code&scope=identify%20guilds.join%20bot%20applications.commands)), you can use its slash commands 📣 by typing `/` in your chat ⌨️ bar and it will show available ✔️ commands for you to use. Clicking 🖱️ on Akatsuki Du Ca bot icon will simply only show 👁️ you its commands.
