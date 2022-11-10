@@ -2,6 +2,7 @@
 Not Safe for Work commands. 0_0
 """
 
+from logging import Logger
 from discord import Embed, Interaction
 from discord.app_commands import command, checks
 from discord.ext.commands import GroupCog, Bot
@@ -18,7 +19,16 @@ class NSFWCog(GroupCog, name="nsfw"):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("NSFW Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("NSFW Cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="art")

@@ -2,6 +2,7 @@
 Admin commands for bot in guild.
 """
 
+from logging import Logger
 from discord import Interaction
 from discord.app_commands import command, checks, MissingPermissions
 from discord.ext import commands
@@ -9,17 +10,24 @@ from discord.ext.commands import GroupCog, Cog, Context, Bot
 
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
-from modules.vault import get_channel_config
-
 
 class PrefixCog(GroupCog, name="prefix"):
     """
     Prefix related commands.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Prefix Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Prefix Cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
@@ -30,17 +38,8 @@ class PrefixCog(GroupCog, name="prefix"):
         """
 
         author = itr.user
-        result = await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
-
-        if result:
-            return await itr.response.send_message(f"Prefix set to `{prefix}`")
-
-        await itr.response.send_message("Fail to set prefix")
-
-        error_channel = self.bot.get_channel(get_channel_config("error"))
-        return await error_channel.send(
-            f"{author} tried to set prefix to `{prefix}` but failed. Error: {result}"
-        )
+        await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
+        return await itr.response.send_message(f"Prefix set to `{prefix}`")
 
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
@@ -51,17 +50,8 @@ class PrefixCog(GroupCog, name="prefix"):
         """
 
         author = itr.user
-        result = await delete_prefix(self.bot.redis_ins, author.guild.id)
-
-        if result:
-            return await itr.response.send_message("Prefix reseted!")
-
-        await itr.response.send_message("Fail to set prefix")
-
-        error_channel = self.bot.get_channel(get_channel_config("error"))
-        return await error_channel.send(
-            f"{author} tried to reset prefix but failed. Error: {result}"
-        )
+        await delete_prefix(self.bot.redis_ins, author.guild.id)
+        return await itr.response.send_message("Prefix reseted!")
 
 
 class BotAdminCog(Cog):
@@ -69,8 +59,18 @@ class BotAdminCog(Cog):
     Commands only bot owners can use.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
+        super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Bot Admin Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Bot Admin Cog unloaded")
+        return await super().cog_unload()
 
     @commands.command(name="resetguildprefix")
     async def resetguildprefix(self, ctx: Context, guild_id: int):
@@ -81,8 +81,8 @@ class BotAdminCog(Cog):
         if not await check_owners(self.bot.redis_ins, ctx):
             raise MissingPermissions(["manage_guild"])
 
-        result = await delete_prefix(self.bot.redis_ins, guild_id)
+        await delete_prefix(self.bot.redis_ins, guild_id)
 
         return await ctx.send(
-            f"Prefix reseted for guild {guild_id}" if result else f"Fail to reset prefix. Error: {result}"
+            f"Prefix reseted for guild {guild_id}"
         )

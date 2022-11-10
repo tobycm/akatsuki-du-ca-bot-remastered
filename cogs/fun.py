@@ -2,6 +2,7 @@
 Fun cog for the bot.
 """
 
+from logging import Logger
 from random import randint, choice
 from string import ascii_letters
 from time import time
@@ -27,7 +28,16 @@ class GIFCog(GroupCog, name="gif"):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Fun cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Fun cog unloaded")
+        return await super().cog_unload()
 
     async def _gif(self, itr: Interaction, target: Member):
         method = itr.command.name
@@ -126,6 +136,8 @@ class FunCog(Cog):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
+        super().__init__()
 
     @checks.cooldown(1, 5, key=user_cooldown_check)
     @command(name="alarm")
@@ -191,7 +203,9 @@ class FunCog(Cog):
 
         embed = Embed(
             title=lang["fun"]["NitroFree"]["Title"],
-            description=f"{lang['fun']['NitroFree']['Description']}\n[https://discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
+            description=f"{lang['fun']['NitroFree']['Description']}\n" +
+                        f"[https://discord.gift/{code}]" +
+                        f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
             color=0x2F3136
         )
         embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")

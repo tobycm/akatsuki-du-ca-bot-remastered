@@ -7,13 +7,12 @@ from time import time
 from typing import List
 from aioredis import Redis
 from discord import Intents, Message, Guild
-from discord.ext.commands import Bot, Context, MissingPermissions, CommandInvokeError
+from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
 
 from modules.database_utils import get_prefix, get_user_lang, return_redis_instance
 from modules.load_lang import get_lang
 from modules.quote_api import get_quotes
-from modules.checks_and_utils import get_prefix_for_bot, return_user_lang
 
 from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic, MusicCog
@@ -24,6 +23,20 @@ from cogs.admin import PrefixCog, BotAdminCog
 from cogs.legacy_commands import LegacyCommands
 
 from api.ipc import Routes
+
+COGS = (
+    FunCog,
+    GIFCog,
+    RadioMusic,
+    MusicCog,
+    NSFWCog,
+    ToysCog,
+    UtilsCog,
+    MinecraftCog,
+    PrefixCog,
+    BotAdminCog,
+    LegacyCommands
+)
 
 class CustomBot(Bot):
     """
@@ -94,50 +107,11 @@ class CustomBot(Bot):
 
         self.quotes = await get_quotes()
 
+        # add ipc routes
         await self.add_cog(Routes(self))
-        self.logger.info("IPC Cog and Server started")
+
+        for cog in COGS:
+            await self.add_cog(cog(self))
 
         await self.load_extension('jishaku')
         self.logger.info("Loaded jishaku")
-
-        await self.add_cog(FunCog(self))
-        await self.add_cog(GIFCog(self))
-        self.logger.info("-> Fun and GIF Cog added <-")
-        await self.add_cog(RadioMusic(self))
-        await self.add_cog(MusicCog(self))
-        self.logger.info(" -> Radio and Music cog added <-")
-        await self.add_cog(NSFWCog(self))
-        self.logger.info(" -> NSFW cog added <-")
-        await self.add_cog(ToysCog(self))
-        self.logger.info(" -> Toys cog added <-")
-        await self.add_cog(UtilsCog(self))
-        await self.add_cog(MinecraftCog(self))
-        self.logger.info(" -> Utils and Minecraft cog added <-")
-        await self.add_cog(PrefixCog(self))
-        self.logger.info(" -> Prefix cog added <-")
-        await self.add_cog(BotAdminCog(self))
-        self.logger.info(" -> Bot admin cog added <-")
-        await self.add_cog(LegacyCommands(self))
-        self.logger.info(" -> Toby sus cog added <-")
-
-    async def on_command_error(self, ctx: Context, exception: Exception) -> None: # pylint: disable=arguments-differ
-        """
-        Command error handler
-        """
-
-        lang = await return_user_lang(self, ctx.author.id)
-        prefix = await get_prefix_for_bot(self, ctx.message)
-
-        if isinstance(exception, CommandInvokeError):
-            exception = exception.original
-
-        def user_no_perms():
-            return lang["MissingGuildPermission"]
-
-        mapping = {
-            MissingPermissions: user_no_perms
-        }
-
-        await ctx.send(
-            content = mapping[exception]()
-        )

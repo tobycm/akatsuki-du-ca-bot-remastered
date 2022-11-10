@@ -2,6 +2,7 @@
 Utilities for the bot.
 """
 
+from logging import Logger
 from typing import Optional
 
 from discord import AllowedMentions, Embed, Interaction, Member
@@ -24,8 +25,18 @@ class UtilsCog(Cog):
     Utilities commands for user.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
+        super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Utilities Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Utilities Cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="osu")
@@ -239,9 +250,18 @@ class MinecraftCog(GroupCog, name="minecraft"):
     Minecraft related commands.
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Minecraft Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Minecraft Cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="java_user")

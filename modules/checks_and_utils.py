@@ -62,6 +62,7 @@ async def get_prefix_for_bot(bot, message: Message):  # pylint: disable=redefine
     """
 
     prefix = await get_prefix(bot.redis_ins, message.guild.id)
+    print(prefix)
     if prefix is None:
         return DEFAULT_PREFIX
     return prefix

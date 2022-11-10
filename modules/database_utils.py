@@ -50,7 +50,8 @@ async def get_prefix(redis_ins: Redis, server_id: int) -> str:
     """
 
     result = await redis_ins.hget("prefix", server_id)
-    return result.decode() if result is not None else "$"
+    if result is not None:
+        return result.decode()
 
 # ------------------------------------------- op ----------------------------------------------
 
@@ -75,7 +76,8 @@ async def get_op(redis_ins: Redis, op_id: int) -> dict:
     """
 
     result = await redis_ins.hget("op", op_id)
-    return json.loads(result.decode()) if result is not None else None
+    if result is not None:
+        return json.loads(result.decode())
 
 # ------------------------------------------ user lang --------------------------------------------
 
@@ -93,4 +95,5 @@ async def get_user_lang(redis_ins: Redis, user_id: int) -> str:
     """
 
     result = await redis_ins.hget("user_lang", user_id)
-    return result.decode() if result is not None else None
+    if result is not None:
+        return result.decode()

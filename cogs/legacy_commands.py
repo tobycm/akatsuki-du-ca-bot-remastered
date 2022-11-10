@@ -2,6 +2,7 @@
 These commands are for Toby for trolling only xd
 """
 
+from logging import Logger
 from discord import utils
 from discord.ext.commands import command, Context, Cog, MissingRequiredArgument, NotOwner, Bot
 
@@ -14,7 +15,16 @@ class LegacyCommands(Cog):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Legacy Command loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Legacy Command unloaded")
+        return await super().cog_unload()
 
     @command(name="say")
     async def say(self, ctx: Context, *, value):

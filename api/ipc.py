@@ -2,6 +2,7 @@
 IPC and routing for bot.
 """
 
+from logging import Logger
 from typing import Dict
 from json import dumps
 
@@ -19,13 +20,16 @@ class Routes(Cog):
     """
     def __init__(self, bot: Bot):
         self.bot = bot
+        self.logger: Logger = bot.logger
         bot.ipc = Server(bot, secret_key = get_bot_config("secret"))
 
     async def cog_load(self) -> None:
+        self.logger.info("IPC Cog and Server started")
         ipc_server: Server = self.bot.ipc
         await ipc_server.start()
 
     async def cog_unload(self) -> None:
+        self.logger.info("IPC Cog and Server stopped")
         ipc_server: Server = self.bot.ipc
         await ipc_server.stop()
         self.bot.ipc = None

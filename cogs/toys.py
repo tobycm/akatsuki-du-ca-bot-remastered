@@ -2,6 +2,7 @@
 Toys for kids lmao
 """
 
+from logging import Logger
 from random import randint
 
 from discord import Interaction
@@ -18,6 +19,16 @@ class ToysCog(Cog):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: Logger = bot.logger
+        super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Toys Cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Toys Cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 0.25, key=user_cooldown_check)
     @command(name="random")

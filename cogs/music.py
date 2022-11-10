@@ -23,9 +23,18 @@ class RadioMusic(GroupCog, name="radio"):
     Radio commands for bot
     """
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: logging.Logger = bot.logger
         super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Radio cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Radio cog unloaded")
+        return await super().cog_unload()
 
     @checks.cooldown(1, 10, key=user_cooldown_check)
     @command(name="suggest")
@@ -48,9 +57,20 @@ class RadioMusic(GroupCog, name="radio"):
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
+        self.logger: logging.Logger = bot.logger
         bot.loop.create_task(self.connect_nodes())
+        super().__init__()
+
+    async def cog_load(self) -> None:
+        self.logger.info("Music cog loaded")
+        return await super().cog_load()
+
+    async def cog_unload(self) -> None:
+        self.logger.info("Music cog unloaded")
+        return await super().cog_unload()
+        
 
     async def connect_nodes(self):
         """
