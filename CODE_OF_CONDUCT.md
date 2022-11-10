@@ -24,6 +24,8 @@ community include:
   and learning from the experience
 * Focusing on what is best not just for us as individuals, but for the
   overall community
+* Use 4-space indents
+* Use type hints as much as possible
 
 Examples of unacceptable behavior include:
 
