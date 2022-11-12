@@ -15,6 +15,11 @@ After you have added ➕ my bot (if you didn't just click [here](https://discord
 
 # How to install
 
+Requirements:
+ - Bot with full intents ![https://i.ibb.co/r7JMbGf/image.png](https://i.ibb.co/r7JMbGf/image.png)
+ - Python 3.8 or higher with its venv package (if I have python3.10 on my machine, I also need to install python3.10-venv from apt or something else)
+ - This script only works on Linux systems with bash
+
 First, clone this git repository: 🖨️
 ```bash
 git clone https://github.com/tobycm/akatsuki-du-ca-bot-remastered.git
