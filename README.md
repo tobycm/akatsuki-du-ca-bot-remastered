@@ -42,6 +42,8 @@ If you want to install a development environment, run this instead: 💻
 ./bot setup_dev
 ```
 
+Also pls change the settings in config/settings.json
+
 Lastly, run the bot: 🚀
 ```bash
 ./bot run
