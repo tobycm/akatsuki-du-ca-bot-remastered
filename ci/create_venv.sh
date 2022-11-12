@@ -7,4 +7,4 @@ then
     location=".venv"
 fi
 
-py -m venv $location
+python3 -m venv $location

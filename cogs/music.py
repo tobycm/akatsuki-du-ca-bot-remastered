@@ -61,7 +61,6 @@ class MusicCog(Cog):
         self.bot = bot
         self.logger: logging.Logger = bot.logger
         bot.loop.create_task(self.connect_nodes())
-        super().__init__()
 
     async def cog_load(self) -> None:
         self.logger.info("Music cog loaded")
