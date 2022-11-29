@@ -3,6 +3,8 @@ Waifu APi backend functions.
 """
 from aiohttp import ClientSession
 
+from models.waifuim_models import Image
+
 async def get_waifu_image_url() -> tuple(("url", "source")):
     """
     Get a random waifu image url and source.
@@ -15,7 +17,6 @@ async def get_waifu_image_url() -> tuple(("url", "source")):
             data = await response.json()
 
     if data["images"]:
-        url = data["images"][0]["url"]
-        source = data["images"][0]["source"]
+        image = Image(data["images"][0])
 
-    return (url, source)
+    return (image.url, image.source)

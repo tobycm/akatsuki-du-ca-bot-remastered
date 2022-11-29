@@ -10,9 +10,10 @@ from discord import Intents, Message, Guild
 from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
 
-from modules.database_utils import get_prefix, get_user_lang, return_redis_instance
+from modules.database_utils import get_user_lang, return_redis_instance
 from modules.load_lang import get_lang
 from modules.quote_api import get_quotes
+from modules.checks_and_utils import get_prefix_for_bot
 
 from cogs.fun import FunCog, GIFCog
 from cogs.music import RadioMusic, MusicCog
@@ -79,7 +80,7 @@ class CustomBot(Bot):
         if message.content == f"<@{self.user.id}>":
             lang_option = await get_user_lang(self.redis_ins, message.author.id)
             lang = self.lang.get(lang_option if lang_option else "en-us")
-            prefix = await get_prefix(self.redis_ins, message.guild.id)
+            prefix = await get_prefix_for_bot(self, message.guild.id)
             await message.reply(
                 lang["main"]["PingForPrefix"][0] + prefix + lang["main"]["PingForPrefix"][1]
             )
