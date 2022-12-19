@@ -26,7 +26,7 @@
     "MinecraftServer": {
         "NotFound": "Not Found",
         "online": "is online",
-        "server_info": "Minecraft Server Status\n Server IP: ",
+        "ServerIp": "Server IP: ",
         "version": "Version: ",
         "players": "Players: "
     }

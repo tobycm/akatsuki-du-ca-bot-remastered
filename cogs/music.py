@@ -69,7 +69,7 @@ class MusicCog(Cog):
     async def cog_unload(self) -> None:
         self.logger.info("Music cog unloaded")
         return await super().cog_unload()
-        
+
 
     async def connect_nodes(self):
         """
@@ -222,7 +222,7 @@ class MusicCog(Cog):
         return True
 
     async def _disconnect(self, itr: Interaction, lang: dict) -> None or True:
-        if not self.disconnect_check(itr, lang):
+        if not await self.disconnect_check(itr, lang):
             return
         await itr.response.send_message(
             lang["music"]["voice_client"]["status"]["disconnecting"]

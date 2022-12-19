@@ -24,10 +24,10 @@
         "Minecraftプレーヤー情報\n名前："
     ],
     "MinecraftServer": {
-        "NotFound": "Không tìm thấy",
-        "online": "đang online",
-        "server_info": "Thông tin máy chủ Minecraft\nIP máy chủ: ",
-        "version": "Phiên bản: ",
-        "players": "Người chơi: "
+        "NotFound": "見つかりません",
+        "online": "現在オンライン",
+        "ServerIp": "IP máy chủ: ",
+        "version": "バージョン： ",
+        "players": "プレイヤー数： "
     }
 }

@@ -23,7 +23,7 @@
     "MinecraftServer": {
         "NotFound": "Không tìm thấy",
         "online": "đang online",
-        "server_info": "Thông tin máy chủ Minecraft\nIP máy chủ: ",
+        "ServerIp": "IP máy chủ: ",
         "version": "Phiên bản: ",
         "players": "Người chơi: "
     }

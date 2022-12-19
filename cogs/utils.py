@@ -299,6 +299,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
         author = itr.user
 
         lang = await return_user_lang(self.bot, author.id)
+        mc_server_lang = lang['utils']['MinecraftServer']
 
         data = await get_minecraft_server_info(server_ip)
 
@@ -306,14 +307,14 @@ class MinecraftCog(GroupCog, name="minecraft"):
             return await itr.response.send_message(lang["utils"]["MinecraftServer"]["NotFound"])
 
         motd = "```" + '\n'.join([i for i in data['motd']]) + "```"
-        server_info = lang['utils']['MinecraftServer']['server_info'] + server_ip
-        version = lang['utils']['MinecraftServer']['version'] + data['version']
-        players = f"{lang['utils']['MinecraftServer']['players']}{data['players'][0]}/{data['players'][1]}"
+        server_info = mc_server_lang['ServerIp'] + server_ip
+        version = mc_server_lang['version'] + data['version']
+        players = mc_server_lang['players'] + data['players'][0] + "/" + data['players'][1]
 
         embed = rich_embeds(
             Embed(
-                title=f"{server_ip} {lang['utils']['MinecraftServer']['online']}",
-                description=f"{motd.lstrip()}\n{server_info}\n{version}\n{players}"
+                title=f"{server_ip} {mc_server_lang['online' if data['online'] else 'offline']}",
+                description= "\n".join([motd, server_info, version, players])
             ),
             author,
             lang["main"]
