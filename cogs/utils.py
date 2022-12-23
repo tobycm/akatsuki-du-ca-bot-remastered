@@ -190,9 +190,9 @@ class UtilsCog(Cog):
         embed.add_field(name="User Status", value=user.status)
         embed.add_field(name="User Joined Date", value=f"<t:{int(user.joined_at.timestamp())}:D>")
         embed.add_field(name="User Creation Date", value=f"<t:{int(user.created_at.timestamp())}:D>")
-        embed.add_field(name="User Roles", value="".join([
+        embed.add_field(name="User Roles", value=", ".join([
             role.name for role in user.roles if not role.is_default()
-        ]))
+        ]) if len(user.roles) != 0 else "No Roles")
         embed.set_thumbnail(url=user.avatar.url)
 
         await itr.response.send_message(
