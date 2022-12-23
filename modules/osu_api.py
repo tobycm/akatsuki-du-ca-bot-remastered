@@ -2,7 +2,6 @@
 osu! backend functions for osu! cog.
 """
 
-import json
 from aiohttp import ClientSession
 
 from modules.vault import get_api_key
