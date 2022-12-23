@@ -10,7 +10,7 @@ from modules.vault import get_api_key
 API_ENDPOINT = "https://osu.ppy.sh/api/"
 
 
-async def get_osu_user_info(user: str) -> json or None:
+async def get_osu_user_info(user: str) -> dict or None:
     """
     Return a user's osu! info as json.
     """
