@@ -193,7 +193,7 @@ class UtilsCog(Cog):
         embed.add_field(
             name="User Roles",
             value=", ".join([
-                role.name for role in user.roles if not role.is_default()
+                role.mention for role in user.roles if not role.is_default()
             ]) if len(user.roles) != 1 else "No Roles",
             inline=False)
         embed.set_thumbnail(url=user.avatar.url)
@@ -203,7 +203,8 @@ class UtilsCog(Cog):
                 embed=embed,
                 author=user,
                 lang=lang["main"]
-            )
+            ),
+            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False)
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
