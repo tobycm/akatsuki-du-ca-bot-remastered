@@ -38,37 +38,6 @@ async def sync_command(ctx: Context):
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
 # -----------------------------------------------------
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv before command run
-
-# async def check_lang(message: Message):
-#     """
-#     First time use bot so check lang
-#     """
-#     print("here")
-#     if await get_user_lang(bot.redis_ins, message.author.id) is not None:
-#         print("here")
-#         return True
-#     print("here")
-#     select_menu = LangSel(bot.lang)
-#     view = View(timeout=45)
-#     for lang in bot.lang:
-#         for lang_name, _ in lang:
-#             select_menu.add_option(label=lang_name, value=lang_name)
-#     view.add_item(select_menu)
-#     print("here")
-
-#     print("here")
-#     await message.reply(
-#         content="Có vẻ như đây là lần đầu bạn sử dụng bot này, " +
-#                 "mình sẽ giúp bạn cài đặt ngôn ngữ cho bạn.\n" +
-#                 "Looks like this is your first time using this bot, " +
-#                 "I will help you to set up your language.",
-#         view=view
-#     )
-#     return False
-
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ before command run
-# -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
 bot.run(get_bot_config("token"))

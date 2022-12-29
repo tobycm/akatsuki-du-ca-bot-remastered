@@ -3,13 +3,20 @@ Models and functions for easy use for music cog
 """
 
 from typing import List
-from discord import Embed, Interaction, TextChannel, Thread
+from discord import CategoryChannel, Embed, Interaction
 from discord.ui import Select
-from wavelink import Track, Player, YouTubePlaylist, WaitQueue
+from wavelink import Track, Player as WavelinkPlayer, YouTubePlaylist, WaitQueue
 
 from modules.checks_and_utils import seconds_to_time
 from modules.embed_process import rich_embeds
 
+class Player(WavelinkPlayer):
+    """
+    Custom player class
+    """
+
+    text_channel: CategoryChannel
+    loop_mode: str or None
 
 class MusicSel(Select):
     """
@@ -133,10 +140,3 @@ def make_queue(queue: WaitQueue, lang: dict) -> List[Embed]:
     return embeds
 
 
-class Player(Player):  # pylint: disable=function-redefined
-    """
-    Custom player class
-    """
-
-    text_channel: TextChannel or Thread
-    loop_mode: str or None

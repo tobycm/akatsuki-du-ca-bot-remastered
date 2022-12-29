@@ -326,3 +326,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
         )
 
         return await itr.response.send_message(embed=embed)
+
+# async def setup(bot):
+#     await bot.add_cog(MinecraftCog(bot))
+#     await bot.add_cog(UtilsCog(bot))

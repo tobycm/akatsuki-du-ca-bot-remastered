@@ -18,10 +18,15 @@ async def check_owners(redis_ins: Redis, ctx: Context or Interaction) -> bool:
     Check if user is owner
     """
 
-    result = await redis_ins.hget("op", ctx.author.id)
-    if result is None:
-        return False
-    return True
+    author = ctx.author if isinstance(ctx, Context) else ctx.user
+
+    if await ctx.bot.is_owner(author):
+        return True
+
+    if await redis_ins.hget("op", ctx.author.id):
+        return True
+
+    return False
 
 
 def user_cooldown_check(itr: Interaction) -> bool:

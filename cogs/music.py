@@ -272,32 +272,49 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["music"]["searching"]
         )
 
-        try:
-            track: YouTubeTrack = await YouTubeTrack.search(query=query, return_first=True)
-            playlist = False
-        except TypeError:
-            playlist: YouTubePlaylist = await YouTubePlaylist.search(query=query)
-
-        if playlist:
-            for track in playlist.tracks:
-                await player.queue.put_wait(track)
-                if not player.is_playing():
-                    await player.play(await player.queue.get_wait())
-            await itr.edit_original_response(content="", embed=rich_embeds(
-                NewPlaylist(playlist, lang, query),
-                itr.user,
-                lang["main"]
-            ))
-            return
+        track = await YouTubeTrack.search(query=query)
+        if isinstance(track, YouTubePlaylist):
+            track = track.tracks[0]
 
         await player.queue.put_wait(track)
+
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
+
         await itr.edit_original_response(content="", embed=rich_embeds(
             NewTrack(track, lang),
             itr.user,
             lang["main"]
         ))
+
+    @checks.cooldown(1, 1.25, key=user_cooldown_check)
+    @command(name="playlist")
+    async def playlist(self, itr: Interaction, query: str):
+        """
+        Play a list of song.
+        """
+
+        lang = await return_user_lang(self.bot, itr.user.id)
+
+        player: Player = await self._connect(itr, lang)
+        player.text_channel = itr.channel
+        await itr.response.send_message(
+            lang["music"]["misc"]["action"]["music"]["searching"]
+        )
+
+        playlist: YouTubePlaylist = await YouTubePlaylist.search(query=query)
+
+        for track in playlist.tracks:
+            await player.queue.put_wait(track)
+
+        await itr.edit_original_response(content="", embed=rich_embeds(
+            NewPlaylist(playlist, lang, query),
+            itr.user,
+            lang["main"]
+        ))
+
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -314,14 +331,15 @@ class MusicCog(Cog):
             lang["music"]["misc"]["action"]["music"]["searching"]
         )
 
-        try:
-            track: YouTubeTrack = await YouTubeTrack.search(query=query, return_first=True)
-        except AttributeError:
-            return await itr.edit_original_response(content="No playlist pls 0.0")
+        track = await YouTubeTrack.search(query=query)
+        if isinstance(track, YouTubePlaylist):
+            track = track.tracks[0]
 
         player.queue.put_at_front(track)
+        
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
+            
         await itr.edit_original_response(content="", embed=rich_embeds(
             NewTrack(track, lang),
             itr.user,
@@ -344,9 +362,12 @@ class MusicCog(Cog):
         )
 
         track: SoundCloudTrack = await SoundCloudTrack.search(query=query, return_first=True)
+        
         await player.queue.put_wait(track)
+        
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
+            
         await itr.edit_original_response(content="", embed=rich_embeds(
             NewTrack(track, lang),
             itr.user,
@@ -370,6 +391,7 @@ class MusicCog(Cog):
 
         tracks: List[Track] = await YouTubeTrack.search(query=query)
         tracks = tracks[:5]
+        
         embed = Embed(
             title=lang["music"]["misc"]["result"],
             description="",
