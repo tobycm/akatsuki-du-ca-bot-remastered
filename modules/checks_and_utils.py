@@ -3,33 +3,37 @@ Just some checks and utils function
 """
 
 from datetime import timedelta
+from typing import Union
+
 from aioredis import Redis
-
 from discord import Interaction, Message
-from discord.ext.commands import Context, Bot
+from discord.ext.commands import Bot, Context
 
+from models.bot_models import AkatsukiDuCa
 from modules.database_utils import get_prefix, get_user_lang
 from modules.vault import get_bot_config
 
 DEFAULT_PREFIX = get_bot_config("prefix")
 
-async def check_owners(redis_ins: Redis, ctx: Context or Interaction) -> bool:
+
+async def check_owners(redis_ins: Redis, ctx: Union[Context, Interaction]) -> bool:
     """
     Check if user is owner
     """
 
+    bot: Bot = ctx.bot if isinstance(ctx, Context) else ctx.client
     author = ctx.author if isinstance(ctx, Context) else ctx.user
 
-    if await ctx.bot.is_owner(author):
+    if await bot.is_owner(author):
         return True
 
-    if await redis_ins.hget("op", ctx.author.id):
+    if await redis_ins.hget("op", author.id):
         return True
 
     return False
 
 
-def user_cooldown_check(itr: Interaction) -> bool:
+def user_cooldown_check(itr: Interaction) -> int:
     """
     User cooldown check
     """
@@ -37,15 +41,18 @@ def user_cooldown_check(itr: Interaction) -> bool:
     return itr.user.id
 
 
-def guild_cooldown_check(itr: Interaction) -> bool:
+def guild_cooldown_check(itr: Interaction) -> int:
     """
     Guild cooldown check
     """
 
+    if itr.guild is None:
+        return itr.user.id
+
     return itr.guild.id
 
 
-async def return_user_lang(bot: Bot, user_id: int) -> dict:
+async def return_user_lang(bot: AkatsukiDuCa, user_id: int) -> dict:
     """
     Return user language as a dict
     """
@@ -61,12 +68,13 @@ def seconds_to_time(seconds) -> str:
 
     return str(timedelta(seconds=int(seconds)))
 
-async def get_prefix_for_bot(bot, message: Message):  # pylint: disable=redefined-outer-name
+
+async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message):
     """
     Return the prefix for the bot.
     """
 
-    prefix = await get_prefix(bot.redis_ins, message.guild.id)
-    if prefix is None:
-        return DEFAULT_PREFIX
-    return prefix
+    if message.guild is None:  # for typing
+        return
+
+    return await get_prefix(bot.redis_ins, message.guild.id) or DEFAULT_PREFIX

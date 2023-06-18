@@ -32,7 +32,7 @@ case $cmd in
     *)
     if [[ $cmd -eq "" ]]
     then
-        echo "No command specified."
+        echo "No command specified. Available commands: create_venv, activate_venv, run, install, setup_dev"
     else
         echo "Command not found."
     fi

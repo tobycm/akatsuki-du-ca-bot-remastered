@@ -5,25 +5,24 @@ Custom bot model
 import logging
 from time import time
 from typing import List
+
 from aioredis import Redis
-from discord import Intents, Message, Guild
+from discord import Guild, Intents, Message
 from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
 
+from api.ipc import Routes
+from cogs.admin import BotAdminCog, PrefixCog
+from cogs.fun import FunCog, GIFCog
+from cogs.legacy_commands import LegacyCommands
+from cogs.music import MusicCog, RadioMusic
+from cogs.nsfw import NSFWCog
+from cogs.toys import ToysCog
+from cogs.utils import MinecraftCog, UtilsCog
+from modules.checks_and_utils import get_prefix_for_bot
 from modules.database_utils import get_user_lang, return_redis_instance
 from modules.load_lang import get_lang
 from modules.quote_api import get_quotes
-from modules.checks_and_utils import get_prefix_for_bot
-
-from cogs.fun import FunCog, GIFCog
-from cogs.music import RadioMusic, MusicCog
-from cogs.nsfw import NSFWCog
-from cogs.toys import ToysCog
-from cogs.utils import UtilsCog, MinecraftCog
-from cogs.admin import PrefixCog, BotAdminCog
-from cogs.legacy_commands import LegacyCommands
-
-from api.ipc import Routes
 
 COGS = (
     FunCog,
@@ -36,10 +35,11 @@ COGS = (
     MinecraftCog,
     PrefixCog,
     BotAdminCog,
-    LegacyCommands
+    LegacyCommands,
 )
 
-class CustomBot(Bot):
+
+class AkatsukiDuCa(Bot):
     """
     Custom bot class
     """
@@ -51,15 +51,15 @@ class CustomBot(Bot):
     lang: dict = get_lang()
     quotes: List[dict]
     quotes_added: float = time()
-    logger: logging.Logger = logging.getLogger('discord')
+    logger: logging.Logger = logging.getLogger("discord")
     ipc: Server
 
     logging.basicConfig(
         filename="log/full_bot_log.txt",
-        filemode='a',
-        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-        datefmt='%H:%M:%S',
-        level=logging.INFO
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.INFO,
     )
 
     async def on_ready(self):
@@ -69,7 +69,7 @@ class CustomBot(Bot):
 
         self.logger.info(f"Logged in as {self.user}")
 
-    async def on_message(self, message: Message): # pylint: disable=arguments-differ
+    async def on_message(self, message: Message):  # pylint: disable=arguments-differ
         """
         Run on new message.
         """
@@ -82,7 +82,9 @@ class CustomBot(Bot):
             lang = self.lang.get(lang_option if lang_option else "en-us")
             prefix = await get_prefix_for_bot(self, message)
             await message.reply(
-                lang["main"]["PingForPrefix"][0] + prefix + lang["main"]["PingForPrefix"][1]
+                lang["main"]["PingForPrefix"][0]
+                + prefix
+                + lang["main"]["PingForPrefix"][1]
             )
 
         await self.process_commands(message)
@@ -114,5 +116,5 @@ class CustomBot(Bot):
         for cog in COGS:
             await self.add_cog(cog(self))
 
-        await self.load_extension('jishaku')
+        await self.load_extension("jishaku")
         self.logger.info("Loaded jishaku")

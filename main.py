@@ -7,16 +7,15 @@ Main bot file.
 from discord import Game, Intents
 from discord.ext.commands import Context
 
+from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import check_owners, get_prefix_for_bot
 from modules.vault import get_bot_config
 
-from models.bot_models import CustomBot
-
-bot = CustomBot(
+bot = AkatsukiDuCa(
     command_prefix=get_prefix_for_bot,
     activity=Game(name="Hibiki Ban Mai"),
     intents=Intents.all(),
-    help_command=None
+    help_command=None,
 )
 tree = bot.tree
 
@@ -35,6 +34,7 @@ async def sync_command(ctx: Context):
         return
     await tree.sync()
     await ctx.send("Synced!")
+
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
 # -----------------------------------------------------
