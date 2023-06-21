@@ -6,18 +6,17 @@ from logging import Logger
 from typing import Optional
 
 from discord import AllowedMentions, Embed, Interaction, Member
-from discord.app_commands import command, checks
-from discord.ext.commands import Cog, GroupCog, Bot
+from discord.app_commands import checks, command
+from discord.ext.commands import Bot, Cog, GroupCog
 from discord.ui import View
 
+from models.utils_models import ChangeLang
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
+from modules.lang import lang_list
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
-from modules.load_lang import lang_list
-
-from models.utils_models import ChangeLang
 
 
 class UtilsCog(Cog):
@@ -65,18 +64,17 @@ class UtilsCog(Cog):
             i += 1
 
         embed = rich_embeds(
-            Embed(title=lang["utils"]["osuStatsTitle"] % (user,),
-                  description="\n".join(desc),
-                  )
-            .set_thumbnail(
-                url=f"http://s.ppy.sh/a/{osu_user_data['user_id']}"
+            Embed(
+                title=lang["utils"]["osuStatsTitle"] % (user,),
+                description="\n".join(desc),
             )
+            .set_thumbnail(url=f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
             .set_author(
                 name="osu! user data",
-                icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png"
+                icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png",
             ),
             author,
-            lang["main"]
+            lang["main"],
         )
 
         return await itr.response.send_message(embed=embed)
@@ -98,13 +96,11 @@ class UtilsCog(Cog):
 
         await bug_channel.send(
             f"{author} báo lỗi: {bug_description}",
-            allowed_mentions=AllowedMentions(
-                users=False,
-                roles=False,
-                everyone=False
-            )
+            allowed_mentions=AllowedMentions(users=False, roles=False, everyone=False),
         )
-        return await bug_channel.send(f"User ID: {author.id} | Guild ID: {author.guild.id}")
+        return await bug_channel.send(
+            f"User ID: {author.id} | Guild ID: {author.guild.id}"
+        )
 
     @checks.cooldown(1, 30, key=user_cooldown_check)
     @command(name="change_language")
@@ -113,10 +109,7 @@ class UtilsCog(Cog):
         Start an interactive language change session. hehe
         """
 
-        select_menu = ChangeLang(
-            bot=self.bot,
-            author=itr.user
-        )
+        select_menu = ChangeLang(bot=self.bot, author=itr.user)
 
         for option in lang_list:
             select_menu.add_option(label=option, value=option)
@@ -124,9 +117,7 @@ class UtilsCog(Cog):
         view = View(timeout=30).add_item(select_menu)
 
         await itr.response.send_message(
-            content="Please select a language",
-            view=view,
-            ephemeral=True
+            content="Please select a language", view=view, ephemeral=True
         )
 
         if await view.wait():
@@ -158,17 +149,17 @@ class UtilsCog(Cog):
         embed.add_field(name="Server Name", value=guild.name)
         embed.add_field(name="Server ID", value=guild.id)
         embed.add_field(name="Server Owner", value=guild.owner)
-        embed.add_field(name="Server Age", value=f"<t:{int(guild.created_at.timestamp())}:D>")
+        embed.add_field(
+            name="Server Age", value=f"<t:{int(guild.created_at.timestamp())}:D>"
+        )
         embed.add_field(name="Server Member Count", value=guild.member_count)
-        embed.add_field(name="Server Verification Level", value=guild.verification_level)
+        embed.add_field(
+            name="Server Verification Level", value=guild.verification_level
+        )
         embed.set_thumbnail(url=guild.icon.url)
 
         await itr.response.send_message(
-            embed=rich_embeds(
-                embed=embed,
-                author=itr.user,
-                lang=lang["main"]
-            )
+            embed=rich_embeds(embed=embed, author=itr.user, lang=lang["main"])
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -188,23 +179,26 @@ class UtilsCog(Cog):
         embed.add_field(name="User Name", value=user.name)
         embed.add_field(name="User ID", value=user.id)
         embed.add_field(name="User Status", value=user.status)
-        embed.add_field(name="User Joined Date", value=f"<t:{int(user.joined_at.timestamp())}:D>")
-        embed.add_field(name="User Creation Date", value=f"<t:{int(user.created_at.timestamp())}:D>")
+        embed.add_field(
+            name="User Joined Date", value=f"<t:{int(user.joined_at.timestamp())}:D>"
+        )
+        embed.add_field(
+            name="User Creation Date", value=f"<t:{int(user.created_at.timestamp())}:D>"
+        )
         embed.add_field(
             name="User Roles",
-            value=", ".join([
-                role.mention for role in user.roles if not role.is_default()
-            ]) if len(user.roles) != 1 else "No Roles",
-            inline=False)
+            value=", ".join(
+                [role.mention for role in user.roles if not role.is_default()]
+            )
+            if len(user.roles) != 1
+            else "No Roles",
+            inline=False,
+        )
         embed.set_thumbnail(url=user.avatar.url)
 
         await itr.response.send_message(
-            embed=rich_embeds(
-                embed=embed,
-                author=user,
-                lang=lang["main"]
-            ),
-            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False)
+            embed=rich_embeds(embed=embed, author=user, lang=lang["main"]),
+            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -220,14 +214,10 @@ class UtilsCog(Cog):
             user: Member = itr.user
 
         embed = rich_embeds(
-            embed = Embed(
-                title = "Avatar"
-            ),
-            author = itr.user,
-            lang=lang["main"]
+            embed=Embed(title="Avatar"), author=itr.user, lang=lang["main"]
         )
 
-        embed.set_image(url = user.avatar.url)
+        embed.set_image(url=user.avatar.url)
         await itr.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -240,15 +230,16 @@ class UtilsCog(Cog):
         lang = await return_user_lang(self.bot, itr.user.id)
 
         embed = rich_embeds(
-            embed = Embed(
-                title = "Server Icon",
+            embed=Embed(
+                title="Server Icon",
             ),
-            author = itr.user,
-            lang=lang["main"]
+            author=itr.user,
+            lang=lang["main"],
         )
 
-        embed.set_image(url = itr.guild.icon.url)
+        embed.set_image(url=itr.guild.icon.url)
         await itr.response.send_message(embed=embed)
+
 
 class MinecraftCog(GroupCog, name="minecraft"):
     """
@@ -283,14 +274,13 @@ class MinecraftCog(GroupCog, name="minecraft"):
         embed = rich_embeds(
             Embed(
                 title=lang["utils"]["MinecraftAccount"][0] + user,
-                description=f"{lang['utils']['MinecraftAccount'][1]}{user}\nUUID: {uuid}"
-            ).set_image(
-                url=image
-            ).set_thumbnail(
-                url=thumbnail
-            ),
+                description=f"{lang['utils']['MinecraftAccount'][1]}{user}\nUUID: {uuid}",
+            )
+            .set_image(url=image)
+            .set_thumbnail(url=thumbnail),
             author,
-            lang["main"])
+            lang["main"],
+        )
 
         return await itr.response.send_message(embed=embed)
 
@@ -304,28 +294,33 @@ class MinecraftCog(GroupCog, name="minecraft"):
         author = itr.user
 
         lang = await return_user_lang(self.bot, author.id)
-        mc_server_lang = lang['utils']['MinecraftServer']
+        mc_server_lang = lang["utils"]["MinecraftServer"]
 
         data = await get_minecraft_server_info(server_ip)
 
         if data is False:
-            return await itr.response.send_message(lang["utils"]["MinecraftServer"]["NotFound"])
+            return await itr.response.send_message(
+                lang["utils"]["MinecraftServer"]["NotFound"]
+            )
 
-        motd = "```" + '\n'.join([i for i in data['motd']]) + "```"
-        server_info = mc_server_lang['ServerIp'] + server_ip
-        version = mc_server_lang['version'] + data['version']
-        players = mc_server_lang['players'] + data['players'][0] + "/" + data['players'][1]
+        motd = "```" + "\n".join([i for i in data["motd"]]) + "```"
+        server_info = mc_server_lang["ServerIp"] + server_ip
+        version = mc_server_lang["version"] + data["version"]
+        players = (
+            mc_server_lang["players"] + data["players"][0] + "/" + data["players"][1]
+        )
 
         embed = rich_embeds(
             Embed(
                 title=f"{server_ip} {mc_server_lang['online' if data['online'] else 'offline']}",
-                description= "\n".join([motd, server_info, version, players])
+                description="\n".join([motd, server_info, version, players]),
             ),
             author,
-            lang["main"]
+            lang["main"],
         )
 
         return await itr.response.send_message(embed=embed)
+
 
 # async def setup(bot):
 #     await bot.add_cog(MinecraftCog(bot))

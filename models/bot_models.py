@@ -21,7 +21,7 @@ from cogs.toys import ToysCog
 from cogs.utils import MinecraftCog, UtilsCog
 from modules.checks_and_utils import get_prefix_for_bot
 from modules.database_utils import get_user_lang, return_redis_instance
-from modules.load_lang import get_lang
+from modules.lang import load_lang
 from modules.quote_api import get_quotes
 
 COGS = (
@@ -48,7 +48,7 @@ class AkatsukiDuCa(Bot):
         super().__init__(*args, intents=intents, **kwargs)
 
     redis_ins: Redis = return_redis_instance()
-    lang: dict = get_lang()
+    lang: dict = load_lang()
     quotes: List[dict]
     quotes_added: float = time()
     logger: logging.Logger = logging.getLogger("discord")
@@ -79,7 +79,7 @@ class AkatsukiDuCa(Bot):
 
         if message.content == f"<@{self.user.id}>":
             lang_option = await get_user_lang(self.redis_ins, message.author.id)
-            lang = self.lang.get(lang_option if lang_option else "en-us")
+            lang = self.lang.get(lang_option or "en-us")
             prefix = await get_prefix_for_bot(self, message)
             await message.reply(
                 lang["main"]["PingForPrefix"][0]

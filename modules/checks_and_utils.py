@@ -46,19 +46,21 @@ def guild_cooldown_check(itr: Interaction) -> int:
     Guild cooldown check
     """
 
-    if itr.guild is None:
+    if itr.guild is None:  # for typing
         return itr.user.id
 
     return itr.guild.id
 
 
-async def return_user_lang(bot: AkatsukiDuCa, user_id: int) -> dict:
+async def return_user_lang(bot, user_id: int) -> dict:
     """
     Return user language as a dict
     """
 
+    bot: AkatsukiDuCa = bot
+
     lang_option = await get_user_lang(bot.redis_ins, user_id)
-    return bot.lang[lang_option] if lang_option is not None else bot.lang["en-us"]
+    return bot.lang[lang_option] or bot.lang["en-us"]
 
 
 def seconds_to_time(seconds) -> str:
