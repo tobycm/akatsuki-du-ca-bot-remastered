@@ -6,12 +6,11 @@ import logging
 import os
 from time import time
 
-from aioredis import Redis
 from discord import Intents
 from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
 
-from modules.database_utils import return_redis_instance
+from modules.database_utils import load_redis
 from modules.lang import load_lang
 
 
@@ -23,8 +22,8 @@ class AkatsukiDuCa(Bot):
     def __init__(self, *args, intents=Intents.all(), **kwargs):
         super().__init__(*args, intents=intents, **kwargs)
 
-    redis_ins: Redis = return_redis_instance()
-    lang: dict = load_lang(redis_ins)
+    load_redis()
+    lang: dict = load_lang()
     quotes: list[dict]
     quotes_added: float = time()
     logger: logging.Logger = logging.getLogger("discord")

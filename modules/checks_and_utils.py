@@ -5,29 +5,28 @@ Just some checks and utils function
 from datetime import timedelta
 from typing import Union
 
-from aioredis import Redis
 from discord import Interaction, Message
-from discord.ext.commands import Bot, Context
+from discord.ext.commands import Context
 
 from models.bot_models import AkatsukiDuCa
-from modules.database_utils import get_prefix, get_user_lang
+from modules.database_utils import get_op, get_prefix, get_user_lang
 from modules.vault import get_bot_config
 
 DEFAULT_PREFIX = get_bot_config("prefix")
 
 
-async def check_owners(redis_ins: Redis, ctx: Union[Context, Interaction]) -> bool:
+async def check_owners(ctx: Union[Context, Interaction]) -> bool:
     """
     Check if user is owner
     """
 
-    bot: Bot = ctx.bot if isinstance(ctx, Context) else ctx.client
+    bot: AkatsukiDuCa = ctx.bot if isinstance(ctx, Context) else ctx.client
     author = ctx.author if isinstance(ctx, Context) else ctx.user
 
     if await bot.is_owner(author):
         return True
 
-    if await redis_ins.hget("op", author.id):
+    if await get_op(author.id):
         return True
 
     return False
@@ -52,14 +51,12 @@ def guild_cooldown_check(itr: Interaction) -> int:
     return itr.guild.id
 
 
-async def return_user_lang(bot, user_id: int) -> dict:
+async def return_user_lang(bot: AkatsukiDuCa, user_id: int) -> dict:
     """
     Return user language as a dict
     """
 
-    bot: AkatsukiDuCa = bot
-
-    lang_option = await get_user_lang(bot.redis_ins, user_id)
+    lang_option = await get_user_lang(user_id)
     return bot.lang[lang_option] or bot.lang["en-us"]
 
 
@@ -79,4 +76,4 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message):
     if message.guild is None:  # for typing
         return
 
-    return await get_prefix(bot.redis_ins, message.guild.id) or DEFAULT_PREFIX
+    return await get_prefix(message.guild.id) or DEFAULT_PREFIX

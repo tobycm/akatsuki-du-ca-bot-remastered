@@ -3,20 +3,19 @@ Fun cog for the bot.
 """
 
 from logging import Logger
-from random import randint, choice
+from random import choice, randint
 from string import ascii_letters
 from time import time
 
-from discord import Embed, Member, Interaction, File
-from discord.app_commands import command, checks
-from discord.ext.commands import GroupCog, Cog, Bot
+from discord import Embed, File, Interaction, Member
+from discord.app_commands import checks, command
+from discord.ext.commands import Bot, Cog, GroupCog
 
-from modules.checks_and_utils import user_cooldown_check, return_user_lang
+from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.exceptions import LangNotAvailable
 from modules.gif_api import construct_gif_embed
-
 from modules.quote_api import get_quotes
 from modules.waifu_api import get_waifu_image_url
 
@@ -47,14 +46,9 @@ class GIFCog(GroupCog, name="gif"):
 
         lang = await return_user_lang(self.bot, author.id)
 
-        embed = await construct_gif_embed(
-            author,
-            target,
-            method,
-            lang["gif"]
-        )
+        embed = await construct_gif_embed(author, target, method, lang["gif"])
 
-        await itr.channel.send(embed=rich_embeds(embed, author, lang["main"]))
+        await itr.channel.send(embed=rich_embeds(embed, author))
         return await itr.response.send_message("Sent!", ephemeral=True)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -129,6 +123,7 @@ class GIFCog(GroupCog, name="gif"):
 
         await self._gif(itr, target)
 
+
 class FunCog(Cog):
     """
     Other fun commands.
@@ -148,7 +143,7 @@ class FunCog(Cog):
 
         author = itr.user
 
-        lang_option = await get_user_lang(self.bot.redis_ins, author.id)
+        lang_option = await get_user_lang(author.id)
         if lang_option != "vi-vn":
             raise LangNotAvailable
 
@@ -157,12 +152,12 @@ class FunCog(Cog):
             # bro got lucky
             await itr.channel.send(
                 content="Bạn may mắn thật đấy, bạn được Ban Mai gọi dậy nè :))",
-                file=File("assets/banmai.mp4")
+                file=File("assets/banmai.mp4"),
             )
         else:
             await itr.channel.send(
                 content="Ngủ nhiều là không tốt đâu đó nha :D \n - Du Ca said - ",
-                file=File("assets/duca.mp4")
+                file=File("assets/duca.mp4"),
             )
         return await itr.edit_original_response(content="Đã gửi :D")
 
@@ -178,12 +173,12 @@ class FunCog(Cog):
 
         (url, source) = await get_waifu_image_url()
 
-        embed = rich_embeds(Embed(
-            title="Waifu",
-            description=f"{lang['fun']['waifu']}\n[Source]({source})"
-        ),
+        embed = rich_embeds(
+            Embed(
+                title="Waifu", description=f"{lang['fun']['waifu']}\n[Source]({source})"
+            ),
             author,
-            lang["main"])
+        )
         embed.set_image(url=url)
         return await itr.response.send_message(embed=embed)
 
@@ -203,13 +198,15 @@ class FunCog(Cog):
 
         embed = Embed(
             title=lang["fun"]["NitroFree"]["Title"],
-            description=f"{lang['fun']['NitroFree']['Description']}\n" +
-                        f"[https://discord.gift/{code}]" +
-                        f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
-            color=0x2F3136
+            description=f"{lang['fun']['NitroFree']['Description']}\n"
+            + f"[https://discord.gift/{code}]"
+            + f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
+            color=0x2F3136,
         )
         embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
-        await itr.response.send_message("Getting sweet free nitro for you <3", ephemeral=True)
+        await itr.response.send_message(
+            "Getting sweet free nitro for you <3", ephemeral=True
+        )
         return await itr.channel.send(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -220,7 +217,6 @@ class FunCog(Cog):
         """
 
         author = itr.user
-        lang = await return_user_lang(self.bot, author.id)
         time_now = time()
 
         if (time_now - self.bot.quotes_added) > 900:
@@ -229,15 +225,7 @@ class FunCog(Cog):
 
         quote = choice(self.bot.quotes)
         for author, quote in quote:
-
             return await itr.response.send_message(
-                embed=rich_embeds(
-                    Embed(
-                        title=author,
-                        description=quote
-                    ),
-                    author,
-                    lang["main"]
-                ),
-                ephemeral=True
+                embed=rich_embeds(Embed(title=author, description=quote), author),
+                ephemeral=True,
             )

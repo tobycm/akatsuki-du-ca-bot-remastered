@@ -17,6 +17,7 @@ from cogs.toys import ToysCog
 from cogs.utils import MinecraftCog, UtilsCog
 from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import check_owners, get_prefix_for_bot
+from modules.database_utils import get_user_lang
 from modules.lang import lang
 from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
@@ -40,7 +41,7 @@ async def sync_command(ctx: Context):
     Sync commands to global.
     """
 
-    if not await check_owners(bot.redis_ins, ctx):
+    if not await check_owners(ctx):
         return
     await tree.sync()
     await ctx.send("Synced!")
@@ -72,7 +73,9 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
     if message.content == f"<@{bot.user.id}>":
         prefix = await get_prefix_for_bot(bot, message)
         await message.reply(
-            f"{lang('main.PingForPrefix')[0]}{prefix}{lang('main.PingForPrefix')[1]}"
+            prefix.join(
+                lang("main.PingForPrefix", await get_user_lang(message.author.id))
+            )
         )
 
     await bot.process_commands(message)

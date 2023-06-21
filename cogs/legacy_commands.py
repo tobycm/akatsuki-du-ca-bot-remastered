@@ -3,10 +3,19 @@ These commands are for Toby for trolling only xd
 """
 
 from logging import Logger
+
 from discord import utils
-from discord.ext.commands import command, Context, Cog, MissingRequiredArgument, NotOwner, Bot
+from discord.ext.commands import (
+    Bot,
+    Cog,
+    Context,
+    MissingRequiredArgument,
+    NotOwner,
+    command,
+)
 
 from modules.checks_and_utils import check_owners
+
 
 class LegacyCommands(Cog):
     """
@@ -32,7 +41,7 @@ class LegacyCommands(Cog):
         Basically echo
         """
 
-        if not await check_owners(self.bot.redis_ins, ctx):
+        if not await check_owners(ctx):
             raise NotOwner
         if value == "":
             raise MissingRequiredArgument
@@ -41,7 +50,9 @@ class LegacyCommands(Cog):
         return await ctx.send(value)
 
     @command(name="sayemoji")
-    async def sayemoji(self, ctx: Context, emoji_name: str = None, guild_id: int = None):
+    async def sayemoji(
+        self, ctx: Context, emoji_name: str = None, guild_id: int = None
+    ):
         """
         Find the emoji and send it
         """

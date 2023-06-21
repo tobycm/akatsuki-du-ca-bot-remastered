@@ -29,6 +29,7 @@ from models.music_models import (
     make_queue,
 )
 from modules.checks_and_utils import seconds_to_time, user_cooldown_check
+from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.lang import lang
 from modules.vault import get_lavalink_nodes
@@ -68,7 +69,9 @@ class RadioMusic(GroupCog, name="radio"):
             + f"User ID: {itr.user.id}, Guild ID: {itr.guild_id}"
         )
 
-        await itr.response.send_message(lang("music.SuggestionSent", itr.user.id))
+        await itr.response.send_message(
+            lang("music.SuggestionSent", await get_user_lang(itr.user.id))
+        )
 
 
 class MusicCog(Cog):
@@ -163,7 +166,7 @@ class MusicCog(Cog):
 
     async def connect_check(
         self, itr: Interaction, connecting: bool
-    ) -> Optional[VoiceProtocol]:
+    ) -> Optional[Literal[True]]:
         """
         Connect checks
         """
@@ -171,16 +174,22 @@ class MusicCog(Cog):
         user_voice = itr.user.voice
         if not user_voice:  # author not in voice channel
             await itr.response.send_message(
-                lang("music.voice_client.error.user_no_voice", itr.user.id)
+                lang(
+                    "music.voice_client.error.user_no_voice",
+                    await get_user_lang(itr.user.id),
+                )
             )
-            return None
-
+            return
         voice_client = itr.guild.voice_client
         if voice_client and (voice_client.channel is user_voice.channel) and connecting:
             await itr.response.send_message(
-                lang("music.voice_client.error.already_connected", itr.user.id)
+                lang(
+                    "music.voice_client.error.already_connected",
+                    await get_user_lang(itr.user.id),
+                )
             )
-        return voice_client
+            return
+        return True
 
     async def _connect(
         self, itr: Interaction, connecting: bool = False
@@ -189,19 +198,25 @@ class MusicCog(Cog):
         Initialize a player and connect to a voice channel if there are none.
         """
 
-        player = await self.connect_check(itr, connecting)
-        if not player:
-            return None
+        ok = await self.connect_check(itr, connecting)
+        if not ok:
+            return
 
         if connecting:
             await itr.response.send_message(
-                lang("music.voice_client.status.connecting", itr.user.id)
+                lang(
+                    "music.voice_client.status.connecting",
+                    await get_user_lang(itr.user.id),
+                )
             )
 
         player = await itr.user.voice.channel.connect(self_deaf=True, cls=Player)
         if connecting:
             await itr.edit_original_response(
-                content=lang("music.voice_client.status.connected", itr.user.id)
+                content=lang(
+                    "music.voice_client.status.connected",
+                    await get_user_lang(itr.user.id),
+                )
             )
         return player
 
@@ -212,17 +227,26 @@ class MusicCog(Cog):
 
         if not itr.user.voice:  # author not in voice channel
             await itr.response.send_message(
-                lang("music.voice_client.error.user_no_voice", itr.user.id)
+                lang(
+                    "music.voice_client.error.user_no_voice",
+                    await get_user_lang(itr.user.id),
+                )
             )
             return None
         if not itr.guild.voice_client:  # bot didn't even connect lol
             await itr.response.send_message(
-                lang("music.voice_client.error.not_connected", itr.user.id)
+                lang(
+                    "music.voice_client.error.not_connected",
+                    await get_user_lang(itr.user.id),
+                )
             )
             return None
         if itr.guild.voice_client.channel != itr.user.voice.channel:
             await itr.response.send_message(
-                lang("music.voice_client.error.playing_in_another_channel", itr.user.id)
+                lang(
+                    "music.voice_client.error.playing_in_another_channel",
+                    await get_user_lang(itr.user.id),
+                )
             )
         return True
 
@@ -230,12 +254,18 @@ class MusicCog(Cog):
         if not await self.disconnect_check(itr):
             return None
         await itr.response.send_message(
-            lang("music.voice_client.status.disconnecting", itr.user.id)
+            lang(
+                "music.voice_client.status.disconnecting",
+                await get_user_lang(itr.user.id),
+            )
         )
 
         await itr.guild.voice_client.disconnect(force=True)
         await itr.edit_original_response(
-            content=lang("music.voice_client.status.disconnected", itr.user.id)
+            content=lang(
+                "music.voice_client.status.disconnected",
+                await get_user_lang(itr.user.id),
+            )
         )
         return True
 
@@ -265,9 +295,11 @@ class MusicCog(Cog):
         """
 
         player: Player = await self._connect(itr)
+        if not player:
+            return
         player.text_channel = itr.channel
         await itr.response.send_message(
-            lang("music.misc.action.music.searching", itr.user.id)
+            lang("music.misc.action.music.searching", await get_user_lang(itr.user.id))
         )
 
         track = await YouTubeTrack.search(query)
@@ -292,9 +324,11 @@ class MusicCog(Cog):
         """
 
         player: Player = await self._connect(itr)
+        if not player:
+            return
         player.text_channel = itr.channel
         await itr.response.send_message(
-            lang("music.misc.action.music.searching", itr.user.id)
+            lang("music.misc.action.music.searching", await get_user_lang(itr.user.id))
         )
 
         playlist = await YouTubePlaylist.search(query)
@@ -320,9 +354,11 @@ class MusicCog(Cog):
         """
 
         player: Player = await self._connect(itr)
+        if not player:
+            return
         player.text_channel = itr.channel
         await itr.response.send_message(
-            lang("music.misc.action.music.searching", itr.user.id)
+            lang("music.misc.action.music.searching", await get_user_lang(itr.user.id))
         )
 
         track = await YouTubeTrack.search(query)
@@ -347,9 +383,11 @@ class MusicCog(Cog):
         """
 
         player: Player = await self._connect(itr)
+        if not player:
+            return
         player.text_channel = itr.channel
         await itr.response.send_message(
-            lang("music.misc.action.music.searching", itr.user.id)
+            lang("music.misc.action.music.searching", await get_user_lang(itr.user.id))
         )
 
         track = await SoundCloudTrack.search(query, return_first=True)
@@ -372,15 +410,19 @@ class MusicCog(Cog):
         """
 
         player: Player = await self._connect(itr)
+        if not player:
+            return
         player.text_channel = itr.channel
         await itr.response.send_message(
-            lang("music.misc.action.music.searching", itr.user.id)
+            lang("music.misc.action.music.searching", await get_user_lang(itr.user.id))
         )
 
         tracks = (await YouTubeTrack.search(query))[:5]
 
         embed = Embed(
-            title=lang("music.misc.result", itr.user.id), description="", color=0x00FF00
+            title=lang("music.misc.result", await get_user_lang(itr.user.id)),
+            description="",
+            color=0x00FF00,
         )
         counter = 1
 
@@ -396,7 +438,9 @@ class MusicCog(Cog):
         view.add_item(select_menu)
 
         await itr.edit_original_response(
-            content=lang("music.misc.result", itr.user.id), embed=embed, view=view
+            content=lang("music.misc.result", await get_user_lang(itr.user.id)),
+            embed=embed,
+            view=view,
         )
 
         if await view.wait():
@@ -412,7 +456,7 @@ class MusicCog(Cog):
 
         await (await self._connect(itr)).pause()
         return await itr.response.send_message(
-            lang("music.misc.action.music.paused", itr.user.id)
+            lang("music.misc.action.music.paused", await get_user_lang(itr.user.id))
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -424,7 +468,7 @@ class MusicCog(Cog):
 
         await (await self._connect(itr)).resume()
         return await itr.response.send_message(
-            lang("music.misc.action.music.resumed", itr.user.id)
+            lang("music.misc.action.music.resumed", await get_user_lang(itr.user.id))
         )
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -436,7 +480,7 @@ class MusicCog(Cog):
 
         await (await self._connect(itr)).stop()
         return await itr.response.send_message(
-            lang("music.misc.action.music.skipped", itr.user.id)
+            lang("music.misc.action.music.skipped", await get_user_lang(itr.user.id))
         )
 
     @checks.cooldown(1, 2, key=user_cooldown_check)
@@ -446,12 +490,14 @@ class MusicCog(Cog):
         Stop playing music.
         """
 
-        vcl: Player = await self._connect(itr)
-        if not vcl.queue.is_empty:
-            vcl.queue.clear()
-        await vcl.stop()
+        player: Player = await self._connect(itr)
+        if not player:
+            return
+        if not player.queue.is_empty:
+            player.queue.clear()
+        await player.stop()
         return await itr.response.send_message(
-            lang("music.misc.action.music.stopped", itr.user.id)
+            lang("music.misc.action.music.stopped", await get_user_lang(itr.user.id))
         )
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -461,13 +507,17 @@ class MusicCog(Cog):
         Show the queue.
         """
 
-        vcl: Player = await self._connect(itr)
-        if vcl.queue.is_empty:
+        player: Player = await self._connect(itr)
+        if not player:
+            return
+        if player.queue.is_empty:
             return await itr.response.send_message(
-                lang("music.misc.action.error.no_queue", itr.user.id)
+                lang(
+                    "music.misc.action.error.no_queue", await get_user_lang(itr.user.id)
+                )
             )
 
-        queue_embeds = make_queue(vcl.queue, itr.user.id)
+        queue_embeds = make_queue(player.queue, itr.user.id)
 
         view = None
         if len(queue_embeds) > 1:
@@ -492,18 +542,22 @@ class MusicCog(Cog):
         Show the now playing song.
         """
 
-        vcl: Player = await self._connect(itr)
-        if not vcl.is_playing():
+        player: Player = await self._connect(itr)
+        if not player:
+            return
+        if not player.is_playing():
             return await itr.response.send_message(
-                lang("music.misc.action.error.no_music", itr.user.id)
+                lang(
+                    "music.misc.action.error.no_music", await get_user_lang(itr.user.id)
+                )
             )
 
-        track: YouTubeTrack = vcl.track
+        track: YouTubeTrack = player.track
         embed = rich_embeds(
             Embed(
-                title=lang("music.misc.now_playing", itr.user.id),
+                title=lang("music.misc.now_playing", await get_user_lang(itr.user.id)),
                 description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                + f"Duration: {seconds_to_time(vcl.position)}/{seconds_to_time(track.duration)}",
+                + f"Duration: {seconds_to_time(player.position)}/{seconds_to_time(track.duration)}",
             ),
             itr.user,
         )
@@ -516,15 +570,19 @@ class MusicCog(Cog):
         Clear the queue
         """
 
-        vcl: Player = await self._connect(itr)
-        if vcl.queue.is_empty:
+        player: Player = await self._connect(itr)
+        if not player:
+            return
+        if player.queue.is_empty:
             return await itr.response.send_message(
-                lang("music.misc.action.error.no_queue", itr.user.id)
+                lang(
+                    "music.misc.action.error.no_queue", await get_user_lang(itr.user.id)
+                )
             )
 
-        vcl.queue.clear()
+        player.queue.clear()
         return await itr.response.send_message(
-            lang("music.misc.action.queue.cleared", itr.user.id)
+            lang("music.misc.action.queue.cleared", await get_user_lang(itr.user.id))
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -534,15 +592,17 @@ class MusicCog(Cog):
         Loop queue, song or turn loop off
         """
 
-        vcl: Player = await self._connect(itr)
+        player: Player = await self._connect(itr)
+        if not player:
+            return
         if mode == "song":
-            vcl.queue.put_at_front(vcl.current)
-        if mode == "off" and vcl.loop_mode == "song":
-            await vcl.queue.get_wait()
-        vcl.loop_mode = mode if mode != "off" else None
+            player.queue.put_at_front(player.current)
+        if mode == "off" and player.loop_mode == "song":
+            await player.queue.get_wait()
+        player.loop_mode = mode if mode != "off" else None
 
         await itr.response.send_message(
-            lang("music.misc.action.loop", itr.user.id)[mode]
+            lang("music.misc.action.loop", await get_user_lang(itr.user.id))[mode]
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -552,10 +612,12 @@ class MusicCog(Cog):
         Seeks to a certain point in the current track.
         """
 
-        vcl: Player = await self._connect(itr)
-        if vcl.current.length < position:
+        player: Player = await self._connect(itr)
+        if not player:
+            return
+        if player.current.length < position:
             # lmao seek over track
             return await itr.response.send_message("Lmao how to seek over track")
 
-        await vcl.seek(position=position)
+        await player.seek(position=position)
         return await itr.response.send_message("Done!")

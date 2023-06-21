@@ -3,13 +3,15 @@ Admin commands for bot in guild.
 """
 
 from logging import Logger
+
 from discord import Interaction
-from discord.app_commands import command, checks, MissingPermissions
+from discord.app_commands import MissingPermissions, checks, command
 from discord.ext import commands
-from discord.ext.commands import GroupCog, Cog, Context, Bot
+from discord.ext.commands import Bot, Cog, Context, GroupCog
 
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
+
 
 class PrefixCog(GroupCog, name="prefix"):
     """
@@ -38,7 +40,7 @@ class PrefixCog(GroupCog, name="prefix"):
         """
 
         author = itr.user
-        await set_prefix(self.bot.redis_ins, author.guild.id, prefix)
+        await set_prefix(author.guild.id, prefix)
         return await itr.response.send_message(f"Prefix set to `{prefix}`")
 
     @checks.cooldown(1, 1, key=guild_cooldown_check)
@@ -50,7 +52,7 @@ class PrefixCog(GroupCog, name="prefix"):
         """
 
         author = itr.user
-        await delete_prefix(self.bot.redis_ins, author.guild.id)
+        await delete_prefix(author.guild.id)
         return await itr.response.send_message("Prefix reseted!")
 
 
@@ -78,11 +80,9 @@ class BotAdminCog(Cog):
         Reset a guild prefix remotely
         """
 
-        if not await check_owners(self.bot.redis_ins, ctx):
+        if not await check_owners(ctx):
             raise MissingPermissions(["manage_guild"])
 
-        await delete_prefix(self.bot.redis_ins, guild_id)
+        await delete_prefix(guild_id)
 
-        return await ctx.send(
-            f"Prefix reseted for guild {guild_id}"
-        )
+        return await ctx.send(f"Prefix reseted for guild {guild_id}")
