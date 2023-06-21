@@ -3,7 +3,6 @@ Vault for the bot secrets and variables.
 """
 
 from json import load
-from typing import List
 
 
 def get_bot_config(value: str) -> str:
@@ -33,7 +32,7 @@ def get_api_key(service: str) -> str:
         return load(config)["api_keys"][service]
 
 
-def get_lavalink_nodes() -> List[dict]:
+def get_lavalink_nodes() -> list[dict]:
     """
     Return a list of lavalink nodes.
     """

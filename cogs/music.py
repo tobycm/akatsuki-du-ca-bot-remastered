@@ -5,7 +5,7 @@ This is the music cog.
 import logging
 from typing import Literal, Optional
 
-from discord import Color, Embed, Interaction, TextChannel, VoiceProtocol
+from discord import Color, Embed, Interaction, TextChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
@@ -135,8 +135,8 @@ class MusicCog(Cog):
         if player.queue.is_empty:
             player.text_channel, player.loop_mode = None, None
             return await player.disconnect()
-        next_track = await player.queue.get_wait()
-        await player.play(next_track)
+
+        await player.play(await player.queue.get_wait())
 
     @Cog.listener()
     async def on_wavelink_track_start(self, payload: TrackEventPayload):
