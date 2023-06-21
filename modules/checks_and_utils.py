@@ -57,7 +57,7 @@ async def return_user_lang(bot: AkatsukiDuCa, user_id: int) -> dict:
     """
 
     lang_option = await get_user_lang(user_id)
-    return bot.lang[lang_option] or bot.lang["en-us"]
+    return bot.lang[lang_option]
 
 
 def seconds_to_time(seconds) -> str:

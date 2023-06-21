@@ -6,6 +6,10 @@ import json
 from os import listdir
 from typing import Union
 
+from discord.ext.commands import Context
+
+from modules.checks_and_utils import return_user_lang
+
 lang_pack = {}
 lang_list = ["vi-vn", "en-us", "ja-jp"]
 
@@ -29,7 +33,7 @@ def load_lang() -> dict:
     return lang_pack
 
 
-def lang(address: str, lang_option: str) -> Union[str, list, dict]:
+def get_lang_with_address(address: str, lang_option: str) -> Union[str, list, dict]:
     """
     Return a language string or a list of language strings
 
@@ -41,3 +45,12 @@ def lang(address: str, lang_option: str) -> Union[str, list, dict]:
         result_lang = result_lang[child]
 
     return result_lang
+
+
+def lang(command_function):
+    async def wrapper(ctx: Context, *args, **kwargs) -> bool:
+        return await command_function(
+            ctx, *args, **kwargs, lang=await return_user_lang(ctx.bot, ctx.author.id)
+        )
+
+    return wrapper

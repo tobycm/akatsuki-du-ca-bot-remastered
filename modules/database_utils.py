@@ -98,7 +98,7 @@ async def set_user_lang(user_id: int, lang: str) -> None:
     await redis.hset("user_lang", user_id, lang)
 
 
-async def get_user_lang(user_id: int) -> Optional[str]:
+async def get_user_lang(user_id: int) -> str:
     """
     Get user language from database
     """

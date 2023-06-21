@@ -11,7 +11,7 @@ from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
 from modules.checks_and_utils import seconds_to_time
 from modules.embed_process import rich_embeds
-from modules.lang import lang
+from modules.lang import get_lang_with_address
 
 
 class Player(WavelinkPlayer):
@@ -45,7 +45,9 @@ class MusicSelect(Select):
         await interaction.response.send_message(
             embed=rich_embeds(
                 Embed(
-                    title=lang("music.misc.action.queue.added", self.user_id),
+                    title=get_lang_with_address(
+                        "music.misc.action.queue.added", self.user_id
+                    ),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
                     + f"Duration: {seconds_to_time(track.duration)}",
                 ).set_thumbnail(
@@ -87,7 +89,7 @@ class NewTrackEmbed(Embed):
 
     def __init__(self, track: YouTubeTrack, user_id: int) -> None:
         super().__init__(
-            title=lang("music.misc.action.queue.added", user_id),
+            title=get_lang_with_address("music.misc.action.queue.added", user_id),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
             + f"Duration: {seconds_to_time(track.duration)}",
         )
@@ -103,7 +105,7 @@ class NewPlaylistEmbed(Embed):
 
     def __init__(self, playlist: YouTubePlaylist, url: str, user_id: int) -> None:
         super().__init__(
-            title=lang("music.misc.action.queue.added", user_id),
+            title=get_lang_with_address("music.misc.action.queue.added", user_id),
             description=f"[**{playlist.name}**]({url})\n"
             + f"Items: {len(playlist.tracks)}",
         )
@@ -118,7 +120,9 @@ class QueueEmbed(Embed):
     """
 
     def __init__(self, user_id: int) -> None:
-        super().__init__(title=lang("music.misc.queue", user_id), description="")
+        super().__init__(
+            title=get_lang_with_address("music.misc.queue", user_id), description=""
+        )
 
 
 def make_queue(queue: Queue, user_id: int) -> list[Embed]:
