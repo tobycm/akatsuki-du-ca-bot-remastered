@@ -1,26 +1,25 @@
 {
-    "bot": {
-        "token": "",
-        "secret": "",
-        "prefix": "!",
-        "home_guild_id": 1234567890,
-        "home_guild_invite": "https://discord.gg/",
-        "channels": {
-            "error": 1234567890,
-            "bug": 1234567890
-        }
-    },
+  "bot": {
+    "token": "",
+    "secret": "",
+    "prefix": "!",
+    "home_guild_id": 1234567890,
+    "home_guild_invite": "https://discord.gg/",
+    "channels": {
+      "error": 1234567890,
+      "bug": 1234567890
+    }
+  },
 
-    "api_keys": {
-        "osu": "",
-        "tenor": ""
-    },
+  "api_keys": {
+    "osu": "",
+    "tenor": ""
+  },
 
-    "lavalink_nodes": [
-        {
-            "host": "localhost",
-            "port": "8080",
-            "password": "youshallnotpass"
-        }
-    ]
+  "lavalink_nodes": [
+    {
+      "uri": "localhost:2333",
+      "password": "youshallnotpass"
+    }
+  ]
 }
