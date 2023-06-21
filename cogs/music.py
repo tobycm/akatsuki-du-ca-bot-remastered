@@ -31,7 +31,7 @@ from models.music_models import (
 from modules.checks_and_utils import seconds_to_time, user_cooldown_check
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
-from modules.lang import get_lang_with_address
+from modules.lang import get_lang_with_address, lang
 from modules.vault import get_lavalink_nodes
 
 
@@ -273,7 +273,8 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="connect")
-    async def connect(self, itr: Interaction):
+    @lang
+    async def connect(self, itr: Interaction, lang={}):
         """
         Connect to a voice channel.
         """

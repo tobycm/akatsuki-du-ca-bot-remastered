@@ -10,6 +10,7 @@ from wavelink import Player as WavelinkPlayer
 from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
 from modules.checks_and_utils import seconds_to_time
+from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.lang import get_lang_with_address
 
@@ -54,6 +55,7 @@ class MusicSelect(Select):
                     url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
                 ),
                 interaction.user,
+                await get_user_lang(interaction.user.id)
             )
         )
         return
@@ -65,9 +67,9 @@ class PageSelect(Select):
     class queue_page_select(Select):
     """
 
-    def __init__(self, embeds: list[Embed], itr: Interaction) -> None:
+    def __init__(self, embeds: list[Embed], interaction: Interaction) -> None:
         self.embeds: list[Embed] = embeds
-        self.interaction: Interaction = itr
+        self.interaction: Interaction = interaction
 
         super().__init__(placeholder="Choose page")
 

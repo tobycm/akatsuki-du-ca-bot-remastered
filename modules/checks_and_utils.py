@@ -10,6 +10,7 @@ from discord.ext.commands import Context
 
 from models.bot_models import AkatsukiDuCa
 from modules.database_utils import get_op, get_prefix, get_user_lang
+from modules.lang import get_lang_with_address
 from modules.vault import get_bot_config
 
 DEFAULT_PREFIX = get_bot_config("prefix")
@@ -51,13 +52,12 @@ def guild_cooldown_check(itr: Interaction) -> int:
     return itr.guild.id
 
 
-async def return_user_lang(bot: AkatsukiDuCa, user_id: int) -> dict:
+async def return_user_lang(user_id: int) -> dict:
     """
     Return user language as a dict
     """
 
-    lang_option = await get_user_lang(user_id)
-    return bot.lang[lang_option]
+    return get_lang_with_address("", await get_user_lang(user_id))
 
 
 def seconds_to_time(seconds) -> str:
