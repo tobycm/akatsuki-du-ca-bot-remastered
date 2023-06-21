@@ -12,13 +12,16 @@ from modules.database_utils import get_user_lang
 
 lang_pack = {}
 lang_list = ["vi-vn", "en-us", "ja-jp"]
-redis_ins: Redis
+global redis_ins
 
 
 def load_lang(redis: Redis) -> dict:
     """
     Return all language pack
     """
+
+    global redis_ins
+    redis_ins = redis
 
     for lang in lang_list:
         options = [file for file in listdir(f"lang/{lang}/")]
@@ -34,7 +37,7 @@ def load_lang(redis: Redis) -> dict:
     return lang_pack
 
 
-async def lang(address: str, user_id: str) -> Union[str, list[str]]:
+async def lang(address: str, user_id: int) -> Union[str, list, dict]:
     """
     Return a language string or a list of language strings
 
@@ -43,8 +46,8 @@ async def lang(address: str, user_id: str) -> Union[str, list[str]]:
 
     lang_option = await get_user_lang(redis_ins, user_id)
 
-    lang = lang_pack[lang_option]
+    result_lang = lang_pack[lang_option]
     for child in address.split("."):
-        lang = lang[child]
+        result_lang = result_lang[child]
 
-    return lang
+    return result_lang
