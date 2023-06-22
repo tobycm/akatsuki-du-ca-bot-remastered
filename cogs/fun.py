@@ -10,15 +10,15 @@ from typing import Union
 
 from discord import Embed, File, Interaction, Member, TextChannel, Thread, VoiceChannel
 from discord.app_commands import checks, command
-from discord.ext.commands import Bot, Cog, GroupCog
+from discord.ext.commands import Cog, GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import return_user_lang, user_cooldown_check
+from modules.checks_and_utils import user_cooldown_check
 from modules.database_utils import get_user_lang
 from modules.embed_process import rich_embeds
 from modules.exceptions import LangNotAvailable
 from modules.gif_api import construct_gif_embed
-from modules.lang import get_lang, get_lang_by_address
+from modules.lang import get_lang
 from modules.quote_api import get_quotes
 from modules.waifu_api import get_waifu_image_url
 
@@ -182,8 +182,7 @@ class FunCog(Cog):
         embed = rich_embeds(
             Embed(
                 title="Waifu",
-                description=f"{get_lang_by_address('fun.waifu', lang)}"
-                + f"\n[Source]({source})",
+                description=f"{lang('fun.waifu')}" + f"\n[Source]({source})",
             ),
             interaction.user,
             lang,
@@ -203,11 +202,12 @@ class FunCog(Cog):
         for _ in range(0, 23):
             code += choice(ascii_letters)
 
-        lang = await return_user_lang(self.bot, author.id)
+        lang = await get_lang(author.id)
 
         embed = Embed(
-            title=lang["fun"]["NinteractionoFree"]["Title"],
-            description=f"{lang['fun']['NinteractionoFree']['Description']}\n"
+            title=lang("fun.NinteractionoFree.Title"),
+            description=lang("fun.NinteractionoFree.Description")
+            + "\n"
             + f"[https://discord.gift/{code}]"
             + f"(https://akatsukiduca.tk/verify-ninteractiono?key={code}&id={author.id})",
             color=0x2F3136,
@@ -216,6 +216,8 @@ class FunCog(Cog):
         await interaction.response.send_message(
             "Getting sweet free ninteractiono for you <3", ephemeral=True
         )
+
+        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
         return await interaction.channel.send(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)

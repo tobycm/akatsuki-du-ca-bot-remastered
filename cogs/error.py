@@ -3,26 +3,29 @@ File for error handler cog
 """
 
 from logging import Logger
+
 from discord.ext.commands import (
-    Context,
-    MissingPermissions,
+    Cog,
     CommandInvokeError,
     CommandNotFound,
-    MissingRequiredArgument,
     CommandOnCooldown,
-    Cog,
-    Bot
+    Context,
+    MissingPermissions,
+    MissingRequiredArgument,
 )
 
-from modules.checks_and_utils import get_prefix_for_bot, return_user_lang
+from models.bot_models import AkatsukiDuCa
+from modules.checks_and_utils import get_prefix_for_bot
 from modules.exceptions import LangNotAvailable
+from modules.lang import get_lang
+
 
 class ErrorHandler(Cog):
     """
     Cog for handling command errors
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
         self.logger: Logger = bot.logger
         super().__init__()
@@ -36,34 +39,40 @@ class ErrorHandler(Cog):
         return await super().cog_unload()
 
     @Cog.listener("on_command_error")
-    async def error_message_handler(self, ctx: Context, exception: Exception) -> None: # pylint: disable=arguments-differ
+    async def error_message_handler(
+        self, ctx: Context, exception: Exception
+    ) -> None:  # pylint: disable=arguments-differ
         """
         Command error handler
         """
 
-        lang = await return_user_lang(self, ctx.author.id)
-        prefix = await get_prefix_for_bot(self, ctx.message)
+        lang = await get_lang(ctx.author.id)
+        prefix = await get_prefix_for_bot(ctx.bot, ctx.message)
 
         if isinstance(exception, CommandInvokeError):
             exception = exception.original
 
         async def user_no_perms(ctx: Context):
-            await ctx.send(lang["MissingGuildPermission"])
+            await ctx.send(lang("main.MissingGuildPermission"))
 
         async def not_found(ctx: Context):
-            await ctx.send(prefix.join(lang["CommandNotFound"]))
+            await ctx.send(prefix.join(lang("main.CommandNotFound")))
 
         async def miss_args(ctx: Context):
-            await ctx.send(prefix.join(lang["MissingRequiredArgument"]))
+            await ctx.send(prefix.join(lang("main.MissingRequiredArgument")))
 
         async def on_cooldown(ctx: Context):
-            exception: CommandOnCooldown = exception
-            await ctx.send(str(round(exception.retry_after, 1)).join(lang["CommandOnCooldown"]))
+            assert isinstance(exception, CommandOnCooldown)
+            await ctx.send(
+                str(round(exception.retry_after, 1)).join(
+                    lang("main.CommandOnCooldown")
+                )
+            )
 
         async def no_lang_available(ctx: Context):
-            await ctx.send(lang["NotAvailableLanguage"])
+            await ctx.send(lang("main.NotAvailableLanguage"))
 
-        mapping = {
+        mapping: dict = {
             MissingPermissions: user_no_perms,
             CommandNotFound: not_found,
             MissingRequiredArgument: miss_args,
