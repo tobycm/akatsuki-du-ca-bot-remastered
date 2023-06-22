@@ -173,7 +173,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="user_info")
-    async def user_info(self, interaction: Interaction, user: Optional[Member]): # type: ignore
+    async def user_info(self, interaction: Interaction, user: Optional[Member]):  # type: ignore
         """
         Send user info
         """
@@ -212,7 +212,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="avatar")
-    async def avatar(self, interaction: Interaction, user: Optional[Member] = None): # type: ignore
+    async def avatar(self, interaction: Interaction, user: Optional[Member] = None):  # type: ignore
         """
         Get a user avatar
         """
@@ -315,7 +315,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
                 get_lang_by_address("utils.MinecraftServer.NotFound", lang)
             )
 
-        motd = f"```{'\n'.join(data['motd'])}```" # type: ignore
+        motd = "```" + "\n".join(data["motd"]) + "```"  # type: ignore
         server_info = get_lang_by_address("utils.MinecraftServer.ServerIp", lang) + server_ip  # type: ignore
         version = get_lang_by_address("utils.MinecraftServer.version", lang) + data["version"]  # type: ignore
         players = f"{get_lang_by_address('utils.MinecraftServer.players', lang)}{data['players'][0]}/{data['players'][1]}"  # type: ignore
