@@ -23,7 +23,7 @@ class AkatsukiDuCa(Bot):
         super().__init__(*args, intents=intents, **kwargs)
 
     load_redis()
-    lang: dict = load_lang()
+    load_lang()
     quotes: list[dict]
     quotes_added: float = time()
     logger: logging.Logger = logging.getLogger("discord")

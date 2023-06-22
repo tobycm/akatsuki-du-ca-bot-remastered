@@ -17,8 +17,7 @@ from cogs.toys import ToysCog
 from cogs.utils import MinecraftCog, UtilsCog
 from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import check_owners, get_prefix_for_bot
-from modules.database_utils import get_user_lang
-from modules.lang import lang
+from modules.lang import get_lang, get_lang_by_address
 from modules.quote_api import get_quotes
 from modules.vault import get_bot_config
 
@@ -74,7 +73,9 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
         prefix = await get_prefix_for_bot(bot, message)
         await message.reply(
             prefix.join(
-                lang("main.PingForPrefix", await get_user_lang(message.author.id))
+                get_lang_by_address(
+                    "main.PingForPrefix", await get_lang(message.author.id)
+                )
             )
         )
 

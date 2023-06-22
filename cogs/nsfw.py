@@ -3,13 +3,15 @@ Not Safe for Work commands. 0_0
 """
 
 from logging import Logger
-from discord import Embed, Interaction
-from discord.app_commands import command, checks
-from discord.ext.commands import GroupCog, Bot
 
+from discord import Embed, Interaction
+from discord.app_commands import checks, command
+from discord.ext.commands import Bot, GroupCog
+
+from modules.checks_and_utils import user_cooldown_check
 from modules.embed_process import rich_embeds
+from modules.lang import get_lang, get_lang_by_address
 from modules.nsfw import get_nsfw
-from modules.checks_and_utils import user_cooldown_check, return_user_lang
 
 
 class NSFWCog(GroupCog, name="nsfw"):
@@ -32,23 +34,29 @@ class NSFWCog(GroupCog, name="nsfw"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="art")
-    async def nsfw(self, itr: Interaction):
+    async def nsfw(self, interaction: Interaction):
         """
         Good nsfw art huh?
         """
 
-        author = itr.user
-        lang = await return_user_lang(self.bot, author.id)
-        if not itr.channel.is_nsfw():
-            await itr.response.send_message(lang["nsfw"]["PlsGoToNSFW"], ephemeral=True)
+        lang = await get_lang(interaction.user.id)
+
+        if not interaction.channel.is_nsfw():
+            await interaction.response.send_message(
+                get_lang_by_address("nsfw.PlsGoToNSFW", lang), ephemeral=True
+            )
 
         url, source = await get_nsfw()
 
-        await itr.response.send_message(
+        await interaction.response.send_message(
             embed=rich_embeds(
-                Embed(title="0.0",
-                      description=f"{lang['fun']['PoweredByWaifuim']}\nSource: [{source}]({source})"),
-                author,
-                lang["main"]
+                Embed(
+                    title="0.0",
+                    description=get_lang_by_address("fun.PoweredByWaifuim", lang)
+                    + "\n"
+                    + f"Source: [{source}]({source})",
+                ),
+                interaction.user,
+                lang,
             ).set_image(url=url)
         )

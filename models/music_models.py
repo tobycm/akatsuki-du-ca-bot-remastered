@@ -11,7 +11,7 @@ from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
 from modules.checks_and_utils import seconds_to_time
 from modules.embed_process import rich_embeds
-from modules.lang import lang
+from modules.lang import get_lang_by_address
 
 
 class Player(WavelinkPlayer):
@@ -28,12 +28,10 @@ class MusicSelect(Select):
     Make a music selection Select
     """
 
-    def __init__(
-        self, tracks: list[YouTubeTrack], player: Player, user_id: int
-    ) -> None:
-        self.user_id: int = user_id
-        self.tracks: list[YouTubeTrack] = tracks
-        self.player: Player = player
+    def __init__(self, tracks: list[YouTubeTrack], player: Player, lang: dict) -> None:
+        self.lang = lang
+        self.tracks = tracks
+        self.player = player
 
         super().__init__(placeholder="Make your music selection")
 
@@ -45,13 +43,16 @@ class MusicSelect(Select):
         await interaction.response.send_message(
             embed=rich_embeds(
                 Embed(
-                    title=lang("music.misc.action.queue.added", self.user_id),
+                    title=get_lang_by_address(
+                        "music.misc.action.queue.added", self.lang
+                    ),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
                     + f"Duration: {seconds_to_time(track.duration)}",
                 ).set_thumbnail(
                     url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
                 ),
                 interaction.user,
+                self.lang,
             )
         )
         return
@@ -63,9 +64,10 @@ class PageSelect(Select):
     class queue_page_select(Select):
     """
 
-    def __init__(self, embeds: list[Embed], itr: Interaction) -> None:
-        self.embeds: list[Embed] = embeds
-        self.interaction: Interaction = itr
+    def __init__(self, embeds: list[Embed], itr: Interaction, lang: dict) -> None:
+        self.embeds = embeds
+        self.interaction = itr
+        self.lang = lang
 
         super().__init__(placeholder="Choose page")
 
@@ -74,7 +76,7 @@ class PageSelect(Select):
 
         await interaction.response.defer()
         await self.interaction.edit_original_response(
-            embed=rich_embeds(self.embeds[page], interaction.user)
+            embed=rich_embeds(self.embeds[page], interaction.user, self.lang)
         )
 
         return
@@ -85,9 +87,9 @@ class NewTrackEmbed(Embed):
     Make a new track embed
     """
 
-    def __init__(self, track: YouTubeTrack, user_id: int) -> None:
+    def __init__(self, track: YouTubeTrack, lang: dict) -> None:
         super().__init__(
-            title=lang("music.misc.action.queue.added", user_id),
+            title=get_lang_by_address("music.misc.action.queue.added", lang),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
             + f"Duration: {seconds_to_time(track.duration)}",
         )
@@ -101,9 +103,9 @@ class NewPlaylistEmbed(Embed):
     Make a new playlist embed
     """
 
-    def __init__(self, playlist: YouTubePlaylist, url: str, user_id: int) -> None:
+    def __init__(self, playlist: YouTubePlaylist, url: str, lang: dict) -> None:
         super().__init__(
-            title=lang("music.misc.action.queue.added", user_id),
+            title=get_lang_by_address("music.misc.action.queue.added", lang),
             description=f"[**{playlist.name}**]({url})\n"
             + f"Items: {len(playlist.tracks)}",
         )
@@ -117,22 +119,24 @@ class QueueEmbed(Embed):
     Make a queue page embed
     """
 
-    def __init__(self, user_id: int) -> None:
-        super().__init__(title=lang("music.misc.queue", user_id), description="")
+    def __init__(self, lang: dict) -> None:
+        super().__init__(
+            title=get_lang_by_address("music.misc.queue", lang), description=""
+        )
 
 
-def make_queue(queue: Queue, user_id: int) -> list[Embed]:
+def make_queue(queue: Queue, lang: dict) -> list[Embed]:
     """
     Make queue pages embeds
     """
     embeds = []
-    embed = QueueEmbed(user_id)
+    embed = QueueEmbed(lang)
     counter = 1
 
     for track in queue:
         if len(embed) > 1024:
             embeds.append(embed)
-            embed = QueueEmbed(user_id)
+            embed = QueueEmbed(lang)
         if len(embeds) == 5:
             break
         embed.description += f"{counter}. {track.title}\n"
