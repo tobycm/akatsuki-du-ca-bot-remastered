@@ -12,7 +12,7 @@ from discord.ext.commands import GroupCog
 from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import user_cooldown_check
 from modules.embed_process import rich_embeds
-from modules.lang import get_lang, get_lang_by_address
+from modules.lang import get_lang
 from modules.nsfw import get_nsfw
 
 
@@ -47,7 +47,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
-                get_lang_by_address("nsfw.PlsGoToNSFW", lang), ephemeral=True
+                lang("nsfw.PlsGoToNSFW"), ephemeral=True
             )
 
         url, source = await get_nsfw()
@@ -56,7 +56,7 @@ class NSFWCog(GroupCog, name="nsfw"):
             embed=rich_embeds(
                 Embed(
                     title="0.0",
-                    description=get_lang_by_address("fun.PoweredByWaifuim", lang)
+                    description=lang("fun.PoweredByWaifuim")
                     + "\n"  # type: ignore
                     + f"Source: [{source}]({source})",
                 ),

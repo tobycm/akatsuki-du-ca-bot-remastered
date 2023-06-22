@@ -3,18 +3,18 @@ Utilities for the bot.
 """
 
 from logging import Logger
-from typing import Optional, Union
+from typing import Optional
 
-from discord import AllowedMentions, Embed, Interaction, Member, TextChannel, User
+from discord import AllowedMentions, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command
-from discord.ext.commands import Bot, Cog, GroupCog
+from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
 
 from models.bot_models import AkatsukiDuCa
 from models.utils_models import ChangeLang
-from modules.checks_and_utils import return_user_lang, user_cooldown_check
+from modules.checks_and_utils import user_cooldown_check
 from modules.embed_process import rich_embeds
-from modules.lang import get_lang, get_lang_by_address, lang_list
+from modules.lang import get_lang, lang_list
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
@@ -51,12 +51,10 @@ class UtilsCog(Cog):
 
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
-            await interaction.response.send_message(
-                get_lang_by_address("utils.osuUserNotFound", lang)
-            )
+            await interaction.response.send_message(lang("utils.osuUserNotFound"))
             return
 
-        lang_desc = get_lang_by_address("utils.osuStatsDescription", lang)
+        lang_desc = lang("utils.osuStatsDescription")
         i = 0
         desc = []
 
@@ -68,7 +66,7 @@ class UtilsCog(Cog):
 
         embed = rich_embeds(
             Embed(
-                title=get_lang_by_address("utils.osuStatsTitle", lang) % (user,),  # type: ignore
+                title=lang("utils.osuStatsTitle") % (user,),  # type: ignore
                 description="\n".join(desc),
             )
             .set_thumbnail(url=f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
@@ -283,10 +281,8 @@ class MinecraftCog(GroupCog, name="minecraft"):
         uuid, image, thumbnail = await get_minecraft_user_embed(user)
         embed = rich_embeds(
             Embed(
-                title=get_lang_by_address("utils.MinecraftAccount", lang)[0] + user,
-                description=get_lang_by_address("utils.MinecraftAccount", lang)[1]
-                + user
-                + f"\nUUID: {uuid}",
+                title=lang("utils.MinecraftAccount.0") + user,
+                description=lang("utils.MinecraftAccount.1") + user + f"\nUUID: {uuid}",
             )
             .set_image(url=image)
             .set_thumbnail(url=thumbnail),
@@ -306,27 +302,26 @@ class MinecraftCog(GroupCog, name="minecraft"):
         author = interaction.user
 
         lang = await get_lang(author.id)
-        mc_server_lang = get_lang_by_address("utils.MinecraftServer", lang)
 
         data = await get_minecraft_server_info(server_ip)
 
         if data is False:
             return await interaction.response.send_message(
-                get_lang_by_address("utils.MinecraftServer.NotFound", lang)
+                lang("utils.MinecraftServer.NotFound")
             )
 
         motd = "```" + "\n".join(data["motd"]) + "```"  # type: ignore
-        server_info = get_lang_by_address("utils.MinecraftServer.ServerIp", lang) + server_ip  # type: ignore
-        version = get_lang_by_address("utils.MinecraftServer.version", lang) + data["version"]  # type: ignore
-        players = f"{get_lang_by_address('utils.MinecraftServer.players', lang)}{data['players'][0]}/{data['players'][1]}"  # type: ignore
+        server_info = lang("utils.MinecraftServer.ServerIp") + server_ip  # type: ignore
+        version = lang("utils.MinecraftServer.version") + data["version"]  # type: ignore
+        players = f"{lang('utils.MinecraftServer.players')}{data['players'][0]}/{data['players'][1]}"  # type: ignore
 
         embed = rich_embeds(
             Embed(
-                title=f"{server_ip} {get_lang_by_address('utils.MinecraftServer.online', lang)}",
+                title=f"{server_ip} {lang('utils.MinecraftServer.online')}",
                 description="\n".join([motd, server_info, version, players]),
             ),
             author,
-            lang["main"],
+            lang,
         )
 
         return await interaction.response.send_message(embed=embed)

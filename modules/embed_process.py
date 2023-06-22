@@ -3,11 +3,10 @@ Embed related functions
 """
 
 from random import random
+from typing import Callable
 
 from discord import Color, Embed
 from discord.abc import User
-
-from modules.lang import get_lang_by_address
 
 
 def random_color() -> Color:
@@ -18,14 +17,12 @@ def random_color() -> Color:
     return Color(int(0xFFFFFF * (1.0 - (0.5 * random()))))
 
 
-def rich_embeds(
-    embed: Embed, author: User, lang: dict = {"main": {"EmbedFooter": "Requested by: "}}
-) -> Embed:
+def rich_embeds(embed: Embed, author: User, lang: Callable[[str], str]) -> Embed:
     """
     Added color, author and footer to embed
     """
 
-    footer = get_lang_by_address("main.EmbedFooter", lang)
+    footer = lang("main.EmbedFooter")
     embed.color = random_color()
     text = f"{footer} {author.name}#{author.discriminator}"
     embed.set_footer(text=text, icon_url=author.display_avatar)

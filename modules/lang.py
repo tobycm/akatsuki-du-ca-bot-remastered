@@ -4,7 +4,7 @@ Language stuff.
 
 import json
 from os import listdir
-from typing import Union
+from typing import Callable, Union
 
 from modules.database_utils import get_user_lang
 
@@ -28,27 +28,28 @@ def load_lang() -> None:
         lang_packs.update({lang: full_lang})
 
 
-async def get_lang(user_id: int) -> dict:
+async def get_lang(user_id: int) -> Callable[[str], str]:
     """
     Return a language pack based on user's language
     """
 
-    return lang_packs[await get_user_lang(user_id)]
+    user_lang_pack = lang_packs[await get_user_lang(user_id)]
 
+    def get_lang_by_address(address: str) -> str:
+        """
+        Return a language string or a list of language strings
 
-def get_lang_by_address(address: str, lang_pack: dict) -> Union[str, list, dict]:
-    """
-    Return a language string or a list of language strings
+        Address format: "child.child"
+        """
 
-    Address format: "child.child"
-    """
+        result_lang = user_lang_pack
+        for child in address.split("."):
+            try:
+                child = int(child)
+            except:
+                pass
+            result_lang = result_lang[child]
 
-    result_lang = lang_pack
-    for child in address.split("."):
-        result_lang = result_lang[child]
+        return result_lang
 
-    return result_lang
-
-
-def get_lang_pack(lang_option: str) -> dict:
-    return lang_packs[lang_option]
+    return get_lang_by_address

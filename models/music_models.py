@@ -2,7 +2,7 @@
 Models and functions for easy use for music cog
 """
 
-from typing import Literal, Optional, Union
+from typing import Callable, Literal, Optional, Union
 
 from discord import Embed, Interaction, TextChannel, Thread, VoiceChannel
 from discord.ui import Select
@@ -12,7 +12,6 @@ from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
 from modules.checks_and_utils import seconds_to_time
 from modules.embed_process import rich_embeds
-from modules.lang import get_lang_by_address
 
 
 class Player(WavelinkPlayer):
@@ -30,7 +29,9 @@ class MusicSelect(Select):
     Make a music selection Select
     """
 
-    def __init__(self, tracks: list[YouTubeTrack], player: Player, lang: dict) -> None:
+    def __init__(
+        self, tracks: list[YouTubeTrack], player: Player, lang: Callable[[str], str]
+    ) -> None:
         self.lang = lang
         self.tracks = tracks
         self.player = player
@@ -45,9 +46,7 @@ class MusicSelect(Select):
         await interaction.response.send_message(
             embed=rich_embeds(
                 Embed(
-                    title=get_lang_by_address(
-                        "music.misc.action.queue.added", self.lang
-                    ),
+                    title=self.lang("music.misc.action.queue.added"),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
                     + f"Duration: {seconds_to_time(track.duration / 1000)}",
                 ).set_thumbnail(
@@ -66,7 +65,9 @@ class PageSelect(Select):
     class queue_page_select(Select):
     """
 
-    def __init__(self, embeds: list[Embed], itr: Interaction, lang: dict) -> None:
+    def __init__(
+        self, embeds: list[Embed], itr: Interaction, lang: Callable[[str], str]
+    ) -> None:
         self.embeds = embeds
         self.interaction = itr
         self.lang = lang
@@ -89,9 +90,9 @@ class NewTrackEmbed(Embed):
     Make a new track embed
     """
 
-    def __init__(self, track: Playable, lang: dict) -> None:
+    def __init__(self, track: Playable, lang: Callable[[str], str]) -> None:
         super().__init__(
-            title=get_lang_by_address("music.misc.action.queue.added", lang),
+            title=lang("music.misc.action.queue.added"),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
             + f"Duration: {seconds_to_time(track.duration / 1000)}",
         )
@@ -105,9 +106,11 @@ class NewPlaylistEmbed(Embed):
     Make a new playlist embed
     """
 
-    def __init__(self, playlist: YouTubePlaylist, url: str, lang: dict) -> None:
+    def __init__(
+        self, playlist: YouTubePlaylist, url: str, lang: Callable[[str], str]
+    ) -> None:
         super().__init__(
-            title=get_lang_by_address("music.misc.action.queue.added", lang),
+            title=lang("music.misc.action.queue.added"),
             description=f"[**{playlist.name}**]({url})\n"
             + f"Items: {len(playlist.tracks)}",
         )
@@ -121,13 +124,11 @@ class QueueEmbed(Embed):
     Make a queue page embed
     """
 
-    def __init__(self, lang: dict) -> None:
-        super().__init__(
-            title=get_lang_by_address("music.misc.queue", lang), description=""
-        )
+    def __init__(self, lang: Callable[[str], str]) -> None:
+        super().__init__(title=lang("music.misc.queue"), description="")
 
 
-def make_queue(queue: Queue, lang: dict) -> list[Embed]:
+def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[Embed]:
     """
     Make queue pages embeds
     """
