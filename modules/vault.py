@@ -14,7 +14,7 @@ def get_bot_config(value: str) -> str:
         return load(config)["bot"][value]
 
 
-def get_channel_config(value: str) -> str:
+def get_channel_config(value: str) -> int:
     """
     Return a channel ID with the corresponding type.
     """

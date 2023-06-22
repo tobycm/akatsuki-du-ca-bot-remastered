@@ -2,17 +2,26 @@
 Minecraft backend functions for Minecraft cog.
 """
 
-from discord import Embed
+from typing import Literal, Union
+
 from aiohttp import ClientSession
 
+UUID = str
+Image = str
+Thumbnail = str
 
-async def get_minecraft_user_embed(username: str) -> tuple(["uuid", "image", "thumbnail"]):
+
+async def get_minecraft_user_embed(
+    username: str,
+) -> tuple[UUID, Image, Thumbnail]:
     """
     Return a tuple of user's UUID, image and thumbnail.
     """
 
     async with ClientSession() as session:
-        async with session.get("https://playerdb.co/api/player/minecraft/" + username) as response:
+        async with session.get(
+            "https://playerdb.co/api/player/minecraft/" + username
+        ) as response:
             data = await response.json()
 
             uuid = data["data"]["player"]["id"]
@@ -22,7 +31,7 @@ async def get_minecraft_user_embed(username: str) -> tuple(["uuid", "image", "th
             return (uuid, image, thumbnail)
 
 
-async def get_minecraft_server_info(server_ip: str) -> Embed:
+async def get_minecraft_server_info(server_ip: str) -> Union[dict, Literal[False]]:
     """
     Return a Minecraft server's info as an Embed.
     """
@@ -38,5 +47,5 @@ async def get_minecraft_server_info(server_ip: str) -> Embed:
                 "motd": data["motd"]["clean"],
                 "players": [data["players"]["online"], data["players"]["max"]],
                 "version": data["version"],
-                "icon": data["icon"].replace('\\', '')
+                "icon": data["icon"].replace("\\", ""),
             }

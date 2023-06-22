@@ -3,9 +3,11 @@ GIF backend functions.
 """
 
 from random import choice
+
 from aiohttp import ClientSession
 from discord import Embed
 
+from modules.lang import get_lang_by_address
 from modules.vault import get_api_key
 
 
@@ -22,20 +24,22 @@ async def get_gif_url(method: str) -> str("url"):
             return choice(data["results"])["media"][0]["gif"]["url"]
 
 
-async def construct_gif_embed(author: str, target: str, method: str, lang: dict) -> Embed:
+async def construct_gif_embed(
+    author: str, target: str, method: str, lang: dict
+) -> Embed:
     """
     Construct a GIF embed
     """
 
-    title = lang[method]["title"]
+    mid_text = get_lang_by_address(f"gif.{method}.mid_text", lang)
 
     if method == "slap":
-        desc = f"{target} {lang[method]['mid_text']} {author}"
+        description = f"{target} {mid_text} {author}"
     else:
-        desc = f"{author} {lang[method]['mid_text']} {target}"
+        description = f"{author} {mid_text} {target}"
     if method in ["hug", "kick", "poke", "bite", "cuddle"]:
-        desc = desc + lang[method]["mid_text_2"]
+        description += get_lang_by_address(f"gif.{method}.mid_text_2", lang)  # type: ignore
 
-    embed = Embed(title=title, description=desc)
-    embed.set_image(url=await get_gif_url(method))
-    return embed
+    return Embed(
+        title=get_lang_by_address(f"gif.{method}.title", lang), description=description
+    ).set_image(url=await get_gif_url(method))

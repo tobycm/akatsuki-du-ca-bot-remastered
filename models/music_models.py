@@ -4,8 +4,9 @@ Models and functions for easy use for music cog
 
 from typing import Literal, Optional, Union
 
-from discord import Embed, Interaction, TextChannel
+from discord import Embed, Interaction, TextChannel, Thread, VoiceChannel
 from discord.ui import Select
+from wavelink import Playable
 from wavelink import Player as WavelinkPlayer
 from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
@@ -19,7 +20,8 @@ class Player(WavelinkPlayer):
     Custom player class
     """
 
-    text_channel: Optional[TextChannel] = None
+    interaction: Optional[Interaction] = None
+    text_channel: Optional[Union[TextChannel, Thread, VoiceChannel]] = None
     loop_mode: Optional[Union[Literal["song"], Literal["queue"]]] = None
 
 
@@ -39,7 +41,7 @@ class MusicSelect(Select):
         track = self.tracks[int(self.values[0]) - 1]
         await self.player.queue.put_wait(track)
         if not self.player.is_playing():
-            await self.player.play(await self.player.queue.get_wait())
+            await self.player.play(await self.player.queue.get_wait())  # type: ignore
         await interaction.response.send_message(
             embed=rich_embeds(
                 Embed(
@@ -47,7 +49,7 @@ class MusicSelect(Select):
                         "music.misc.action.queue.added", self.lang
                     ),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                    + f"Duration: {seconds_to_time(track.duration)}",
+                    + f"Duration: {seconds_to_time(track.duration / 1000)}",
                 ).set_thumbnail(
                     url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
                 ),
@@ -87,11 +89,11 @@ class NewTrackEmbed(Embed):
     Make a new track embed
     """
 
-    def __init__(self, track: YouTubeTrack, lang: dict) -> None:
+    def __init__(self, track: Playable, lang: dict) -> None:
         super().__init__(
             title=get_lang_by_address("music.misc.action.queue.added", lang),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-            + f"Duration: {seconds_to_time(track.duration)}",
+            + f"Duration: {seconds_to_time(track.duration / 1000)}",
         )
         self.set_thumbnail(
             url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
@@ -139,7 +141,7 @@ def make_queue(queue: Queue, lang: dict) -> list[Embed]:
             embed = QueueEmbed(lang)
         if len(embeds) == 5:
             break
-        embed.description += f"{counter}. {track.title}\n"
+        embed.description += f"{counter}. {track.title}\n"  # type: ignore
         counter += 1
 
     if len(embeds) == 0:

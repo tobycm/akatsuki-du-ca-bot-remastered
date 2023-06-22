@@ -6,9 +6,6 @@ import json
 from os import listdir
 from typing import Union
 
-from discord import Interaction
-from discord.ext.commands import Context
-
 from modules.database_utils import get_user_lang
 
 lang_packs = {}
@@ -31,7 +28,7 @@ def load_lang() -> None:
         lang_packs.update({lang: full_lang})
 
 
-async def get_lang(user_id: int):
+async def get_lang(user_id: int) -> dict:
     """
     Return a language pack based on user's language
     """

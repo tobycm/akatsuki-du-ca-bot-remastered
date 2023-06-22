@@ -3,17 +3,18 @@ Utilities for the bot.
 """
 
 from logging import Logger
-from typing import Optional
+from typing import Optional, Union
 
-from discord import AllowedMentions, Embed, Interaction, Member
+from discord import AllowedMentions, Embed, Interaction, Member, TextChannel, User
 from discord.app_commands import checks, command
 from discord.ext.commands import Bot, Cog, GroupCog
 from discord.ui import View
 
+from models.bot_models import AkatsukiDuCa
 from models.utils_models import ChangeLang
 from modules.checks_and_utils import return_user_lang, user_cooldown_check
 from modules.embed_process import rich_embeds
-from modules.lang import lang_list
+from modules.lang import get_lang, get_lang_by_address, lang_list
 from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
 from modules.osu_api import get_osu_user_info
 from modules.vault import get_channel_config
@@ -24,7 +25,7 @@ class UtilsCog(Cog):
     Utilities commands for user.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
         self.logger: Logger = bot.logger
         super().__init__()
@@ -39,21 +40,23 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="osu")
-    async def osu(self, itr: Interaction, user: str):
+    async def osu(self, interaction: Interaction, user: str):
         """
         Get osu! stats for a user
         """
 
-        author = itr.user
+        author = interaction.user
 
-        lang = await return_user_lang(self.bot, author.id)
+        lang = await get_lang(author.id)
 
         osu_user_data = await get_osu_user_info(user)
         if osu_user_data is None:
-            await itr.response.send_message(lang["utils"]["osuUserNotFound"])
+            await interaction.response.send_message(
+                get_lang_by_address("utils.osuUserNotFound", lang)
+            )
             return
 
-        lang_desc = lang["utils"]["osuStatsDescription"]
+        lang_desc = get_lang_by_address("utils.osuStatsDescription", lang)
         i = 0
         desc = []
 
@@ -65,7 +68,7 @@ class UtilsCog(Cog):
 
         embed = rich_embeds(
             Embed(
-                title=lang["utils"]["osuStatsTitle"] % (user,),
+                title=get_lang_by_address("utils.osuStatsTitle", lang) % (user,),  # type: ignore
                 description="\n".join(desc),
             )
             .set_thumbnail(url=f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
@@ -74,25 +77,28 @@ class UtilsCog(Cog):
                 icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png",
             ),
             author,
-            lang["main"],
+            lang,
         )
 
-        return await itr.response.send_message(embed=embed)
+        return await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 2.5, key=user_cooldown_check)
     @command(name="bugreport")
-    async def bugreport(self, itr: Interaction, bug_description: str):
+    async def bugreport(self, interaction: Interaction, bug_description: str):
         """
         Report a bug. Use wisely
         """
 
-        author = itr.user
+        author = interaction.user
 
         bug_channel = self.bot.get_channel(get_channel_config("bug"))
 
-        await itr.response.send_message(
+        await interaction.response.send_message(
             "Thank you for your bug report. It will be reviewed shortly."
         )
+
+        assert isinstance(bug_channel, TextChannel)
+        assert isinstance(author, Member)
 
         await bug_channel.send(
             f"{author} báo lỗi: {bug_description}",
@@ -104,46 +110,47 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 30, key=user_cooldown_check)
     @command(name="change_language")
-    async def change_language(self, itr: Interaction):
+    async def change_language(self, interaction: Interaction):
         """
         Start an interactive language change session. hehe
         """
 
-        select_menu = ChangeLang(bot=self.bot, author=itr.user)
+        select_menu = ChangeLang(interaction.user)
 
         for option in lang_list:
             select_menu.add_option(label=option, value=option)
 
         view = View(timeout=30).add_item(select_menu)
 
-        await itr.response.send_message(
+        await interaction.response.send_message(
             content="Please select a language", view=view, ephemeral=True
         )
 
         if await view.wait():
-            select_menu: ChangeLang = view.children[0]
-            select_menu.disabled = True
-            return await itr.edit_original_response(view=view)
+            assert isinstance(view.children[0], ChangeLang)
+            view.children[0].disabled = True
+            return await interaction.edit_original_response(view=view)
 
     @checks.cooldown(1, 2, key=user_cooldown_check)
     @command(name="ping")
-    async def ping_bot(self, itr: Interaction):
+    async def ping_bot(self, interaction: Interaction):
         """
         Check and send bot ping/latency
         """
 
-        await itr.response.send_message(
+        await interaction.response.send_message(
             content=f"\U0001f3d3 Pong! `{round(self.bot.latency * 1000)}ms`"
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="server_info")
-    async def server_info(self, itr: Interaction):
+    async def server_info(self, interaction: Interaction):
         """
         Send server info
         """
-        guild = itr.guild
-        lang = await return_user_lang(self.bot, itr.user.id)
+
+        assert interaction.guild
+        guild = interaction.guild
         embed = Embed(title="Server Info", description="")
 
         embed.add_field(name="Server Name", value=guild.name)
@@ -156,23 +163,25 @@ class UtilsCog(Cog):
         embed.add_field(
             name="Server Verification Level", value=guild.verification_level
         )
-        embed.set_thumbnail(url=guild.icon.url)
+        embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
 
-        await itr.response.send_message(
-            embed=rich_embeds(embed=embed, author=itr.user, lang=lang["main"])
+        await interaction.response.send_message(
+            embed=rich_embeds(
+                embed, interaction.user, await get_lang(interaction.user.id)
+            )
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="user_info")
-    async def user_info(self, itr: Interaction, user: Optional[Member] = None):
+    async def user_info(self, interaction: Interaction, user: Optional[Member]): # type: ignore
         """
         Send user info
         """
 
-        lang = await return_user_lang(self.bot, itr.user.id)
-
-        if user is None:
-            user: Member = itr.user
+        if not user:
+            assert isinstance(interaction.user, Member)
+            user: Member = interaction.user
+        assert user.joined_at
 
         embed = Embed(title="User Info", description="")
 
@@ -194,51 +203,52 @@ class UtilsCog(Cog):
             else "No Roles",
             inline=False,
         )
-        embed.set_thumbnail(url=user.avatar.url)
+        embed.set_thumbnail(url=user.avatar.url if user.avatar else None)
 
-        await itr.response.send_message(
-            embed=rich_embeds(embed=embed, author=user, lang=lang["main"]),
+        await interaction.response.send_message(
+            embed=rich_embeds(embed, user, await get_lang(interaction.user.id)),
             allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="avatar")
-    async def avatar(self, itr: Interaction, user: Optional[Member] = None):
+    async def avatar(self, interaction: Interaction, user: Optional[Member] = None): # type: ignore
         """
         Get a user avatar
         """
 
-        lang = await return_user_lang(self.bot, itr.user.id)
-
-        if user is None:
-            user: Member = itr.user
+        if not user:
+            assert isinstance(interaction.user, Member)
+            user: Member = interaction.user
 
         embed = rich_embeds(
-            embed=Embed(title="Avatar"), author=itr.user, lang=lang["main"]
+            Embed(title="Avatar"), interaction.user, await get_lang(interaction.user.id)
         )
 
-        embed.set_image(url=user.avatar.url)
-        await itr.response.send_message(embed=embed)
+        embed.set_image(url=user.avatar.url if user.avatar else None)
+        await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="server_icon")
-    async def server_icon(self, itr: Interaction):
+    async def server_icon(self, interaction: Interaction):
         """
         Get a user avatar
         """
 
-        lang = await return_user_lang(self.bot, itr.user.id)
+        assert interaction.guild
 
         embed = rich_embeds(
-            embed=Embed(
+            Embed(
                 title="Server Icon",
             ),
-            author=itr.user,
-            lang=lang["main"],
+            interaction.user,
+            await get_lang(interaction.user.id),
         )
 
-        embed.set_image(url=itr.guild.icon.url)
-        await itr.response.send_message(embed=embed)
+        embed.set_image(
+            url=interaction.guild.icon.url if interaction.guild.icon else None
+        )
+        await interaction.response.send_message(embed=embed)
 
 
 class MinecraftCog(GroupCog, name="minecraft"):
@@ -246,7 +256,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
     Minecraft related commands.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
         self.logger: Logger = bot.logger
         super().__init__()
@@ -261,65 +271,65 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="java_user")
-    async def java_user(self, itr: Interaction, user: str):
+    async def java_user(self, interaction: Interaction, user: str):
         """
         Find info (mostly skin) about a Minecraft Java player
         """
 
-        author = itr.user
+        author = interaction.user
 
-        lang = await return_user_lang(self.bot, author.id)
+        lang = await get_lang(author.id)
 
         uuid, image, thumbnail = await get_minecraft_user_embed(user)
         embed = rich_embeds(
             Embed(
-                title=lang["utils"]["MinecraftAccount"][0] + user,
-                description=f"{lang['utils']['MinecraftAccount'][1]}{user}\nUUID: {uuid}",
+                title=get_lang_by_address("utils.MinecraftAccount", lang)[0] + user,
+                description=get_lang_by_address("utils.MinecraftAccount", lang)[1]
+                + user
+                + f"\nUUID: {uuid}",
             )
             .set_image(url=image)
             .set_thumbnail(url=thumbnail),
             author,
-            lang["main"],
+            lang,
         )
 
-        return await itr.response.send_message(embed=embed)
+        return await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="java_server")
-    async def java_server(self, itr: Interaction, server_ip: str):
+    async def java_server(self, interaction: Interaction, server_ip: str):
         """
         Find info about a Minecraft Java server
         """
 
-        author = itr.user
+        author = interaction.user
 
-        lang = await return_user_lang(self.bot, author.id)
-        mc_server_lang = lang["utils"]["MinecraftServer"]
+        lang = await get_lang(author.id)
+        mc_server_lang = get_lang_by_address("utils.MinecraftServer", lang)
 
         data = await get_minecraft_server_info(server_ip)
 
         if data is False:
-            return await itr.response.send_message(
-                lang["utils"]["MinecraftServer"]["NotFound"]
+            return await interaction.response.send_message(
+                get_lang_by_address("utils.MinecraftServer.NotFound", lang)
             )
 
-        motd = "```" + "\n".join([i for i in data["motd"]]) + "```"
-        server_info = mc_server_lang["ServerIp"] + server_ip
-        version = mc_server_lang["version"] + data["version"]
-        players = (
-            mc_server_lang["players"] + data["players"][0] + "/" + data["players"][1]
-        )
+        motd = f"```{'\n'.join(data['motd'])}```" # type: ignore
+        server_info = get_lang_by_address("utils.MinecraftServer.ServerIp", lang) + server_ip  # type: ignore
+        version = get_lang_by_address("utils.MinecraftServer.version", lang) + data["version"]  # type: ignore
+        players = f"{get_lang_by_address('utils.MinecraftServer.players', lang)}{data['players'][0]}/{data['players'][1]}"  # type: ignore
 
         embed = rich_embeds(
             Embed(
-                title=f"{server_ip} {mc_server_lang['online' if data['online'] else 'offline']}",
+                title=f"{server_ip} {get_lang_by_address('utils.MinecraftServer.online', lang)}",
                 description="\n".join([motd, server_info, version, players]),
             ),
             author,
             lang["main"],
         )
 
-        return await itr.response.send_message(embed=embed)
+        return await interaction.response.send_message(embed=embed)
 
 
 # async def setup(bot):

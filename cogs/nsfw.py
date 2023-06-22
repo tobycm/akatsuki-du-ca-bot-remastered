@@ -3,11 +3,13 @@ Not Safe for Work commands. 0_0
 """
 
 from logging import Logger
+from typing import Union
 
-from discord import Embed, Interaction
+from discord import Embed, Interaction, TextChannel, Thread
 from discord.app_commands import checks, command
-from discord.ext.commands import Bot, GroupCog
+from discord.ext.commands import GroupCog
 
+from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import user_cooldown_check
 from modules.embed_process import rich_embeds
 from modules.lang import get_lang, get_lang_by_address
@@ -19,7 +21,7 @@ class NSFWCog(GroupCog, name="nsfw"):
     NSFW related commands.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
         self.logger: Logger = bot.logger
         super().__init__()
@@ -41,6 +43,8 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         lang = await get_lang(interaction.user.id)
 
+        assert isinstance(interaction.channel, Union[TextChannel, Thread])
+
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
                 get_lang_by_address("nsfw.PlsGoToNSFW", lang), ephemeral=True
@@ -53,7 +57,7 @@ class NSFWCog(GroupCog, name="nsfw"):
                 Embed(
                     title="0.0",
                     description=get_lang_by_address("fun.PoweredByWaifuim", lang)
-                    + "\n"
+                    + "\n"  # type: ignore
                     + f"Source: [{source}]({source})",
                 ),
                 interaction.user,

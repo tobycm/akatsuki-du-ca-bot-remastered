@@ -18,7 +18,9 @@ def random_color() -> Color:
     return Color(int(0xFFFFFF * (1.0 - (0.5 * random()))))
 
 
-def rich_embeds(embed: Embed, author: User, lang: dict) -> Embed:
+def rich_embeds(
+    embed: Embed, author: User, lang: dict = {"main": {"EmbedFooter": "Requested by: "}}
+) -> Embed:
     """
     Added color, author and footer to embed
     """
