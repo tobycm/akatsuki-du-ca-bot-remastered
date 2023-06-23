@@ -319,7 +319,9 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        track = (await YouTubeTrack.search(query))[0]
+        track = await YouTubeTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         await player.queue.put_wait(track)
 
@@ -351,7 +353,9 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        playlist = (await YouTubePlaylist.search(query))[0]
+        playlist = await YouTubePlaylist.search(query)
+        if isinstance(playlist, list):
+            playlist = playlist[0]
 
         for track in playlist.tracks:
             await player.queue.put_wait(track)
@@ -387,7 +391,9 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        track = (await YouTubeTrack.search(query))[0]
+        track = await YouTubeTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         player.queue.put_at_front(track)
 
@@ -418,7 +424,9 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        track = (await SoundCloudTrack.search(query))[0]
+        track = await SoundCloudTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         await player.queue.put_wait(track)
 
@@ -449,7 +457,9 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        tracks = (await YouTubeTrack.search(query))[:5]
+        tracks = await YouTubeTrack.search(query)
+        if isinstance(tracks, list):
+            tracks = tracks[:5]
 
         embed = Embed(
             title=lang("music.misc.result"),
