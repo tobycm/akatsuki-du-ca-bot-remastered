@@ -2,7 +2,6 @@
 Fun cog for the bot.
 """
 
-from logging import Logger
 from random import choice, randint
 from string import ascii_letters
 from time import time
@@ -210,7 +209,7 @@ class FunCog(Cog):
             title=lang("fun.NitroFree.Title"),
             description=lang("fun.NitroFree.Description")
             + "\n"
-            + f"[https://discord.gift/{code}]"
+            + f"[discord.gift/{code}]"
             + f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
             color=0x2F3136,
         )
