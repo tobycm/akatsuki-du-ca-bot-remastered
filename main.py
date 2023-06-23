@@ -10,7 +10,6 @@ from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
 from api import Routes
-from cogs import *
 from models.bot_models import AkatsukiDuCa
 from modules import database, lang, osu, vault
 from modules.checks_and_utils import check_owners, get_prefix_for_bot
@@ -22,20 +21,6 @@ bot = AkatsukiDuCa(
     help_command=None,
 )
 
-# comment the cog line to disable it
-COGS_LIST = (
-    FunCog,
-    GIFCog,
-    RadioMusic,
-    MusicCog,
-    NSFWCog,
-    ToysCog,
-    UtilsCog,
-    MinecraftCog,
-    PrefixCog,
-    BotAdminCog,
-    LegacyCommands,
-)
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
@@ -115,12 +100,8 @@ async def setup_hook():
     Run on startup (yes you can touch this).
     """
 
-    # add ipc routes
-    await bot.add_cog(Routes(bot))
-
-    for cog in COGS_LIST:
-        await bot.add_cog(cog(bot))
-
+    await bot.load_extension("cogs")
+    await bot.load_extension("api")
     await bot.load_extension("jishaku")
     bot.logger.info("Loaded jishaku")
 
@@ -135,4 +116,4 @@ async def cleanup():
     await database.cleanup()
 
 
-asyncio.run(cleanup)
+asyncio.run(cleanup())
