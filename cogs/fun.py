@@ -30,7 +30,7 @@ class GIFCog(GroupCog, name="gif"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -49,12 +49,14 @@ class GIFCog(GroupCog, name="gif"):
 
         lang = await get_lang(interaction.user.id)
 
-        embed = await construct_gif_embed(
-            str(interaction.user), str(target), method, lang
-        )
-
         assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
-        await interaction.channel.send(embed=rich_embeds(embed, interaction.user, lang))
+        await interaction.channel.send(
+            embed=rich_embeds(
+                await construct_gif_embed(interaction.user, target, method, lang),
+                interaction.user,
+                lang,
+            )
+        )
         return await interaction.response.send_message("Sent!", ephemeral=True)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -137,7 +139,7 @@ class FunCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     @checks.cooldown(1, 5, key=user_cooldown_check)

@@ -7,8 +7,9 @@ from logging import Logger
 from discord import Interaction
 from discord.app_commands import MissingPermissions, checks, command
 from discord.ext import commands
-from discord.ext.commands import Bot, Cog, Context, GroupCog
+from discord.ext.commands import Cog, Context, GroupCog
 
+from models.bot_models import AkatsukiDuCa
 from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database_utils import delete_prefix, set_prefix
 
@@ -18,9 +19,9 @@ class PrefixCog(GroupCog, name="prefix"):
     Prefix related commands.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -34,26 +35,26 @@ class PrefixCog(GroupCog, name="prefix"):
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
     @command(name="set")
-    async def setprefix(self, itr: Interaction, prefix: str):
+    async def setprefix(self, interaction: Interaction, prefix: str):
         """
         Set the bot's prefix
         """
 
-        author = itr.user
-        await set_prefix(author.guild.id, prefix)
-        return await itr.response.send_message(f"Prefix set to `{prefix}`")
+        assert interaction.guild
+        await set_prefix(interaction.guild.id, prefix)
+        return await interaction.response.send_message(f"Prefix set to `{prefix}`")
 
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
     @command(name="reset")
-    async def resetprefix(self, itr: Interaction):
+    async def resetprefix(self, interaction: Interaction):
         """
         Reset the bot's prefix
         """
 
-        author = itr.user
-        await delete_prefix(author.guild.id)
-        return await itr.response.send_message("Prefix reseted!")
+        assert interaction.guild
+        await delete_prefix(interaction.guild.id)
+        return await interaction.response.send_message("Prefix reseted!")
 
 
 class BotAdminCog(Cog):
@@ -61,9 +62,9 @@ class BotAdminCog(Cog):
     Commands only bot owners can use.
     """
 
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -77,7 +78,7 @@ class BotAdminCog(Cog):
     @commands.command(name="resetguildprefix")
     async def resetguildprefix(self, ctx: Context, guild_id: int):
         """
-        Reset a guild prefix remotely
+        Reset a guild prefix
         """
 
         if not await check_owners(ctx):

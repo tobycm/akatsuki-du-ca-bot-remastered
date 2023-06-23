@@ -13,10 +13,10 @@ global redis
 def load_redis(
     host: str = "localhost",
     port: int = 6379,
-    username: str = None,
-    password: str = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
     database: int = 0,
-) -> Redis:
+):
     """
     Create and return a Redis instance
     """

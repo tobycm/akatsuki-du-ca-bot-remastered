@@ -23,7 +23,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:

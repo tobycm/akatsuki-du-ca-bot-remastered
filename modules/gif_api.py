@@ -3,10 +3,10 @@ GIF backend functions.
 """
 
 from random import choice
-from typing import Callable
+from typing import Callable, Union
 
 from aiohttp import ClientSession
-from discord import Embed
+from discord import Embed, Member, User
 
 from modules.vault import get_api_key
 
@@ -27,7 +27,10 @@ async def get_gif_url(method: str) -> Url:
 
 
 async def construct_gif_embed(
-    author: str, target: str, method: str, lang: Callable[[str], str]
+    author: Union[User, Member],
+    target: Union[User, Member],
+    method: str,
+    lang: Callable[[str], str],
 ) -> Embed:
     """
     Construct a GIF embed

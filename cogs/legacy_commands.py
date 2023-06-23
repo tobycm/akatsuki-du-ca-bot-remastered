@@ -2,12 +2,10 @@
 These commands are for Toby for trolling only xd
 """
 
-from logging import Logger
 from typing import Optional
 
 from discord import utils
 from discord.ext.commands import (
-    Bot,
     Cog,
     Context,
     MissingRequiredArgument,
@@ -26,7 +24,7 @@ class LegacyCommands(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:

@@ -2,7 +2,7 @@
 This is the music cog.
 """
 
-import logging
+from logging import Logger
 from typing import Callable, Literal, Optional, Union
 
 from discord import Color, Embed, Interaction, Member, TextChannel, Thread, VoiceChannel
@@ -41,7 +41,7 @@ class RadioMusic(GroupCog, name="radio"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: logging.Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -76,12 +76,9 @@ class RadioMusic(GroupCog, name="radio"):
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
-    bot: AkatsukiDuCa
-    logger: logging.Logger
-
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: logging.Logger = bot.logger
+        self.logger = bot.logger
         bot.loop.create_task(self.connect_nodes())
 
     async def cog_load(self) -> None:
