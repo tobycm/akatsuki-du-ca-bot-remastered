@@ -1,6 +1,7 @@
-aioredis
 redis
 aiohttp
+waifuim.py
+aiosu
 jishaku
 pynacl
 wavelink

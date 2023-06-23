@@ -2,18 +2,14 @@
 Not Safe for Work commands. 0_0
 """
 
-from logging import Logger
-from typing import Union
-
 from discord import Embed, Interaction, TextChannel, Thread
 from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import user_cooldown_check
-from modules.embed_process import rich_embeds
+from modules.checks_and_utils import rich_embed, user_cooldown_check
 from modules.lang import get_lang
-from modules.nsfw import get_nsfw
+from modules.waifu import random_image
 
 
 class NSFWCog(GroupCog, name="nsfw"):
@@ -43,24 +39,24 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         lang = await get_lang(interaction.user.id)
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread])
+        assert isinstance(interaction.channel, TextChannel | Thread)
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
                 lang("nsfw.PlsGoToNSFW"), ephemeral=True
             )
 
-        url, source = await get_nsfw()
+        image = await random_image(nsfw=True)
 
         await interaction.response.send_message(
-            embed=rich_embeds(
+            embed=rich_embed(
                 Embed(
                     title="0.0",
                     description=lang("fun.PoweredByWaifuim")
-                    + "\n"  # type: ignore
-                    + f"Source: [{source}]({source})",
+                    + "\n"
+                    + f"[Source]({image})",
                 ),
                 interaction.user,
                 lang,
-            ).set_image(url=url)
+            ).set_image(url=str(image))
         )

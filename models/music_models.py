@@ -2,7 +2,7 @@
 Models and functions for easy use for music cog
 """
 
-from typing import Callable, Literal, Optional, Union
+from typing import Callable, Literal
 
 from discord import Embed, Interaction, TextChannel, Thread, VoiceChannel
 from discord.ui import Select
@@ -10,8 +10,7 @@ from wavelink import Playable
 from wavelink import Player as WavelinkPlayer
 from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
-from modules.checks_and_utils import seconds_to_time
-from modules.embed_process import rich_embeds
+from modules.checks_and_utils import rich_embed, seconds_to_time
 
 
 class Player(WavelinkPlayer):
@@ -19,9 +18,9 @@ class Player(WavelinkPlayer):
     Custom player class
     """
 
-    interaction: Optional[Interaction] = None
-    text_channel: Optional[Union[TextChannel, Thread, VoiceChannel]] = None
-    loop_mode: Optional[Union[Literal["song"], Literal["queue"]]] = None
+    interaction: Interaction | None = None
+    text_channel: TextChannel | Thread | VoiceChannel | None = None
+    loop_mode: Literal["song", "queue"] | None = None
 
 
 class MusicSelect(Select):
@@ -44,7 +43,7 @@ class MusicSelect(Select):
         if not self.player.is_playing():
             await self.player.play(await self.player.queue.get_wait())  # type: ignore
         await interaction.response.send_message(
-            embed=rich_embeds(
+            embed=rich_embed(
                 Embed(
                     title=self.lang("music.misc.action.queue.added"),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
@@ -79,7 +78,7 @@ class PageSelect(Select):
 
         await interaction.response.defer()
         await self.interaction.edit_original_response(
-            embed=rich_embeds(self.embeds[page], interaction.user, self.lang)
+            embed=rich_embed(self.embeds[page], interaction.user, self.lang)
         )
 
         return
@@ -106,12 +105,10 @@ class NewPlaylistEmbed(Embed):
     Make a new playlist embed
     """
 
-    def __init__(
-        self, playlist: YouTubePlaylist, url: str, lang: Callable[[str], str]
-    ) -> None:
+    def __init__(self, playlist: YouTubePlaylist, lang: Callable[[str], str]) -> None:
         super().__init__(
             title=lang("music.misc.action.queue.added"),
-            description=f"[**{playlist.name}**]({url})\n"
+            description=f"[**{playlist.name}**]({playlist.uri})\n"
             + f"Items: {len(playlist.tracks)}",
         )
         self.set_thumbnail(

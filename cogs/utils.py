@@ -2,9 +2,6 @@
 Utilities for the bot.
 """
 
-from logging import Logger
-from typing import Optional
-
 from discord import AllowedMentions, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
@@ -12,12 +9,10 @@ from discord.ui import View
 
 from models.bot_models import AkatsukiDuCa
 from models.utils_models import ChangeLang
-from modules.checks_and_utils import user_cooldown_check
-from modules.embed_process import rich_embeds
+from modules.checks_and_utils import rich_embed, user_cooldown_check
 from modules.lang import get_lang, lang_list
-from modules.minecraft_utils import get_minecraft_server_info, get_minecraft_user_embed
-from modules.osu_api import get_osu_user_info
-from modules.vault import get_channel_config
+from modules.minecraft import get_minecraft_server_info, get_minecraft_user_embed
+from modules.osu import get_user
 
 
 class UtilsCog(Cog):
@@ -49,27 +44,24 @@ class UtilsCog(Cog):
 
         lang = await get_lang(author.id)
 
-        osu_user_data = await get_osu_user_info(user)
-        if osu_user_data is None:
-            await interaction.response.send_message(lang("utils.osuUserNotFound"))
-            return
-
-        lang_desc = lang("utils.osuStatsDescription")
-        i = 0
-        desc = []
-
-        for key, value in osu_user_data.items():
-            if key == "country":
-                value = f":flag_{value}:"
-            desc.append(lang_desc[i] + str(value))
-            i += 1
-
-        embed = rich_embeds(
-            Embed(
-                title=lang("utils.osuStatsTitle") % (user,),  # type: ignore
-                description="\n".join(desc),
+        player = await get_user(user)
+        if not player:
+            return await interaction.response.send_message(
+                lang("utils.osuUserNotFound")
             )
-            .set_thumbnail(url=f"http://s.ppy.sh/a/{osu_user_data['user_id']}")
+
+        description_lang = lang("utils.osuStatsDescription")
+        line = 0
+        description = f"""
+            
+        """
+
+        embed = rich_embed(
+            Embed(
+                title=lang("utils.osuStatsTitle") % (player.username,),  # type: ignore
+                description=f"Good at everything {player}pp",
+            )
+            .set_thumbnail(url=f"http://s.ppy.sh/a/{player.username}")
             .set_author(
                 name="osu! user data",
                 icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/1024px-Osu%21_Logo_2016.svg.png",
@@ -82,29 +74,28 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 2.5, key=user_cooldown_check)
     @command(name="bugreport")
-    async def bugreport(self, interaction: Interaction, bug_description: str):
+    async def bugreport(
+        self, interaction: Interaction[AkatsukiDuCa], bug_description: str
+    ):
         """
         Report a bug. Use wisely
         """
 
-        author = interaction.user
-
-        bug_channel = self.bot.get_channel(get_channel_config("bug"))
+        bug_channel = interaction.client.get_channel(
+            interaction.client.config.channels.bug
+        )
 
         await interaction.response.send_message(
             "Thank you for your bug report. It will be reviewed shortly."
         )
 
         assert isinstance(bug_channel, TextChannel)
-        assert isinstance(author, Member)
 
         await bug_channel.send(
-            f"{author} báo lỗi: {bug_description}",
+            f"{interaction.user} báo lỗi: {bug_description}",
             allowed_mentions=AllowedMentions(users=False, roles=False, everyone=False),
         )
-        return await bug_channel.send(
-            f"User ID: {author.id} | Guild ID: {author.guild.id}"
-        )
+        return await bug_channel.send(f"User ID: {interaction.user.id}")
 
     @checks.cooldown(1, 30, key=user_cooldown_check)
     @command(name="change_language")
@@ -137,7 +128,7 @@ class UtilsCog(Cog):
         """
 
         await interaction.response.send_message(
-            content=f"\U0001f3d3 Pong! `{round(self.bot.latency * 1000)}ms`"
+            content=f"\U0001f3d3 Pong! `{round(interaction.client.latency * 1000)}ms`"
         )
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
@@ -164,7 +155,7 @@ class UtilsCog(Cog):
         embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
 
         await interaction.response.send_message(
-            embed=rich_embeds(
+            embed=rich_embed(
                 embed, interaction.user, await get_lang(interaction.user.id)
             )
         )
@@ -204,7 +195,7 @@ class UtilsCog(Cog):
         embed.set_thumbnail(url=user.avatar.url if user.avatar else None)
 
         await interaction.response.send_message(
-            embed=rich_embeds(embed, user, await get_lang(interaction.user.id)),
+            embed=rich_embed(embed, user, await get_lang(interaction.user.id)),
             allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
         )
 
@@ -219,7 +210,7 @@ class UtilsCog(Cog):
             assert isinstance(interaction.user, Member)
             user: Member = interaction.user
 
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(title="Avatar"), interaction.user, await get_lang(interaction.user.id)
         )
 
@@ -235,7 +226,7 @@ class UtilsCog(Cog):
 
         assert interaction.guild
 
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title="Server Icon",
             ),
@@ -255,8 +246,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
     """
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
-        self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -279,7 +269,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
         lang = await get_lang(author.id)
 
         uuid, image, thumbnail = await get_minecraft_user_embed(user)
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title=lang("utils.MinecraftAccount.0") + user,
                 description=lang("utils.MinecraftAccount.1") + user + f"\nUUID: {uuid}",
@@ -305,17 +295,17 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         data = await get_minecraft_server_info(server_ip)
 
-        if data is False:
+        if not data:
             return await interaction.response.send_message(
                 lang("utils.MinecraftServer.NotFound")
             )
 
-        motd = "```" + "\n".join(data["motd"]) + "```"  # type: ignore
-        server_info = lang("utils.MinecraftServer.ServerIp") + server_ip  # type: ignore
-        version = lang("utils.MinecraftServer.version") + data["version"]  # type: ignore
-        players = f"{lang('utils.MinecraftServer.players')}{data['players'][0]}/{data['players'][1]}"  # type: ignore
+        motd = "```" + "\n".join(data.motd) + "```"
+        server_info = lang("utils.MinecraftServer.ServerIp") + server_ip
+        version = lang("utils.MinecraftServer.version") + data.version
+        players = f"{lang('utils.MinecraftServer.players')}{data.players.online}/{data.players.max}"
 
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title=f"{server_ip} {lang('utils.MinecraftServer.online')}",
                 description="\n".join([motd, server_info, version, players]),

@@ -3,30 +3,32 @@ Database functions module.
 """
 
 import json
-from typing import Optional
+from typing import TypedDict
 
-from aioredis import ConnectionPool, Redis
+from redis.asyncio import ConnectionPool, Redis
+
+from modules.vault import RedisConfig
 
 global redis
 
+redis: Redis
 
-def load_redis(
-    host: str = "localhost",
-    port: int = 6379,
-    username: Optional[str] = None,
-    password: Optional[str] = None,
-    database: int = 0,
-):
+
+def load(config: RedisConfig):
     """
     Create and return a Redis instance
     """
 
     pool = ConnectionPool.from_url(
-        f"redis://{host}:{port}/{database}",
+        f"redis://{config.host}:{config.port}/{config.database}",
         max_connections=2,
     )
     global redis
-    redis = Redis(connection_pool=pool, username=username, password=password)
+    redis = Redis(connection_pool=pool, username=config.user, password=config.password)
+
+
+async def cleanup():
+    await redis.close()
 
 
 # --------------------------------------------- prefix ---------------------------------------------
@@ -37,7 +39,7 @@ async def set_prefix(server_id: int, prefix: str) -> None:
     Set a user prefix in database
     """
 
-    await redis.hset("prefix", server_id, prefix)
+    await redis.hset("prefix", str(server_id), prefix)
 
 
 async def delete_prefix(server_id: int) -> None:
@@ -45,15 +47,15 @@ async def delete_prefix(server_id: int) -> None:
     Delete a user prefix in database
     """
 
-    await redis.hdel("prefix", server_id)
+    await redis.hdel("prefix", str(server_id))
 
 
-async def get_prefix(server_id: int) -> Optional[str]:
+async def get_prefix(server_id: int) -> str | None:
     """
     Get a user prefix from database
     """
 
-    result = await redis.hget("prefix", server_id)
+    result = await redis.hget("prefix", str(server_id))
     if result is not None:
         return result.decode()
 
@@ -61,12 +63,19 @@ async def get_prefix(server_id: int) -> Optional[str]:
 # ------------------------------------------- op ----------------------------------------------
 
 
+class OP(TypedDict):
+    reason: str
+    adder_id: int
+
+
 async def set_op(new_op_id: int, reason: str, adder_id: int) -> None:
     """
     Save the new OP Discord ID in database
     """
 
-    await redis.hset("op", new_op_id, str({"reason": reason, "adder_id": adder_id}))
+    await redis.hset(
+        "op", str(new_op_id), str({"reason": reason, "adder_id": adder_id})
+    )
 
 
 async def del_op(del_op_id: int) -> None:
@@ -74,15 +83,15 @@ async def del_op(del_op_id: int) -> None:
     Delete OP Discord ID from database
     """
 
-    await redis.hdel("op", del_op_id)
+    await redis.hdel("op", str(del_op_id))
 
 
-async def get_op(op_id: int) -> Optional[dict]:
+async def get_op(op_id: int) -> OP | None:
     """
     Get all OP data from database
     """
 
-    result = await redis.hget("op", op_id)
+    result = await redis.hget("op", str(op_id))
     if result is not None:
         return json.loads(result.decode())
 
@@ -90,18 +99,18 @@ async def get_op(op_id: int) -> Optional[dict]:
 # ------------------------------------------ user lang --------------------------------------------
 
 
-async def set_user_lang(user_id: int, lang: str) -> None:
+async def set_user_lang(user_id: int, lang_option: str) -> None:
     """
     Set a user language in database
     """
 
-    await redis.hset("user_lang", user_id, lang)
+    await redis.hset("user_lang", str(user_id), lang_option)
 
 
-async def get_user_lang(user_id: int) -> Optional[str]:
+async def get_user_lang(user_id: int) -> str | None:
     """
     Get user language from database
     """
 
-    result = await redis.hget("user_lang", user_id)
+    result = await redis.hget("user_lang", str(user_id))
     return result.decode() if result is not None else "en-us"

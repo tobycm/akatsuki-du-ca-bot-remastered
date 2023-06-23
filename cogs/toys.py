@@ -33,13 +33,11 @@ class ToysCog(Cog):
 
     @checks.cooldown(1, 0.25, key=user_cooldown_check)
     @command(name="random")
-    async def random(
-        self, interaction: Interaction, min_num: int = 0, max_num: int = 10
-    ):
+    async def random(self, interaction: Interaction, min: int = 0, max: int = 10):
         """
         Feeling lucky?
         """
-        await interaction.response.send_message(randint(min_num, max_num))
+        await interaction.response.send_message(randint(min, max))
 
     @checks.cooldown(1, 0.25, key=user_cooldown_check)
     @command(name="coinflip")

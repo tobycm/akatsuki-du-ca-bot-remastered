@@ -2,8 +2,6 @@
 These commands are for Toby for trolling only xd
 """
 
-from typing import Optional
-
 from discord import utils
 from discord.ext.commands import (
     Cog,
@@ -53,23 +51,23 @@ class LegacyCommands(Cog):
     async def sayemoji(
         self,
         ctx: Context,
-        emoji_name: Optional[str] = None,
-        guild_id: Optional[int] = None,
+        emoji_name: str | None = None,
+        guild_id: int | None = None,
     ):
         """
         Find the emoji and send it
         """
 
-        if emoji_name is None:
+        if not emoji_name:
             raise MissingRequiredArgument  # type: ignore
 
         assert ctx.guild
 
-        if guild_id is None:
+        if not guild_id:
             guild_emojis = ctx.guild.emojis
         else:
             guild = self.bot.get_guild(guild_id)
-            if guild is None:
+            if not guild:
                 await ctx.send("Guild not found")
             guild_emojis = self.bot.get_guild(guild_id).emojis  # type: ignore
 

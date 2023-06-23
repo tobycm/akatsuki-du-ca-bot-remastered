@@ -2,49 +2,50 @@
 Vault for the bot secrets and variables.
 """
 
-from json import load
+import json
+from dataclasses import dataclass
 
 
-def get_bot_config(value: str) -> str:
-    """
-    Return a bot config value.
-    """
-
-    with open("config/settings.json", "r", encoding="utf8") as config:
-        return load(config)["bot"][value]
+@dataclass
+class ChannelsConfig:
+    error: int
+    bug: int
 
 
-def get_channel_config(value: str) -> int:
-    """
-    Return a channel ID with the corresponding type.
-    """
-
-    with open("config/settings.json", "r", encoding="utf8") as config:
-        return load(config)["bot"]["channels"][value]
+@dataclass
+class ApiKeys:
+    osu: str
+    tenor: str
 
 
-def get_api_key(service: str) -> str:
-    """
-    Get an API key from the config.
-    """
-
-    with open("config/settings.json", "r", encoding="utf8") as config:
-        return load(config)["api_keys"][service]
+@dataclass
+class BotLavalinkConfig:
+    uri: str
+    password: str
 
 
-def get_lavalink_nodes() -> list[dict]:
-    """
-    Return a list of lavalink nodes.
-    """
+@dataclass
+class RedisConfig:
+    host: str
+    port: int
+    user: str
+    password: str
+    database: str
 
-    with open("config/settings.json", "r", encoding="utf8") as config:
-        return load(config)["lavalink_nodes"]
+
+@dataclass
+class BotConfig:
+    token: str
+    secret: str
+    prefix: str
+    home_guild_id: int
+    home_guild_invite: str
+    channels: ChannelsConfig
+    api_keys: ApiKeys
+    lavalink_nodes: list[BotLavalinkConfig]
+    redis: RedisConfig
 
 
-def get_redis_config(value: str) -> str:
-    """
-    Return a Redis database config value.
-    """
-
-    with open("config/redis.json", "r", encoding="utf8") as config:
-        return load(config)[value]
+def load() -> BotConfig:
+    with open("config.json", "r", encoding="utf8") as config:
+        return BotConfig(**json.load(config)["bot"])

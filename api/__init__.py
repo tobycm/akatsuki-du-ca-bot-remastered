@@ -1,3 +1,1 @@
-"""
-Just wanted Python to make awareness of this submodule
-"""
+from api.ipc import Routes

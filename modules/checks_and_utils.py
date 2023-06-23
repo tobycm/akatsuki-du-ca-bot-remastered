@@ -3,21 +3,24 @@ Just some checks and utils function
 """
 
 from datetime import timedelta
-from typing import Union
+from random import random
+from typing import Callable
 
-from discord import Interaction, Message
+from discord import Color, Embed, Interaction, Member, Message, User
 from discord.ext.commands import Context
 
 from models.bot_models import AkatsukiDuCa
-from modules.database_utils import get_op, get_prefix, get_user_lang
-from modules.vault import get_bot_config
+from modules.database import get_op, get_prefix
 
-DEFAULT_PREFIX = get_bot_config("prefix")
+global DEFAULT_PREFIX
 
 
-async def check_owners(
-    ctx: Union[Context[AkatsukiDuCa], Interaction[AkatsukiDuCa]]
-) -> bool:
+def load(prefix: str = "duca!"):
+    global DEFAULT_PREFIX
+    DEFAULT_PREFIX = prefix
+
+
+async def check_owners(ctx: Context[AkatsukiDuCa] | Interaction[AkatsukiDuCa]) -> bool:
     """
     Check if user is owner
     """
@@ -34,23 +37,21 @@ async def check_owners(
     return False
 
 
-def user_cooldown_check(itr: Interaction) -> int:
+def user_cooldown_check(interaction: Interaction) -> int:
     """
     User cooldown check
     """
 
-    return itr.user.id
+    return interaction.user.id
 
 
-def guild_cooldown_check(itr: Interaction) -> int:
+def guild_cooldown_check(interaction: Interaction) -> int:
     """
     Guild cooldown check
     """
 
-    if itr.guild is None:  # for typing
-        return itr.user.id
-
-    return itr.guild.id
+    assert interaction.guild
+    return interaction.guild.id
 
 
 def seconds_to_time(seconds) -> str:
@@ -68,3 +69,25 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
 
     assert message.guild
     return await get_prefix(message.guild.id) or DEFAULT_PREFIX
+
+
+def random_color() -> Color:
+    """
+    Make a random Color
+    """
+
+    return Color(int(0xFFFFFF * (1.0 - (0.5 * random()))))
+
+
+def rich_embed(
+    embed: Embed, author: User | Member, lang: Callable[[str], str]
+) -> Embed:
+    """
+    Added color, author and footer to embed
+    """
+
+    footer = lang("main.EmbedFooter")
+    embed.color = random_color()
+    text = f"{footer} {author.name}#{author.discriminator}"
+    embed.set_footer(text=text, icon_url=author.display_avatar)
+    return embed

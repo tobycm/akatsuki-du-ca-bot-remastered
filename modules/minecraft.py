@@ -2,7 +2,8 @@
 Minecraft backend functions for Minecraft cog.
 """
 
-from typing import Literal, Union
+from dataclasses import dataclass
+from typing import Literal, TypedDict
 
 from aiohttp import ClientSession
 
@@ -31,21 +32,43 @@ async def get_minecraft_user_embed(
             return (uuid, image, thumbnail)
 
 
-async def get_minecraft_server_info(server_ip: str) -> Union[dict, Literal[False]]:
+class RawMinecraftServerAPI(TypedDict):
+    motd: dict[str, str]
+    players: dict[str, int]
+    version: str
+    icon: str
+    online: bool
+
+
+@dataclass
+class Players:
+    max: int
+    online: int
+
+
+@dataclass
+class MinecraftServer:
+    motd: str
+    players: Players
+    version: str
+    icon: str
+
+
+async def get_minecraft_server_info(server_ip: str) -> MinecraftServer | None:
     """
     Return a Minecraft server's info as an Embed.
     """
 
     async with ClientSession() as session:
         async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as response:
-            data = await response.json()
+            data: RawMinecraftServerAPI = await response.json()
 
-            if data["online"] is False:
-                return False
+            if not data["online"]:
+                return
 
-            return {
-                "motd": data["motd"]["clean"],
-                "players": [data["players"]["online"], data["players"]["max"]],
-                "version": data["version"],
-                "icon": data["icon"].replace("\\", ""),
-            }
+            return MinecraftServer(
+                data["motd"]["clean"][0],
+                Players(data["players"]["max"], data["players"]["online"]),
+                data["version"],
+                data["icon"],
+            )

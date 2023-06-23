@@ -4,15 +4,15 @@ Language stuff.
 
 import json
 from os import listdir
-from typing import Callable, Union
+from typing import Callable
 
-from modules.database_utils import get_user_lang
+from modules.database import get_user_lang
 
 lang_packs = {}
 lang_list = ["vi-vn", "en-us", "ja-jp"]
 
 
-def load_lang() -> None:
+def load() -> None:
     """
     Return all language pack
     """

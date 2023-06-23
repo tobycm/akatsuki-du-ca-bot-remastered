@@ -4,22 +4,16 @@
 Main bot file.
 """
 
+import asyncio
+
 from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
-from api.ipc import Routes
-from cogs.admin import BotAdminCog, PrefixCog
-from cogs.fun import FunCog, GIFCog
-from cogs.legacy_commands import LegacyCommands
-from cogs.music import MusicCog, RadioMusic
-from cogs.nsfw import NSFWCog
-from cogs.toys import ToysCog
-from cogs.utils import MinecraftCog, UtilsCog
+from api import Routes
+from cogs import *
 from models.bot_models import AkatsukiDuCa
+from modules import database, lang, osu, vault
 from modules.checks_and_utils import check_owners, get_prefix_for_bot
-from modules.lang import get_lang
-from modules.quote_api import get_quotes
-from modules.vault import get_bot_config
 
 bot = AkatsukiDuCa(
     command_prefix=get_prefix_for_bot,
@@ -27,7 +21,21 @@ bot = AkatsukiDuCa(
     intents=Intents.all(),
     help_command=None,
 )
-tree = bot.tree
+
+# comment the cog line to disable it
+COGS_LIST = (
+    FunCog,
+    GIFCog,
+    RadioMusic,
+    MusicCog,
+    NSFWCog,
+    ToysCog,
+    UtilsCog,
+    MinecraftCog,
+    PrefixCog,
+    BotAdminCog,
+    LegacyCommands,
+)
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
@@ -42,13 +50,18 @@ async def sync_command(ctx: Context):
 
     if not await check_owners(ctx):
         return
-    await tree.sync()
+    await bot.tree.sync()
     await ctx.send("Synced!")
 
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
+
+bot.config = vault.load()
+database.load(bot.config.redis)
+lang.load()
+osu.load(bot.config.api_keys.osu)
 
 
 @bot.event
@@ -73,7 +86,7 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
     if message.content == f"<@{bot.user.id}>":
         prefix = await get_prefix_for_bot(bot, message)
         await message.reply(
-            prefix.join((await get_lang(message.author.id))("main.PingForPrefix"))
+            prefix.join((await lang.get_lang(message.author.id))("main.PingForPrefix"))
         )
 
     await bot.process_commands(message)
@@ -102,24 +115,10 @@ async def setup_hook():
     Run on startup (yes you can touch this).
     """
 
-    bot.quotes = await get_quotes()
-
     # add ipc routes
     await bot.add_cog(Routes(bot))
 
-    for cog in (
-        FunCog,
-        GIFCog,
-        RadioMusic,
-        MusicCog,
-        NSFWCog,
-        ToysCog,
-        UtilsCog,
-        MinecraftCog,
-        PrefixCog,
-        BotAdminCog,
-        LegacyCommands,
-    ):
+    for cog in COGS_LIST:
         await bot.add_cog(cog(bot))
 
     await bot.load_extension("jishaku")
@@ -128,4 +127,12 @@ async def setup_hook():
 
 bot.setup_hook = setup_hook
 
-bot.run(get_bot_config("token"))
+bot.run(bot.config.token)
+
+
+async def cleanup():
+    await osu.cleanup()
+    await database.cleanup()
+
+
+asyncio.run(cleanup)

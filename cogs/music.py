@@ -2,36 +2,22 @@
 This is the music cog.
 """
 
-from logging import Logger
-from typing import Callable, Literal, Optional, Union
+from typing import Callable, Literal
 
-from discord import Color, Embed, Interaction, Member, TextChannel, Thread, VoiceChannel
+from discord import (Color, Embed, Interaction, Member, TextChannel, Thread,
+                     VoiceChannel)
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
-from wavelink import (
-    Node,
-    NodePool,
-    SoundCloudTrack,
-    TrackEventPayload,
-    WebsocketClosedPayload,
-    YouTubePlaylist,
-    YouTubeTrack,
-)
+from wavelink import (Node, NodePool, SoundCloudTrack, TrackEventPayload,
+                      WebsocketClosedPayload, YouTubePlaylist, YouTubeTrack)
 
 from models.bot_models import AkatsukiDuCa
-from models.music_models import (
-    MusicSelect,
-    NewPlaylistEmbed,
-    NewTrackEmbed,
-    PageSelect,
-    Player,
-    make_queue,
-)
-from modules.checks_and_utils import seconds_to_time, user_cooldown_check
-from modules.embed_process import rich_embeds
+from models.music_models import (MusicSelect, NewPlaylistEmbed, NewTrackEmbed,
+                                 PageSelect, Player, make_queue)
+from modules.checks_and_utils import (rich_embed, seconds_to_time,
+                                      user_cooldown_check)
 from modules.lang import get_lang
-from modules.vault import get_lavalink_nodes
 
 
 class RadioMusic(GroupCog, name="radio"):
@@ -98,8 +84,8 @@ class MusicCog(Cog):
         await NodePool.connect(
             client=self.bot,
             nodes=[
-                Node(uri=node["uri"], password=node["password"])
-                for node in get_lavalink_nodes()
+                Node(uri=node.uri, password=node.password)
+                for node in self.bot.config.lavalink_nodes
             ],
         )
 
@@ -174,7 +160,7 @@ class MusicCog(Cog):
         interaction: Interaction,
         lang: Callable[[str], str],
         connecting: bool = False,
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         """
         Connect checks
         """
@@ -201,7 +187,7 @@ class MusicCog(Cog):
         interaction: Interaction,
         lang: Callable[[str], str],
         connecting: bool = False,
-    ) -> Optional[Player]:
+    ) -> Player | None:
         """
         Initialize a player and connect to a voice channel if there are none.
         """
@@ -237,7 +223,7 @@ class MusicCog(Cog):
 
     async def disconnect_check(
         self, interaction: Interaction, lang: Callable[[str], str]
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         """
         Disconnect checks
         """
@@ -263,7 +249,7 @@ class MusicCog(Cog):
 
     async def _disconnect(
         self, interaction: Interaction, lang: Callable[[str], str]
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         assert interaction.guild
         assert interaction.guild.voice_client
 
@@ -312,7 +298,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
 
         player.text_channel = interaction.channel
         await interaction.response.send_message(
@@ -331,7 +317,7 @@ class MusicCog(Cog):
             return
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -347,7 +333,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -365,8 +351,8 @@ class MusicCog(Cog):
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(
-                NewPlaylistEmbed(playlist, query, lang),
+            embed=rich_embed(
+                NewPlaylistEmbed(playlist, lang),
                 interaction.user,
                 lang,
             ),
@@ -385,7 +371,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -404,7 +390,7 @@ class MusicCog(Cog):
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -420,7 +406,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -439,7 +425,7 @@ class MusicCog(Cog):
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.75, key=user_cooldown_check)
@@ -455,7 +441,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -600,7 +586,7 @@ class MusicCog(Cog):
             view = View(timeout=60).add_item(select_menu)
 
             await interaction.response.send_message(
-                embed=rich_embeds(queue_embeds[0], interaction.user, lang),
+                embed=rich_embed(queue_embeds[0], interaction.user, lang),
                 view=view,
             )
 
@@ -609,7 +595,7 @@ class MusicCog(Cog):
                 view.children[0].disabled = True
                 await interaction.edit_original_response(view=view)
         await interaction.response.send_message(
-            embed=rich_embeds(queue_embeds[0], interaction.user, lang),
+            embed=rich_embed(queue_embeds[0], interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -629,7 +615,7 @@ class MusicCog(Cog):
             return
 
         track = player.current
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title=lang("music.misc.now_playing"),
                 description=f"[**{track.title}**]({track.uri}) - {track.author}\n"

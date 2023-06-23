@@ -2,13 +2,10 @@
 Models for utils cog
 """
 
-from typing import Union
-
 from discord import Interaction, Member, User
-from discord.ext.commands import Bot
 from discord.ui import Select
 
-from modules.database_utils import set_user_lang
+from modules.database import set_user_lang
 
 
 class ChangeLang(Select):
@@ -16,7 +13,7 @@ class ChangeLang(Select):
     Change language Select menu class
     """
 
-    def __init__(self, author: Union[User, Member]):
+    def __init__(self, author: User | Member):
         self.author = author
 
         super().__init__(placeholder="Choose language")

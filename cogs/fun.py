@@ -4,22 +4,19 @@ Fun cog for the bot.
 
 from random import choice, randint
 from string import ascii_letters
-from time import time
-from typing import Union
 
 from discord import Embed, File, Interaction, Member, TextChannel, Thread, VoiceChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import user_cooldown_check
-from modules.database_utils import get_user_lang
-from modules.embed_process import rich_embeds
+from modules.checks_and_utils import rich_embed, user_cooldown_check
+from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif_api import construct_gif_embed
 from modules.lang import get_lang
-from modules.quote_api import get_quotes
-from modules.waifu_api import get_waifu_image_url
+from modules.quote import get_quote
+from modules.waifu import random_image
 
 
 class GIFCog(GroupCog, name="gif"):
@@ -48,10 +45,16 @@ class GIFCog(GroupCog, name="gif"):
 
         lang = await get_lang(interaction.user.id)
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         await interaction.channel.send(
-            embed=rich_embeds(
-                await construct_gif_embed(interaction.user, target, method, lang),
+            embed=rich_embed(
+                await construct_gif_embed(
+                    interaction.user,
+                    target,
+                    method,
+                    self.bot.config.api_keys.tenor,
+                    lang,
+                ),
                 interaction.user,
                 lang,
             )
@@ -154,7 +157,7 @@ class FunCog(Cog):
         if lang_option != "vi-vn":
             raise LangNotAvailable
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
 
         await interaction.response.send_message("Đang gửi...", ephemeral=True)
         if randint(1, 50) == 25:
@@ -178,17 +181,17 @@ class FunCog(Cog):
         """
         lang = await get_lang(interaction.user.id)
 
-        (url, source) = await get_waifu_image_url()
+        image = await random_image()
 
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title="Waifu",
-                description=f"{lang('fun.waifu')}\n[Source]({source})",
+                description=f"{lang('fun.waifu')}\n[Source]({image})",
             ),
             interaction.user,
             lang,
         )
-        embed.set_image(url=url)
+        embed.set_image(url=str(image))
         return await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -218,7 +221,7 @@ class FunCog(Cog):
             "Getting sweet free nitro for you <3", ephemeral=True
         )
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)
         return await interaction.channel.send(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -228,19 +231,13 @@ class FunCog(Cog):
         A good quote for the day
         """
 
-        time_now = time()
+        quote = await get_quote()
 
-        if (time_now - self.bot.quotes_added) > 900:
-            self.bot.quotes = await get_quotes()
-            self.bot.quotes_added = time_now
-
-        quote = choice(self.bot.quotes)
-        for author, quote in quote:
-            return await interaction.response.send_message(
-                embed=rich_embeds(
-                    Embed(title=author, description=quote),
-                    interaction.user,
-                    await get_lang(interaction.user.id),
-                ),
-                ephemeral=True,
-            )
+        return await interaction.response.send_message(
+            embed=rich_embed(
+                Embed(title=quote.author, description=quote.quote),
+                interaction.user,
+                await get_lang(interaction.user.id),
+            ),
+            ephemeral=True,
+        )
