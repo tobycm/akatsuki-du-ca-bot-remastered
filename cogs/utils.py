@@ -2,6 +2,8 @@
 Utilities for the bot.
 """
 
+from typing import Optional
+
 from discord import AllowedMentions, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog

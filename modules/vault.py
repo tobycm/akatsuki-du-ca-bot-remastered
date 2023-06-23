@@ -28,7 +28,7 @@ class BotLavalinkConfig:
 class RedisConfig:
     host: str
     port: int
-    user: str
+    username: str
     password: str
     database: str
 
@@ -48,4 +48,32 @@ class BotConfig:
 
 def load() -> BotConfig:
     with open("config.json", "r", encoding="utf8") as config:
-        return BotConfig(**json.load(config)["bot"])
+        config = json.load(config)
+        return BotConfig(
+            token=config["bot"]["token"],
+            secret=config["bot"]["secret"],
+            prefix=config["bot"]["prefix"],
+            home_guild_id=config["bot"]["home_guild_id"],
+            home_guild_invite=config["bot"]["home_guild_invite"],
+            channels=ChannelsConfig(
+                error=config["bot"]["channels"]["error"],
+                bug=config["bot"]["channels"]["bug"],
+            ),
+            api_keys=ApiKeys(
+                osu=config["api_keys"]["osu"],
+                tenor=config["api_keys"]["tenor"],
+            ),
+            lavalink_nodes=[
+                BotLavalinkConfig(
+                    uri=config["lavalink_nodes"][0]["uri"],
+                    password=config["lavalink_nodes"][0]["password"],
+                )
+            ],
+            redis=RedisConfig(
+                host=config["redis"]["host"],
+                port=config["redis"]["port"],
+                username=config["redis"]["username"],
+                password=config["redis"]["password"],
+                database=config["redis"]["database"],
+            ),
+        )
