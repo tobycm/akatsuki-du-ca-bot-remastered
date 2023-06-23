@@ -14,7 +14,7 @@ global redis
 redis: Redis
 
 
-def load(config: RedisConfig):
+def load(config: RedisConfig = RedisConfig()):
     """
     Create and return a Redis instance
     """

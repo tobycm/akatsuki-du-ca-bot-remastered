@@ -11,9 +11,9 @@ from discord.ui import View
 
 from models.bot_models import AkatsukiDuCa
 from models.utils_models import ChangeLang
-from modules.checks_and_utils import rich_embed, user_cooldown_check
 from modules.lang import get_lang, lang_list
 from modules.minecraft import get_minecraft_server_info, get_minecraft_user_embed
+from modules.misc import rich_embed, user_cooldown_check
 from modules.osu import get_user
 
 

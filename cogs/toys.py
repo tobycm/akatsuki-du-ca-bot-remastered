@@ -10,7 +10,7 @@ from discord.app_commands import checks, command
 from discord.ext.commands import Cog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import user_cooldown_check
+from modules.misc import user_cooldown_check
 
 
 class ToysCog(Cog):

@@ -4,20 +4,31 @@ This is the music cog.
 
 from typing import Callable, Literal
 
-from discord import (Color, Embed, Interaction, Member, TextChannel, Thread,
-                     VoiceChannel)
+from discord import Color, Embed, Interaction, Member, TextChannel, Thread, VoiceChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import View
-from wavelink import (Node, NodePool, SoundCloudTrack, TrackEventPayload,
-                      WebsocketClosedPayload, YouTubePlaylist, YouTubeTrack)
+from wavelink import (
+    Node,
+    NodePool,
+    SoundCloudTrack,
+    TrackEventPayload,
+    WebsocketClosedPayload,
+    YouTubePlaylist,
+    YouTubeTrack,
+)
 
 from models.bot_models import AkatsukiDuCa
-from models.music_models import (MusicSelect, NewPlaylistEmbed, NewTrackEmbed,
-                                 PageSelect, Player, make_queue)
-from modules.checks_and_utils import (rich_embed, seconds_to_time,
-                                      user_cooldown_check)
+from models.music_models import (
+    MusicSelect,
+    NewPlaylistEmbed,
+    NewTrackEmbed,
+    PageSelect,
+    Player,
+    make_queue,
+)
 from modules.lang import get_lang
+from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
 
 class RadioMusic(GroupCog, name="radio"):

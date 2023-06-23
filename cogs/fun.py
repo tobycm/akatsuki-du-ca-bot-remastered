@@ -10,11 +10,11 @@ from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import rich_embed, user_cooldown_check
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif_api import construct_gif_embed
 from modules.lang import get_lang
+from modules.misc import rich_embed, user_cooldown_check
 from modules.quote import get_quote
 from modules.waifu import random_image
 

@@ -20,17 +20,17 @@ class ApiKeys:
 
 @dataclass
 class BotLavalinkConfig:
-    uri: str
-    password: str
+    uri: str = "http://localhost:2333"
+    password: str = "youshallnotpass"
 
 
 @dataclass
 class RedisConfig:
-    host: str
-    port: int
-    username: str
-    password: str
-    database: str
+    host: str = "localhost"
+    port: int = 6379
+    username: str = ""
+    password: str = ""
+    database: str = "0"
 
 
 @dataclass

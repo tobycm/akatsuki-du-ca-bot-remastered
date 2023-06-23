@@ -9,13 +9,11 @@ import asyncio
 from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
-from api import Routes
 from models.bot_models import AkatsukiDuCa
-from modules import database, lang, osu, vault
-from modules.checks_and_utils import check_owners, get_prefix_for_bot
+from modules import database, lang, misc, osu, vault
 
 bot = AkatsukiDuCa(
-    command_prefix=get_prefix_for_bot,
+    command_prefix=misc.get_prefix_for_bot,
     activity=Game(name="Hibiki Ban Mai"),
     intents=Intents.all(),
     help_command=None,
@@ -33,7 +31,7 @@ async def sync_command(ctx: Context):
     Sync commands to global.
     """
 
-    if not await check_owners(ctx):
+    if not await misc.check_owners(ctx):
         return
     await bot.tree.sync()
     await ctx.send("Synced!")
@@ -44,9 +42,10 @@ async def sync_command(ctx: Context):
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
 bot.config = vault.load()
-database.load(bot.config.redis)
+database.load()
 lang.load()
 osu.load(bot.config.api_keys.osu)
+misc.load()
 
 
 @bot.event
@@ -69,7 +68,7 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
 
     assert bot.user
     if message.content == f"<@{bot.user.id}>":
-        prefix = await get_prefix_for_bot(bot, message)
+        prefix = await misc.get_prefix_for_bot(bot, message)
         await message.reply(
             prefix.join((await lang.get_lang(message.author.id))("main.PingForPrefix"))
         )

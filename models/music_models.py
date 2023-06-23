@@ -10,7 +10,7 @@ from wavelink import Playable
 from wavelink import Player as WavelinkPlayer
 from wavelink import Queue, YouTubePlaylist, YouTubeTrack
 
-from modules.checks_and_utils import rich_embed, seconds_to_time
+from modules.misc import rich_embed, seconds_to_time
 
 
 class Player(WavelinkPlayer):

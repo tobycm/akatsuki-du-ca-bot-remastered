@@ -7,8 +7,8 @@ from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import rich_embed, user_cooldown_check
 from modules.lang import get_lang
+from modules.misc import rich_embed, user_cooldown_check
 from modules.waifu import random_image
 
 

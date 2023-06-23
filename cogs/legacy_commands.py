@@ -12,7 +12,7 @@ from discord.ext.commands import (
 )
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import check_owners
+from modules.misc import check_owners
 
 
 class LegacyCommands(Cog):

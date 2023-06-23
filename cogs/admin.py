@@ -10,8 +10,8 @@ from discord.ext import commands
 from discord.ext.commands import Cog, Context, GroupCog
 
 from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import check_owners, guild_cooldown_check
 from modules.database import delete_prefix, set_prefix
+from modules.misc import check_owners, guild_cooldown_check
 
 
 class PrefixCog(GroupCog, name="prefix"):
