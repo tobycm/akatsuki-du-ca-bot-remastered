@@ -362,8 +362,6 @@ class MusicCog(Cog):
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
-            player.interaction = interaction
-            return
 
         await interaction.edit_original_response(
             content="",
