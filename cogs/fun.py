@@ -193,10 +193,10 @@ class FunCog(Cog):
         return await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @command(name="freeninteractiono")
+    @command(name="freenitro")
     async def freeninteractiono(self, interaction: Interaction):
         """
-        OMG free NinteractionO!!1! gotta claim fast
+        OMG free NiTrO!!1! gotta claim fast
         """
 
         author = interaction.user
