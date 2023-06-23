@@ -360,6 +360,11 @@ class MusicCog(Cog):
         for track in playlist.tracks:
             await player.queue.put_wait(track)
 
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())  # type: ignore
+            player.interaction = interaction
+            return
+
         await interaction.edit_original_response(
             content="",
             embed=rich_embeds(
@@ -368,9 +373,6 @@ class MusicCog(Cog):
                 lang,
             ),
         )
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -399,6 +401,8 @@ class MusicCog(Cog):
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
+            player.interaction = interaction
+            return
 
         await interaction.edit_original_response(
             content="",
@@ -432,6 +436,8 @@ class MusicCog(Cog):
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
+            player.interaction = interaction
+            return
 
         await interaction.edit_original_response(
             content="",
