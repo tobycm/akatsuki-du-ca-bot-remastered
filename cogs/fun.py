@@ -184,7 +184,7 @@ class FunCog(Cog):
         embed = rich_embeds(
             Embed(
                 title="Waifu",
-                description=f"{lang('fun.waifu')}" + f"\n[Source]({source})",
+                description=f"{lang('fun.waifu')}\n[Source]({source})",
             ),
             interaction.user,
             lang,
@@ -207,16 +207,16 @@ class FunCog(Cog):
         lang = await get_lang(author.id)
 
         embed = Embed(
-            title=lang("fun.NinteractionoFree.Title"),
-            description=lang("fun.NinteractionoFree.Description")
+            title=lang("fun.NitroFree.Title"),
+            description=lang("fun.NitroFree.Description")
             + "\n"
             + f"[https://discord.gift/{code}]"
-            + f"(https://akatsukiduca.tk/verify-ninteractiono?key={code}&id={author.id})",
+            + f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
             color=0x2F3136,
         )
-        embed.set_image(url="https://i.ibb.co/5LDTWSj/freeninteractiono.png")
+        embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
         await interaction.response.send_message(
-            "Getting sweet free ninteractiono for you <3", ephemeral=True
+            "Getting sweet free nitro for you <3", ephemeral=True
         )
 
         assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
