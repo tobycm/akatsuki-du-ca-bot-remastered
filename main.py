@@ -22,7 +22,7 @@ bot = AkatsukiDuCa(
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot commands
 
 
 @bot.command(name="sc", hidden=True)
@@ -37,7 +37,23 @@ async def sync_command(ctx: Context):
     await ctx.send("Synced!")
 
 
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
+@bot.command(name="reload", hidden=True)
+async def reload(ctx: Context):
+    """
+    Reload bot.
+    """
+
+    if not await misc.check_owners(ctx):
+        return
+
+    await bot.reload_extension("cogs")
+    await bot.reload_extension("api")
+    await bot.reload_extension("jishaku")
+    await ctx.send("Reloaded!")
+    bot.logger.info("Reloaded by command!")
+
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot commands
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
