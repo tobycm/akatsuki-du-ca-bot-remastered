@@ -28,6 +28,9 @@ class AkatsukiDuCa(Bot):
     if not os.path.exists("logs"):
         os.mkdir("logs")
 
+    if os.path.exists("logs/full_bot_log.txt"):
+        os.rename("logs/full_bot_log.txt", f"logs/full_bot_log_{int(time())}.txt")
+
     logging.basicConfig(
         filename="logs/full_bot_log.txt",
         format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
