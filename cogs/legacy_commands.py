@@ -3,6 +3,7 @@ These commands are for Toby for trolling only xd
 """
 
 from discord import utils
+from discord.app_commands import guild_only
 from discord.ext.commands import (
     Cog,
     Context,
@@ -34,6 +35,7 @@ class LegacyCommands(Cog):
         return await super().cog_unload()
 
     @command(name="say")
+    @guild_only()
     async def say(self, ctx: Context, *, value: str):
         """
         Basically echo
@@ -48,6 +50,7 @@ class LegacyCommands(Cog):
         return await ctx.send(value)
 
     @command(name="sayemoji")
+    @guild_only()
     async def sayemoji(
         self,
         ctx: Context,

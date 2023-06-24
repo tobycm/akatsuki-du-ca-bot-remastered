@@ -4,17 +4,34 @@ Utilities for the bot.
 
 from typing import Optional
 
-from discord import AllowedMentions, Embed, Interaction, Member, TextChannel
+from discord import AllowedMentions, Embed, Interaction, Member, TextChannel, User
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
-from discord.ui import View
+from discord.ui import Select, View
 
 from akatsuki_du_ca import AkatsukiDuCa
-from models.utils_models import ChangeLang
+from modules.database import set_user_lang
 from modules.lang import get_lang, lang_list
 from modules.minecraft import get_minecraft_server
 from modules.misc import rich_embed, user_cooldown_check
 from modules.osu import get_player
+
+
+class ChangeLang(Select):
+    """
+    Change language Select menu class
+    """
+
+    def __init__(self, author: User | Member):
+        self.author = author
+
+        super().__init__(placeholder="Choose language")
+
+    async def callback(self, interaction: Interaction):
+        await set_user_lang(interaction.user.id, self.values[0])
+
+        await interaction.response.send_message("\U0001f44c", ephemeral=True)
+        return
 
 
 class UtilsCog(Cog):

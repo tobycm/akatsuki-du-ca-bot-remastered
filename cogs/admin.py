@@ -5,7 +5,7 @@ Admin commands for bot in guild.
 from logging import Logger
 
 from discord import Interaction
-from discord.app_commands import MissingPermissions, checks, command
+from discord.app_commands import MissingPermissions, checks, command, guild_only
 from discord.ext import commands
 from discord.ext.commands import Cog, Context, GroupCog
 
@@ -35,6 +35,7 @@ class PrefixCog(GroupCog, name="prefix"):
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
     @command(name="set")
+    @guild_only()
     async def setprefix(self, interaction: Interaction, prefix: str):
         """
         Set the bot's prefix
@@ -47,6 +48,7 @@ class PrefixCog(GroupCog, name="prefix"):
     @checks.cooldown(1, 1, key=guild_cooldown_check)
     @checks.has_permissions(manage_guild=True)
     @command(name="reset")
+    @guild_only()
     async def resetprefix(self, interaction: Interaction):
         """
         Reset the bot's prefix
