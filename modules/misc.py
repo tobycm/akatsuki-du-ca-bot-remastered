@@ -25,13 +25,13 @@ async def check_owners(ctx: Context[AkatsukiDuCa] | Interaction[AkatsukiDuCa]) -
     Check if user is owner
     """
 
-    bot = ctx.bot if isinstance(ctx, Context) else ctx.client
-    author = ctx.author if isinstance(ctx, Context) else ctx.user
+    if isinstance(ctx, Interaction):
+        ctx = await Context.from_interaction(ctx)
 
-    if await bot.is_owner(author):
+    if await ctx.bot.is_owner(ctx.author):
         return True
 
-    if await get_op(author.id):
+    if await get_op(ctx.author.id):
         return True
 
     return False

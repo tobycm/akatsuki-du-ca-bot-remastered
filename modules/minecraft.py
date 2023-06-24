@@ -11,10 +11,15 @@ UUID = str
 Image = str
 Thumbnail = str
 
+global session
 
-async def get_minecraft_user(
-    username: str, session: ClientSession
-) -> tuple[UUID, Image, Thumbnail]:
+
+def load(sess: ClientSession):
+    global session
+    session = sess
+
+
+async def get_minecraft_user(username: str) -> tuple[UUID, Image, Thumbnail]:
     """
     Return a tuple of user's UUID, image and thumbnail.
     """
@@ -57,17 +62,15 @@ async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
     """
     Return a Minecraft server's info as an Embed.
     """
+    async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as response:
+        data: RawMinecraftServerAPI = await response.json()
 
-    async with ClientSession() as session:
-        async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as response:
-            data: RawMinecraftServerAPI = await response.json()
+        if not data["online"]:
+            return
 
-            if not data["online"]:
-                return
-
-            return MinecraftServer(
-                data["motd"]["clean"][0],
-                Players(data["players"]["max"], data["players"]["online"]),
-                data["version"],
-                data["icon"],
-            )
+        return MinecraftServer(
+            data["motd"]["clean"][0],
+            Players(data["players"]["max"], data["players"]["online"]),
+            data["version"],
+            data["icon"],
+        )

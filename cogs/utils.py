@@ -12,7 +12,7 @@ from discord.ui import View
 from akatsuki_du_ca import AkatsukiDuCa
 from models.utils_models import ChangeLang
 from modules.lang import get_lang, lang_list
-from modules.minecraft import get_minecraft_server, get_minecraft_user
+from modules.minecraft import get_minecraft_server
 from modules.misc import rich_embed, user_cooldown_check
 from modules.osu import get_player
 

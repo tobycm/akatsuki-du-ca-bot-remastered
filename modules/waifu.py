@@ -2,10 +2,16 @@
 Waifu API module
 """
 
+from aiohttp import ClientSession
 from waifuim import WaifuAioClient
 from waifuim.types import Image
 
-waifuim = WaifuAioClient()
+global waifuim
+
+
+def load(session: ClientSession):
+    global waifuim
+    waifuim = WaifuAioClient(session=session)
 
 
 async def random_image(nsfw: bool = False) -> Image:

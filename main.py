@@ -10,7 +10,7 @@ from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules import database, lang, misc, osu, vault
+from modules import database, gif, lang, minecraft, misc, osu, quote, vault, waifu
 
 bot = AkatsukiDuCa(
     command_prefix=misc.get_prefix_for_bot,
@@ -60,7 +60,11 @@ async def reload(ctx: Context):
 bot.config = vault.load()
 database.load()
 lang.load()
-osu.load(bot.config.api_keys.osu)
+osu.load(bot.config.api_keys.osu, bot.session)
+minecraft.load(bot.session)
+waifu.load(bot.session)
+quote.load(bot.session)
+gif.load(bot.session)
 misc.load()
 
 
@@ -127,7 +131,7 @@ bot.run(bot.config.token)
 
 
 async def cleanup():
-    await osu.cleanup()
+    await bot.session.close()
     await database.cleanup()
 
 
