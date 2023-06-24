@@ -7,7 +7,7 @@ from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules.common import GuildTextChannel
+from modules.common import GuildTextBasedChannel
 from modules.lang import get_lang
 from modules.misc import rich_embed, user_cooldown_check
 from modules.waifu import random_image
@@ -40,7 +40,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         lang = await get_lang(interaction.user.id)
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(

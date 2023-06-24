@@ -1,3 +1,4 @@
 from discord import DMChannel, StageChannel, TextChannel, Thread, VoiceChannel
 
-GuildTextChannel = TextChannel | Thread | VoiceChannel | StageChannel
+GuildTextBasedChannel = TextChannel | Thread | VoiceChannel | StageChannel
+TextBasedChannel = GuildTextBasedChannel | DMChannel

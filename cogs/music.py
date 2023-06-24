@@ -20,7 +20,7 @@ from wavelink import (
 )
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules.common import GuildTextChannel
+from modules.common import GuildTextBasedChannel
 from modules.lang import get_lang
 from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
@@ -31,7 +31,7 @@ class Player(WavelinkPlayer):
     """
 
     interaction: Interaction | None = None
-    text_channel: GuildTextChannel | None = None
+    text_channel: GuildTextBasedChannel | None = None
     loop_mode: Literal["song", "queue"] | None = None
 
 
@@ -438,7 +438,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
 
         player.text_channel = interaction.channel
         await interaction.response.send_message(
@@ -473,7 +473,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -511,7 +511,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -546,7 +546,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
@@ -581,7 +581,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextChannel)
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")

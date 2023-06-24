@@ -5,7 +5,7 @@ Utilities for the bot.
 from typing import Optional
 
 from discord import AllowedMentions, Embed, Interaction, Member, TextChannel, User
-from discord.app_commands import checks, command
+from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
 
@@ -155,6 +155,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="server_info")
+    @guild_only()
     async def server_info(self, interaction: Interaction):
         """
         Send server info
@@ -182,6 +183,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="user_info")
+    @guild_only()
     async def user_info(self, interaction: Interaction, user: Optional[Member]):  # type: ignore
         """
         Send user info
@@ -221,6 +223,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="avatar")
+    @guild_only()
     async def avatar(self, interaction: Interaction, user: Optional[Member] = None):  # type: ignore
         """
         Get a user avatar
@@ -239,6 +242,7 @@ class UtilsCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="server_icon")
+    @guild_only()
     async def server_icon(self, interaction: Interaction):
         """
         Get a user avatar
@@ -301,13 +305,14 @@ class MinecraftCog(GroupCog, name="minecraft"):
             data.players.max,
         )
 
-        embed = rich_embed(
-            Embed(
-                title=lang("utils.minecraft.server.online") % server_ip,
-                description="\n".join([motd, server_info, version, players]),
+        return await interaction.response.send_message(
+            embed=rich_embed(
+                Embed(
+                    title=lang("utils.minecraft.server.online") % server_ip,
+                    description="\n".join([motd, server_info, version, players]),
+                ),
+                interaction.user,
+                lang,
             ),
-            interaction.user,
-            lang,
+            ephemeral=True,
         )
-
-        return await interaction.response.send_message(embed=embed, ephemeral=True)

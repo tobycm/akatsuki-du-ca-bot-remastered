@@ -30,8 +30,8 @@ async def get_gif_url(method: str, api_key: str) -> Url:
 
 
 async def construct_gif_embed(
-    author: User | Member,
-    target: User | Member,
+    author: Member,
+    target: Member,
     method: str,
     api_key: str,
     lang: Callable[[str], str],
