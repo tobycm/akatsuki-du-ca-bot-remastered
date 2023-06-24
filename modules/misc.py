@@ -86,7 +86,7 @@ def rich_embed(
     Added color, author and footer to embed
     """
 
-    footer = lang("main.EmbedFooter")
+    footer = lang("main.embed_footer")
     embed.color = random_color()
     text = f"{footer} {author.name}#{author.discriminator}"
     embed.set_footer(text=text, icon_url=author.display_avatar)

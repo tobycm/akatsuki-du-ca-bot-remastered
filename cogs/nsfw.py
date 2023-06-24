@@ -2,7 +2,7 @@
 Not Safe for Work commands. 0_0
 """
 
-from discord import Embed, Interaction, TextChannel, Thread
+from discord import Embed, Interaction
 from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
@@ -44,7 +44,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
-                lang("nsfw.PlsGoToNSFW"), ephemeral=True
+                lang("nsfw.pls_go_to_nsfw"), ephemeral=True
             )
 
         image = await random_image(nsfw=True)
@@ -53,7 +53,7 @@ class NSFWCog(GroupCog, name="nsfw"):
             embed=rich_embed(
                 Embed(
                     title="0.0",
-                    description=lang("fun.PoweredByWaifuim")
+                    description=lang("fun.powered_by_waifu_im")
                     + "\n"
                     + f"[Source]({image})",
                 ),

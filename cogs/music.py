@@ -196,7 +196,7 @@ class RadioMusic(GroupCog, name="radio"):
 
         lang = await get_lang(interaction.user.id)
 
-        await interaction.response.send_message(lang("music.SuggestionSent"))
+        await interaction.response.send_message(lang("music.suggestion_sent"))
 
 
 class MusicCog(Cog):
