@@ -86,7 +86,7 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
     if message.content == f"<@{bot.user.id}>":
         prefix = await misc.get_prefix_for_bot(bot, message)
         await message.reply(
-            prefix.join((await lang.get_lang(message.author.id))("main.PingForPrefix"))
+            (await lang.get_lang(message.author.id))("main.ping_for_prefix") % prefix
         )
 
     await bot.process_commands(message)

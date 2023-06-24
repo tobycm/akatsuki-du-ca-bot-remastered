@@ -34,14 +34,7 @@ async def construct_gif_embed(
     Construct a GIF embed
     """
 
-    mid_text = lang(f"gif.{method}.mid_text")
-
-    if method == "slap":
-        description = f"{target} {mid_text} {author}"
-    else:
-        description = f"{author} {mid_text} {target}"
-    if method in ["hug", "kick", "poke", "bite", "cuddle"]:
-        description += lang(f"gif.{method}.mid_text_2")  # type: ignore
+    description = lang(f"gif.{method}.text") % (author.mention, target.mention)
 
     return Embed(title=lang(f"gif.{method}.title"), description=description).set_image(
         url=await get_gif_url(method, api_key)

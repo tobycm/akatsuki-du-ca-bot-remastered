@@ -61,7 +61,7 @@ class UtilsCog(Cog):
 
         embed = rich_embed(
             Embed(
-                title=lang("utils.osu.stats.title") % (player.username,),  # type: ignore
+                title=lang("utils.osu.stats.title") % player.username,
                 description=description,
             )
             .set_thumbnail(url=player.avatar_url)
@@ -277,8 +277,8 @@ class MinecraftCog(GroupCog, name="minecraft"):
             )
 
         motd = "```" + "\n".join(data.motd) + "```"
-        server_info = lang("utils.minecraft.server_ip") % (server_ip,)
-        version = lang("utils.minecraft.server.version") % (data.version,)
+        server_info = lang("utils.minecraft.server_ip") % server_ip
+        version = lang("utils.minecraft.server.version") % data.version
         players = lang("utils.minecraft.server.players") % (
             data.players.online,
             data.players.max,
@@ -286,7 +286,7 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         embed = rich_embed(
             Embed(
-                title=lang("utils.minecraft.server.online") % (server_ip,),
+                title=lang("utils.minecraft.server.online") % server_ip,
                 description="\n".join([motd, server_info, version, players]),
             ),
             interaction.user,

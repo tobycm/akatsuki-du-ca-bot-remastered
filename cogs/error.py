@@ -53,24 +53,22 @@ class ErrorHandler(Cog):
             exception = exception.original
 
         async def user_no_perms(ctx: Context):
-            await ctx.send(lang("main.MissingGuildPermission"))
+            await ctx.send(lang("main.missing_guild_permission") % prefix)
 
         async def not_found(ctx: Context):
-            await ctx.send(prefix.join(lang("main.CommandNotFound")))
+            await ctx.send(lang("main.command_not_found") % prefix)
 
         async def miss_args(ctx: Context):
-            await ctx.send(prefix.join(lang("main.MissingRequiredArgument")))
+            await ctx.send(lang("main.missing_required_argument") % prefix)
 
         async def on_cooldown(ctx: Context):
             assert isinstance(exception, CommandOnCooldown)
             await ctx.send(
-                str(round(exception.retry_after, 1)).join(
-                    lang("main.CommandOnCooldown")
-                )
+                lang("main.command_on_cooldown") % round(exception.retry_after, 1)
             )
 
         async def no_lang_available(ctx: Context):
-            await ctx.send(lang("main.NotAvailableLanguage"))
+            await ctx.send(lang("main.language_not_available"))
 
         mapping: dict = {
             MissingPermissions: user_no_perms,

@@ -186,7 +186,7 @@ class FunCog(Cog):
         embed = rich_embed(
             Embed(
                 title="Waifu",
-                description=lang("fun.waifu") % (str(image),),
+                description=lang("fun.waifu") % image,
             ),
             interaction.user,
             lang,
@@ -211,9 +211,7 @@ class FunCog(Cog):
         embed = Embed(
             title=lang("fun.free_nitro.title"),
             description=lang("fun.free_nitro.description")
-            % (
-                f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})"
-            ),
+            % f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
             color=0x2F3136,
         )
         embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")

@@ -1,27 +1,14 @@
 {
-    "CommandNotFound": [
-        "Looks like you are lost :Đ. Use `",
-        "help` to see the list of commands!"
-    ],
-    "MissingRequiredArgument": [
-        "You forgot to put an argument! Use `",
-        "help` to see the list of commands!"
-    ],
-    "CommandOnCooldown": [
-        "You are on cooldown! Wait ",
-        " seconds before using this command again!"
-    ],
-    "PingForPrefix": [
-        "Why ping LOL, prefix for this server is `",
-        "`. ||Just kidding, feel free to ping me||"
-    ],
-    "NotAvailableLanguage": "This command is not available in English yet!",
-    "MissingPermission": "You are missing permission to use this command! ||Want perms? Ask Toby :D||",
-    "WrongTypeArgument": [
-        "Bruh you typed in the wrong argument type haizzz `",
-        "help` to see where did you type the wrong argument!"
-    ],
-    "MissingGuildPermission": "Uh oh, no permissions for you :)",
-    "EmbedFooter": "Requested by: ",
-    "LangSwitched": "Changed language to "
+    "exceptions": {
+        "command_not_found": "Looks like you are lost :Đ. Use `%shelp` to see the list of commands!",
+        "missing_required_argument": "You forgot to put an argument! Use `%shelp` to see the list of commands!",
+        "command_on_cooldown": "You are on cooldown! Wait %s seconds before using this command again!",
+        "ping_for_prefix": "Why ping LOL, prefix for this server is `%s`. ||Just kidding, feel free to ping me||",
+        "language_not_available": "This command is not available in English yet!",
+        "missing_permission": "You are missing permission to use this command! ||Want perms? Ask Toby :D||",
+        "wrong_argument_type": "Bruh you typed in the wrong argument type haizzz `%shelp` to see where did you type the wrong argument!"
+    },
+    "missing_guild_permission": "Uh oh, no permissions for you :)",
+    "embed_footer": "Requested by: %s",
+    "switched_lang": "Changed language to %s"
 }
