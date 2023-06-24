@@ -1,47 +1,34 @@
 {
     "slap": {
         "title": "Vả",
-        "mid_text": " đã bị tát bởi "
+        "text": "%s đã bị tát bởi %s"
     },
-    
     "hug": {
         "title": "Ôm",
-        "mid_text": " đã ôm ",
-        "mid_text_2": ". Ôm nhau thắm thiết :))"
+        "text": "%s đã ôm %s. Ôm nhau thắm thiết :))"
     },
-
     "poke": {
         "title": "Chọc",
-        "mid_text": " đã chọc ",
-        "mid_text_2": ". Chọc nhau cho đời nó vui :))"
+        "text": "%s đã chọc %s. Chọc nhau cho đời nó vui :))"
     },
-
     "pat": {
         "title": "Xoa đầu",
-        "mid_text": " đã xoa đầu "
+        "text": "%s đã xoa đầu %s. Ngủ đêeee"
     },
-
     "kick": {
         "title": "Đá",
-        "mid_text": " đã đá ",
-        "mid_text_2": ". Pay màu ahehehehe"
+        "text": "%s đã đá %s. Pay màu ahehehehe"
     },
-
     "punch": {
         "title": "Đấm",
-        "mid_text": " đã đấm "
+        "text": "%s đã đấm %s. KO"
     },
-
     "cuddle": {
         "title": "Âu yếm",
-        "mid_text": " đã âu yếm ",
-        "mid_text_2": ". Ơ tôi thêm cái lệnh này khi nào thế? :0"
+        "text": "%s đã âu yếm %s. Ơ tôi thêm cái lệnh này khi nào thế? :0"
     },
-
     "bite": {
         "title": "Cắn",
-        "mid_text": " đã cắn ",
-        "mid_text_2": ". Ai cho cắn nhau thế >:|"
+        "text": "%s đã cắn %s. Ai cho cắn nhau thế >:|"
     }
-
 }

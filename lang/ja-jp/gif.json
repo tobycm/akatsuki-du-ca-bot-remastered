@@ -1,39 +1,34 @@
 {
     "slap": {
-        "title": "平手打ち",
-        "mid_text": " 平手打ち "
+        "title": "Slap",
+        "text": "%s slapped %s. Damn bro"
     },
     "hug": {
-        "title": "ハグ",
-        "mid_text": " 抱きしめた ",
-        "mid_text_2": ". とてもかわいい！"
+        "title": "Hug",
+        "text": "%s hugged %s. How cute :Đ"
     },
     "poke": {
-        "title": "ポーク",
-        "mid_text": " 突いた ",
-        "mid_text_2": ". ポーク ポーク :))"
+        "title": "Poke",
+        "text": "%s poked %s. Pokey poke"
     },
     "pat": {
-        "title": "パット",
-        "mid_text": " たたく "
+        "title": "Pat",
+        "text": "%s patted %s. Sleep now"
     },
     "kick": {
-        "title": "キック",
-        "mid_text": " 蹴られた ",
-        "mid_text_2": ". 🦶 ||何と言ったらいいのかわからない😅||"
+        "title": "Kick",
+        "text": "%s kicked %s. Dead XD"
     },
     "punch": {
-        "title": "パンチ",
-        "mid_text": " パンチ "
+        "title": "Punch",
+        "text": "%s punched %s. KO"
     },
     "cuddle": {
-        "title": "抱きしめる",
-        "mid_text": " 抱きしめる ",
-        "mid_text_2": ". 待って、このコマンドを追加したのはいつですか 0.0"
+        "title": "Cuddle",
+        "text": "%s cuddled %s. Wait, when did I add this command :0"
     },
     "bite": {
-        "title": "かむ",
-        "mid_text": " 噛む ",
-        "mid_text_2": ". お互いを噛まない >:|"
+        "title": "Bite",
+        "text": "%s bit %s. Ayo no biting >:|"
     }
 }

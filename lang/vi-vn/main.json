@@ -1,38 +1,14 @@
 {
-    
-    "CommandNotFound": [
-        "Command gì dọ? Lạc đường thì `",
-        "help` để mình giúp nha!"
-    ],
-    
-    "MissingRequiredArgument": [
-        "Bắn súng quên bỏ đạn :)). `",
-        "help` để xem lại bạn thiếu argument gì nhe :Đ"
-    ],
-
-    "CommandOnCooldown": [
-    "Uống trà và từ từ nào. Chờ thêm ",
-    " giây nữa rồi dùng lại lệnh đó nha!."
-    ],
-
-    "PingForPrefix": [
-        "Ping cái giề 0.0, prefix của server này là `",
-        "`. Ping quài >.<"
-    ],
-
-    "NotAvailableLanguage": "Lệnh này không khả dụng cho tiếng Việt.",
-
-    "MissingPermission": "Hong có quyền đâu nha bạn iu! Đòi quyền thì kêu Toby ấy :))",
-
-    "WrongTypeArgument": [
-        "Bạn nhập sai loại thông số rồi haizz. `",
-        "help` để xem lại loại thông số nhé!"
-    ],
-
-    "MissingGuildPermission": "Hong có quyền đâu nha bạn iu!",
-
-    "EmbedFooter": "Yêu cầu bởi: ",
-
-    "LangSwitched": "Đã cài đặt ngôn ngữ thành "
-    
+    "exceptions": {
+        "command_not_found": "Command gì dọ? Lạc đường thì `%shelp` để mình giúp nha!",
+        "missing_required_argument": "Bắn súng quên bỏ đạn :)) `%shelp` để xem lại bạn thiếu argument gì nhe :Đ",
+        "command_on_cooldown": "Uống trà và từ từ nào. Chờ thêm %s giây nữa rồi dùng lại lệnh đó nha!",
+        "ping_for_prefix": "Ping cái giề 0.0, prefix của server này là `%s`. Ping quài >.<",
+        "language_not_available": "Lệnh này không khả dụng cho tiếng Việt.",
+        "missing_permission": "Hong có quyền đâu nha bạn iu! Đòi quyền thì kêu Toby ấy :))",
+        "wrong_argument_type": "Bạn nhập sai loại thông số rồi haizz. `%shelp` để xem lại loại thông số nhé!"
+    },
+    "missing_guild_permission": "Hong có quyền đâu nha bạn iu!",
+    "embed_footer": "Yêu cầu bởi: %s",
+    "switched_lang": "Đã cài đặt ngôn ngữ thành %s"
 }
