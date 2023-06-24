@@ -17,6 +17,9 @@ def load() -> None:
     Return all language pack
     """
 
+    if lang_packs != {}:
+        lang_packs.clear()
+
     for lang in lang_list:
         options = listdir(f"lang/{lang}/")
         full_lang = {}
