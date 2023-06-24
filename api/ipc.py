@@ -8,7 +8,7 @@ from discord.ext.commands import Cog
 from discord.ext.ipc.objects import ClientPayload
 from discord.ext.ipc.server import Server
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 
 # pylint: disable=protected-access
 

@@ -3,7 +3,7 @@ Minecraft backend functions for Minecraft cog.
 """
 
 from dataclasses import dataclass
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from aiohttp import ClientSession
 
@@ -12,24 +12,23 @@ Image = str
 Thumbnail = str
 
 
-async def get_minecraft_user_embed(
-    username: str,
+async def get_minecraft_user(
+    username: str, session: ClientSession
 ) -> tuple[UUID, Image, Thumbnail]:
     """
     Return a tuple of user's UUID, image and thumbnail.
     """
 
-    async with ClientSession() as session:
-        async with session.get(
-            "https://playerdb.co/api/player/minecraft/" + username
-        ) as response:
-            data = await response.json()
+    async with session.get(
+        f"https://playerdb.co/api/player/minecraft/{username}"
+    ) as response:
+        data = await response.json()
 
-            uuid = data["data"]["player"]["id"]
-            image = f"https://crafatar.com/renders/body/{uuid}"
-            thumbnail = f"https://crafatar.com/avatars/{uuid}"
+        uuid = data["data"]["player"]["id"]
+        image = f"https://crafatar.com/renders/body/{uuid}"
+        thumbnail = f"https://crafatar.com/avatars/{uuid}"
 
-            return (uuid, image, thumbnail)
+        return (uuid, image, thumbnail)
 
 
 class RawMinecraftServerAPI(TypedDict):
@@ -54,7 +53,7 @@ class MinecraftServer:
     icon: str
 
 
-async def get_minecraft_server_info(server_ip: str) -> MinecraftServer | None:
+async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
     """
     Return a Minecraft server's info as an Embed.
     """

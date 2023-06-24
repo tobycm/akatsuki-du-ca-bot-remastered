@@ -18,7 +18,7 @@ from wavelink import (
     YouTubeTrack,
 )
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from models.music_models import (
     MusicSelect,
     NewPlaylistEmbed,

@@ -11,7 +11,7 @@ from discord.ext.commands import (
     command,
 )
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.misc import check_owners
 
 

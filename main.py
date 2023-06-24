@@ -9,7 +9,7 @@ import asyncio
 from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules import database, lang, misc, osu, vault
 
 bot = AkatsukiDuCa(

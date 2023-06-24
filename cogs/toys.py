@@ -9,7 +9,7 @@ from discord import Interaction
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.misc import user_cooldown_check
 
 

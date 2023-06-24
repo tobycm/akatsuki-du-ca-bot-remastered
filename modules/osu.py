@@ -1,4 +1,4 @@
-from aiosu.models import User
+from aiosu.models import User as Player
 from aiosu.v1 import Client
 
 global client
@@ -13,5 +13,5 @@ async def cleanup():
     await client.close()
 
 
-async def get_user(username: str) -> User:
+async def get_player(username: str) -> Player:
     return await client.get_user(username)

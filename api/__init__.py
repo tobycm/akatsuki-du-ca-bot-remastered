@@ -1,5 +1,5 @@
+from akatsuki_du_ca import AkatsukiDuCa
 from api.ipc import Routes
-from models.bot_models import AkatsukiDuCa
 
 
 async def setup(bot: AkatsukiDuCa):

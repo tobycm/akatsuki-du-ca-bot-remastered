@@ -9,7 +9,7 @@ from discord.app_commands import MissingPermissions, checks, command
 from discord.ext import commands
 from discord.ext.commands import Cog, Context, GroupCog
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import delete_prefix, set_prefix
 from modules.misc import check_owners, guild_cooldown_check
 

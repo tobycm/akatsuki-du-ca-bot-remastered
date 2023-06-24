@@ -6,6 +6,7 @@ import logging
 import os
 from time import time
 
+from aiohttp import ClientSession
 from discord import Intents
 from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
@@ -24,6 +25,7 @@ class AkatsukiDuCa(Bot):
     logger: logging.Logger = logging.getLogger("discord")
     ipc: Server | None = None
     config: BotConfig
+    session = ClientSession()
 
     if not os.path.exists("logs"):
         os.mkdir("logs")

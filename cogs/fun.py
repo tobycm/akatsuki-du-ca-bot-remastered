@@ -9,7 +9,7 @@ from discord import Embed, File, Interaction, Member, TextChannel, Thread, Voice
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif import construct_gif_embed
@@ -186,7 +186,7 @@ class FunCog(Cog):
         embed = rich_embed(
             Embed(
                 title="Waifu",
-                description=f"{lang('fun.waifu')}\n[Source]({image})",
+                description=lang("fun.waifu") % (str(image),),
             ),
             interaction.user,
             lang,
@@ -209,16 +209,16 @@ class FunCog(Cog):
         lang = await get_lang(author.id)
 
         embed = Embed(
-            title=lang("fun.NitroFree.Title"),
-            description=lang("fun.NitroFree.Description")
-            + "\n"
-            + f"[discord.gift/{code}]"
-            + f"(https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})",
+            title=lang("fun.free_nitro.title"),
+            description=lang("fun.free_nitro.description")
+            % (
+                f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={author.id})"
+            ),
             color=0x2F3136,
         )
         embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
         await interaction.response.send_message(
-            "Getting sweet free nitro for you <3", ephemeral=True
+            lang("fun.free_nitro.success"), ephemeral=True
         )
 
         assert isinstance(interaction.channel, TextChannel | Thread | VoiceChannel)

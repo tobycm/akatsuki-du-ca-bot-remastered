@@ -14,7 +14,7 @@ from discord.ext.commands import (
     MissingRequiredArgument,
 )
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.exceptions import LangNotAvailable
 from modules.lang import get_lang
 from modules.misc import get_prefix_for_bot

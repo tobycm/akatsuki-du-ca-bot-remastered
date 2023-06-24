@@ -6,7 +6,7 @@ from discord import Embed, Interaction, TextChannel, Thread
 from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.lang import get_lang
 from modules.misc import rich_embed, user_cooldown_check
 from modules.waifu import random_image

@@ -9,7 +9,7 @@ from typing import Callable
 from discord import Color, Embed, Interaction, Member, Message, User
 from discord.ext.commands import Context
 
-from models.bot_models import AkatsukiDuCa
+from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import get_op, get_prefix
 
 global DEFAULT_PREFIX
