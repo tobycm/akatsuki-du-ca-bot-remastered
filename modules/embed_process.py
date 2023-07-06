@@ -3,9 +3,9 @@ Embed related functions
 """
 
 from random import random
-from typing import Callable
+from typing import Callable, Union
 
-from discord import Color, Embed
+from discord import Color, Embed, Member
 from discord.abc import User
 
 
@@ -17,7 +17,7 @@ def random_color() -> Color:
     return Color(int(0xFFFFFF * (1.0 - (0.5 * random()))))
 
 
-def rich_embeds(embed: Embed, author: User, lang: Callable[[str], str]) -> Embed:
+def rich_embeds(embed: Embed, author: Union[User, Member], lang: Callable[[str], str]) -> Embed:
     """
     Added color, author and footer to embed
     """
