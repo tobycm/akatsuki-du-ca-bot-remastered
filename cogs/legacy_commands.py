@@ -2,12 +2,9 @@
 These commands are for Toby for trolling only xd
 """
 
-from logging import Logger
-from typing import Optional
-
 from discord import utils
+from discord.app_commands import guild_only
 from discord.ext.commands import (
-    Bot,
     Cog,
     Context,
     MissingRequiredArgument,
@@ -15,8 +12,8 @@ from discord.ext.commands import (
     command,
 )
 
-from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import check_owners
+from akatsuki_du_ca import AkatsukiDuCa
+from modules.misc import check_owners
 
 
 class LegacyCommands(Cog):
@@ -26,7 +23,7 @@ class LegacyCommands(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -38,6 +35,7 @@ class LegacyCommands(Cog):
         return await super().cog_unload()
 
     @command(name="say")
+    @guild_only()
     async def say(self, ctx: Context, *, value: str):
         """
         Basically echo
@@ -52,26 +50,27 @@ class LegacyCommands(Cog):
         return await ctx.send(value)
 
     @command(name="sayemoji")
+    @guild_only()
     async def sayemoji(
         self,
         ctx: Context,
-        emoji_name: Optional[str] = None,
-        guild_id: Optional[int] = None,
+        emoji_name: str | None = None,
+        guild_id: int | None = None,
     ):
         """
         Find the emoji and send it
         """
 
-        if emoji_name is None:
+        if not emoji_name:
             raise MissingRequiredArgument  # type: ignore
 
         assert ctx.guild
 
-        if guild_id is None:
+        if not guild_id:
             guild_emojis = ctx.guild.emojis
         else:
             guild = self.bot.get_guild(guild_id)
-            if guild is None:
+            if not guild:
                 await ctx.send("Guild not found")
             guild_emojis = self.bot.get_guild(guild_id).emojis  # type: ignore
 

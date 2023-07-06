@@ -1,27 +1,14 @@
 {
-    "CommandNotFound": [
-        "何言っての？ヘルプを表示するには `",
-        "help`にメッセージを送信してください !"
-    ],
-    "MissingRequiredArgument": [
-        "引数がありません, `",
-        "help` 不足している引数を確認するための !"
-    ],
-    "CommandOnCooldown": [
-        "お待ちください. ",
-        " 秒後にもう一度やり直してください!"
-    ],
-    "PingForPrefix": [
-        "Ping cái giề 0.0, prefix của server này là `",
-        "`. Ping quài >.<"
-    ],
-    "NotAvailableLanguage": "お住まいの言語ではご利用いただけません.",
-    "MissingPermission": "Hong có quyền đâu nha bạn iu! Đòi quyền thì kêu Toby ấy :))",
-    "WrongTypeArgument": [
-        "Bạn nhập sai loại thông số rồi haizz. `",
-        "help` để xem lại loại thông số nhé!"
-    ],
-    "MissingGuildPermission": "Hong có quyền đâu nha bạn iu!",
-    "EmbedFooter": "依頼者: ",
-    "LangSwitched": "あなたの言語はに設定されています "
+    "exceptions": {
+        "command_not_found": "Looks like you are lost :Đ. Use `%shelp` to see the list of commands!",
+        "missing_required_argument": "You forgot to put an argument! Use `%shelp` to see the list of commands!",
+        "command_on_cooldown": "You are on cooldown! Wait %s seconds before using this command again!",
+        "ping_for_prefix": "Why ping LOL, prefix for this server is `%s`. ||Just kidding, feel free to ping me||",
+        "language_not_available": "This command is not available in English yet!",
+        "missing_permission": "You are missing permission to use this command! ||Want perms? Ask Toby :D||",
+        "wrong_argument_type": "Bruh you typed in the wrong argument type haizzz `%shelp` to see where did you type the wrong argument!"
+    },
+    "missing_guild_permission": "Uh oh, no permissions for you :)",
+    "embed_footer": "Requested by: %s",
+    "switched_lang": "Changed language to %s"
 }

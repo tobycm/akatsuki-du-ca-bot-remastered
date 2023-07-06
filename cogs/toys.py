@@ -9,8 +9,8 @@ from discord import Interaction
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog
 
-from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import user_cooldown_check
+from akatsuki_du_ca import AkatsukiDuCa
+from modules.misc import user_cooldown_check
 
 
 class ToysCog(Cog):
@@ -20,7 +20,7 @@ class ToysCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -33,13 +33,11 @@ class ToysCog(Cog):
 
     @checks.cooldown(1, 0.25, key=user_cooldown_check)
     @command(name="random")
-    async def random(
-        self, interaction: Interaction, min_num: int = 0, max_num: int = 10
-    ):
+    async def random(self, interaction: Interaction, min: int = 0, max: int = 10):
         """
         Feeling lucky?
         """
-        await interaction.response.send_message(randint(min_num, max_num))
+        await interaction.response.send_message(randint(min, max))
 
     @checks.cooldown(1, 0.25, key=user_cooldown_check)
     @command(name="coinflip")

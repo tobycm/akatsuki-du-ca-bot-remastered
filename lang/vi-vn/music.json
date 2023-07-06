@@ -9,9 +9,9 @@
         "error": {
             "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
             "already_connected": "Kết nối rồi lmao",
-            "user_no_voice": "Vào voice đi chứ :v",
+            "user_no_voice": "Vào voice trước đi chứ :v",
             "no_permission": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
-            "playing_in_another_channel": "Bot đang phát trong kênh khác!",
+            "playing_in_another_channel": "Bot đang phát trong kênh khác lmeo",
             "different_voice": "Lmao khác kênh voice",
             "not_found": "Hông tìm được gì hết á ;-;"
         }

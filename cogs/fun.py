@@ -2,25 +2,31 @@
 Fun cog for the bot.
 """
 
-from logging import Logger
 from random import choice, randint
 from string import ascii_letters
-from time import time
-from typing import Union
 
-from discord import Embed, File, Interaction, Member, TextChannel, Thread, VoiceChannel
-from discord.app_commands import checks, command
-from discord.ext.commands import Bot, Cog, GroupCog
+from discord import (
+    Embed,
+    File,
+    Interaction,
+    InteractionType,
+    Member,
+    TextChannel,
+    Thread,
+    VoiceChannel,
+)
+from discord.app_commands import checks, command, guild_only
+from discord.ext.commands import Cog, GroupCog
 
-from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import return_user_lang, user_cooldown_check
-from modules.database_utils import get_user_lang
-from modules.embed_process import rich_embeds
+from akatsuki_du_ca import AkatsukiDuCa
+from modules.common import GuildTextBasedChannel
+from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
-from modules.gif_api import construct_gif_embed
-from modules.lang import get_lang, get_lang_by_address
-from modules.quote_api import get_quotes
-from modules.waifu_api import get_waifu_image_url
+from modules.gif import construct_gif_embed
+from modules.lang import get_lang
+from modules.misc import rich_embed, user_cooldown_check
+from modules.quote import get_quote
+from modules.waifu import random_image
 
 
 class GIFCog(GroupCog, name="gif"):
@@ -29,8 +35,7 @@ class GIFCog(GroupCog, name="gif"):
     """
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
-        self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -41,25 +46,35 @@ class GIFCog(GroupCog, name="gif"):
         self.logger.info("Fun cog unloaded")
         return await super().cog_unload()
 
-    async def _gif(self, interaction: Interaction, target: Member):
-        assert interaction.command
-        method = interaction.command.name
-        if target is self.bot.user:
+    async def _gif(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+        if target is interaction.client.user:
             return await interaction.response.send_message("etou...", ephemeral=True)
 
         lang = await get_lang(interaction.user.id)
 
-        embed = await construct_gif_embed(
-            str(interaction.user), str(target), method, lang
-        )
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
+        assert isinstance(interaction.user, Member)
+        assert interaction.command
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
-        await interaction.channel.send(embed=rich_embeds(embed, interaction.user, lang))
+        await interaction.channel.send(
+            embed=rich_embed(
+                await construct_gif_embed(
+                    interaction.user,
+                    target,
+                    interaction.command.name,
+                    interaction.client.config.api_keys.tenor,
+                    lang,
+                ),
+                interaction.user,
+                lang,
+            )
+        )
         return await interaction.response.send_message("Sent!", ephemeral=True)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="slap")
-    async def slap(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def slap(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Slap someone xD
         """
@@ -68,7 +83,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="hug")
-    async def hug(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def hug(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Hug someone xD
         """
@@ -77,7 +93,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="pat")
-    async def pat(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def pat(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Pat someone xD
         """
@@ -86,7 +103,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="punch")
-    async def punch(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def punch(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Punch someone xD
         """
@@ -95,7 +113,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="kick")
-    async def kick(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def kick(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Kick someone xD
         """
@@ -104,7 +123,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="bite")
-    async def bite(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def bite(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Bite someone xD
         """
@@ -113,7 +133,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="cuddle")
-    async def cuddle(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def cuddle(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Cuddle someone xD
         """
@@ -122,7 +143,8 @@ class GIFCog(GroupCog, name="gif"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="poke")
-    async def poke(self, interaction: Interaction, target: Member):
+    @guild_only()
+    async def poke(self, interaction: Interaction[AkatsukiDuCa], target: Member):
         """
         Poke someone xD
         """
@@ -137,7 +159,7 @@ class FunCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     @checks.cooldown(1, 5, key=user_cooldown_check)
@@ -147,13 +169,11 @@ class FunCog(Cog):
         Send an alarm >:)
         """
 
-        author = interaction.user
-
-        lang_option = await get_user_lang(author.id)
+        lang_option = await get_user_lang(interaction.user.id)
         if lang_option != "vi-vn":
             raise LangNotAvailable
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
 
         await interaction.response.send_message("Đang gửi...", ephemeral=True)
         if randint(1, 50) == 25:
@@ -177,45 +197,45 @@ class FunCog(Cog):
         """
         lang = await get_lang(interaction.user.id)
 
-        (url, source) = await get_waifu_image_url()
+        image = await random_image()
 
-        embed = rich_embeds(
-            Embed(
-                title="Waifu",
-                description=f"{get_lang_by_address('fun.waifu', lang)}"
-                + f"\n[Source]({source})",
-            ),
-            interaction.user,
-            lang,
+        return await interaction.response.send_message(
+            embed=rich_embed(
+                Embed(
+                    title="Waifu",
+                    description=lang("fun.waifu") % image,
+                ),
+                interaction.user,
+                lang,
+            ).set_image(url=str(image))
         )
-        embed.set_image(url=url)
-        return await interaction.response.send_message(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @command(name="freeninteractiono")
-    async def freeninteractiono(self, interaction: Interaction):
+    @command(name="freenitro")
+    @guild_only()
+    async def freenitro(self, interaction: Interaction):
         """
-        OMG free NinteractionO!!1! gotta claim fast
+        OMG free NiTrO!!1! gotta claim fast
         """
 
-        author = interaction.user
         code = ""
         for _ in range(0, 23):
             code += choice(ascii_letters)
 
-        lang = await return_user_lang(self.bot, author.id)
+        lang = await get_lang(interaction.user.id)
 
         embed = Embed(
-            title=lang["fun"]["NinteractionoFree"]["Title"],
-            description=f"{lang['fun']['NinteractionoFree']['Description']}\n"
-            + f"[https://discord.gift/{code}]"
-            + f"(https://akatsukiduca.tk/verify-ninteractiono?key={code}&id={author.id})",
+            title=lang("fun.free_nitro.title"),
+            description=lang("fun.free_nitro.description")
+            % f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
             color=0x2F3136,
         )
-        embed.set_image(url="https://i.ibb.co/5LDTWSj/freeninteractiono.png")
+        embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
         await interaction.response.send_message(
-            "Getting sweet free ninteractiono for you <3", ephemeral=True
+            lang("fun.free_nitro.success"), ephemeral=True
         )
+
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         return await interaction.channel.send(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
@@ -225,19 +245,13 @@ class FunCog(Cog):
         A good quote for the day
         """
 
-        time_now = time()
+        quote = await get_quote()
 
-        if (time_now - self.bot.quotes_added) > 900:
-            self.bot.quotes = await get_quotes()
-            self.bot.quotes_added = time_now
-
-        quote = choice(self.bot.quotes)
-        for author, quote in quote:
-            return await interaction.response.send_message(
-                embed=rich_embeds(
-                    Embed(title=author, description=quote),
-                    interaction.user,
-                    await get_lang(interaction.user.id),
-                ),
-                ephemeral=True,
-            )
+        return await interaction.response.send_message(
+            embed=rich_embed(
+                Embed(title=quote.author, description=quote.quote),
+                interaction.user,
+                await get_lang(interaction.user.id),
+            ),
+            ephemeral=True,
+        )

@@ -1,30 +1,22 @@
 {
-    "osuUserNotFound": "Không tìm thấy người chơi 0.0",
-    "osuStatsTitle": "Thông tin người chơi osu! %s",
-    "osuStatsDescription": [
-        "Tên người chơi: ",
-        "ID người chơi: ",
-        "Ngày tạo tài khoản: ",
-        "Tổng lượt chơi: ",
-        "Tổng điểm: ",
-        "Rank thế giới: ",
-        "Cấp: ",
-        "PP: ",
-        "Độ chính xác: ",
-        "SS: ",
-        "S: ",
-        "A: ",
-        "Quốc gia: ",
-        "Tổng giây đã chơi: ",
-        "Rank quốc gia: "
-    ],
-    "ChangeLanguage": "Chọn ngôn ngữ:",
-    "MinecraftAccount": ["Thông tin người chơi Minecraft: ", "Thông tin người chơi Minecraft\nTên:"],
-    "MinecraftServer": {
-        "NotFound": "Không tìm thấy",
-        "online": "đang online",
-        "ServerIp": "IP máy chủ: ",
-        "version": "Phiên bản: ",
-        "players": "Người chơi: "
+    "bug_report": {
+        "success": "Cảm ơn bro đã gửi report. Lát tui check cho bro."
+    },
+    "osu": {
+        "player_not_found": "Không tìm thấy người chơi 0.0",
+        "stats": {
+            "description": "PP: %s\nRank: %s",
+            "title": "Người chơi hệ pro vjp %s"
+        }
+    },
+    "change_language": "Chọn ngôn ngữ:",
+    "minecraft": {
+        "server": {
+            "not_found": "Không tìm thấy",
+            "online": "%s is online",
+            "server_ip": "IP máy chủ: %s",
+            "version": "Phiên bản: %s",
+            "players": "Người chơi: %s / %s"
+        }
     }
 }

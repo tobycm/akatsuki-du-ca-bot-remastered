@@ -4,34 +4,25 @@
 Main bot file.
 """
 
+import asyncio
+
 from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
-from api.ipc import Routes
-from cogs.admin import BotAdminCog, PrefixCog
-from cogs.fun import FunCog, GIFCog
-from cogs.legacy_commands import LegacyCommands
-from cogs.music import MusicCog, RadioMusic
-from cogs.nsfw import NSFWCog
-from cogs.toys import ToysCog
-from cogs.utils import MinecraftCog, UtilsCog
-from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import check_owners, get_prefix_for_bot
-from modules.lang import get_lang, get_lang_by_address
-from modules.quote_api import get_quotes
-from modules.vault import get_bot_config
+from akatsuki_du_ca import AkatsukiDuCa
+from modules import database, gif, lang, minecraft, misc, osu, quote, vault, waifu
 
 bot = AkatsukiDuCa(
-    command_prefix=get_prefix_for_bot,
+    command_prefix=misc.get_prefix_for_bot,
     activity=Game(name="Hibiki Ban Mai"),
     intents=Intents.all(),
     help_command=None,
 )
-tree = bot.tree
+
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv sync command
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot commands
 
 
 @bot.command(name="sc", hidden=True)
@@ -40,15 +31,41 @@ async def sync_command(ctx: Context):
     Sync commands to global.
     """
 
-    if not await check_owners(ctx):
+    if not await misc.check_owners(ctx):
         return
-    await tree.sync()
+    await bot.tree.sync()
     await ctx.send("Synced!")
 
 
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ sync command
+@bot.command(name="reload", hidden=True)
+async def reload(ctx: Context):
+    """
+    Reload bot.
+    """
+
+    if not await misc.check_owners(ctx):
+        return
+
+    await bot.reload_extension("cogs")
+    await bot.reload_extension("api")
+    await bot.reload_extension("jishaku")
+    await ctx.send("Reloaded!")
+    bot.logger.info("Reloaded by command!")
+
+
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot commands
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
+
+bot.config = vault.load()
+database.load()
+lang.load()
+osu.load(bot.config.api_keys.osu, bot.session)
+minecraft.load(bot.session)
+waifu.load(bot.session)
+quote.load(bot.session)
+gif.load(bot.session)
+misc.load()
 
 
 @bot.event
@@ -69,14 +86,11 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
     if message.author.bot:
         return
 
+    assert bot.user
     if message.content == f"<@{bot.user.id}>":
-        prefix = await get_prefix_for_bot(bot, message)
+        prefix = await misc.get_prefix_for_bot(bot, message)
         await message.reply(
-            prefix.join(
-                get_lang_by_address(
-                    "main.PingForPrefix", await get_lang(message.author.id)
-                )
-            )
+            (await lang.get_lang(message.author.id))("main.ping_for_prefix") % prefix
         )
 
     await bot.process_commands(message)
@@ -105,30 +119,20 @@ async def setup_hook():
     Run on startup (yes you can touch this).
     """
 
-    bot.quotes = await get_quotes()
-
-    # add ipc routes
-    await bot.add_cog(Routes(bot))
-
-    for cog in (
-        FunCog,
-        GIFCog,
-        RadioMusic,
-        MusicCog,
-        NSFWCog,
-        ToysCog,
-        UtilsCog,
-        MinecraftCog,
-        PrefixCog,
-        BotAdminCog,
-        LegacyCommands,
-    ):
-        await bot.add_cog(cog(bot))
-
+    await bot.load_extension("cogs")
+    await bot.load_extension("api")
     await bot.load_extension("jishaku")
     bot.logger.info("Loaded jishaku")
 
 
 bot.setup_hook = setup_hook
 
-bot.run(get_bot_config("token"))
+bot.run(bot.config.token)
+
+
+async def cleanup():
+    await bot.session.close()
+    await database.cleanup()
+
+
+asyncio.run(cleanup())

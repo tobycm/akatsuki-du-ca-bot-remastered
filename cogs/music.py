@@ -2,16 +2,16 @@
 This is the music cog.
 """
 
-import logging
-from typing import Callable, Literal, Optional, Union
+from typing import Callable, Literal
 
 from discord import Color, Embed, Interaction, Member, TextChannel, Thread, VoiceChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
-from discord.ui import View
+from discord.ui import Select, View
+from wavelink import Node, NodePool, Playable
+from wavelink import Player as WavelinkPlayer
 from wavelink import (
-    Node,
-    NodePool,
+    Queue,
     SoundCloudTrack,
     TrackEventPayload,
     WebsocketClosedPayload,
@@ -19,19 +19,145 @@ from wavelink import (
     YouTubeTrack,
 )
 
-from models.bot_models import AkatsukiDuCa
-from models.music_models import (
-    MusicSelect,
-    NewPlaylistEmbed,
-    NewTrackEmbed,
-    PageSelect,
-    Player,
-    make_queue,
-)
-from modules.checks_and_utils import seconds_to_time, user_cooldown_check
-from modules.embed_process import rich_embeds
+from akatsuki_du_ca import AkatsukiDuCa
+from modules.common import GuildTextBasedChannel
 from modules.lang import get_lang
-from modules.vault import get_lavalink_nodes
+from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
+
+
+class Player(WavelinkPlayer):
+    """
+    Custom player class
+    """
+
+    interaction: Interaction | None = None
+    text_channel: GuildTextBasedChannel | None = None
+    loop_mode: Literal["song", "queue"] | None = None
+
+
+class MusicSelect(Select):
+    """
+    Make a music selection Select
+    """
+
+    def __init__(
+        self, tracks: list[YouTubeTrack], player: Player, lang: Callable[[str], str]
+    ) -> None:
+        self.lang = lang
+        self.tracks = tracks
+        self.player = player
+
+        super().__init__(placeholder="Make your music selection")
+
+    async def callback(self, interaction: Interaction):
+        track = self.tracks[int(self.values[0]) - 1]
+        await self.player.queue.put_wait(track)
+        if not self.player.is_playing():
+            await self.player.play(await self.player.queue.get_wait())  # type: ignore
+        await interaction.response.send_message(
+            embed=rich_embed(
+                Embed(
+                    title=self.lang("music.misc.action.queue.added"),
+                    description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
+                    + f"Duration: {seconds_to_time(track.duration / 1000)}",
+                ).set_thumbnail(
+                    url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
+                ),
+                interaction.user,
+                self.lang,
+            )
+        )
+        return
+
+
+class PageSelect(Select):
+    """
+    Make a page selection Select
+    class queue_page_select(Select):
+    """
+
+    def __init__(
+        self, embeds: list[Embed], interaction: Interaction, lang: Callable[[str], str]
+    ) -> None:
+        self.embeds = embeds
+        self.interaction = interaction
+        self.lang = lang
+
+        super().__init__(placeholder="Choose page")
+
+    async def callback(self, interaction: Interaction):
+        page = int(self.values[0]) - 1
+
+        await interaction.response.defer()
+        await self.interaction.edit_original_response(
+            embed=rich_embed(self.embeds[page], interaction.user, self.lang)
+        )
+
+        return
+
+
+class NewTrackEmbed(Embed):
+    """
+    Make a new track embed
+    """
+
+    def __init__(self, track: Playable, lang: Callable[[str], str]) -> None:
+        super().__init__(
+            title=lang("music.misc.action.queue.added"),
+            description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
+            + f"Duration: {seconds_to_time(track.duration / 1000)}",
+        )
+        self.set_thumbnail(
+            url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
+        )
+
+
+class NewPlaylistEmbed(Embed):
+    """
+    Make a new playlist embed
+    """
+
+    def __init__(self, playlist: YouTubePlaylist, lang: Callable[[str], str]) -> None:
+        super().__init__(
+            title=lang("music.misc.action.queue.added"),
+            description=f"[**{playlist.name}**]({playlist.uri})\n"
+            + f"Items: {len(playlist.tracks)}",
+        )
+        self.set_thumbnail(
+            url=f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
+        )
+
+
+class QueueEmbed(Embed):
+    """
+    Make a queue page embed
+    """
+
+    def __init__(self, lang: Callable[[str], str]) -> None:
+        super().__init__(title=lang("music.misc.queue"), description="")
+
+
+def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[Embed]:
+    """
+    Make queue pages embeds
+    """
+    embeds = []
+    embed = QueueEmbed(lang)
+    counter = 1
+
+    for track in queue:
+        if len(embed) > 1000:
+            embeds.append(embed)
+            embed = QueueEmbed(lang)
+        if len(embeds) == 5:
+            break
+        embed.description += f"{counter}. {track.title}\n"  # type: ignore
+        counter += 1
+
+    if len(embeds) == 0:
+        embeds.append(embed)
+
+    return embeds
 
 
 class RadioMusic(GroupCog, name="radio"):
@@ -41,7 +167,7 @@ class RadioMusic(GroupCog, name="radio"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: logging.Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -70,18 +196,15 @@ class RadioMusic(GroupCog, name="radio"):
 
         lang = await get_lang(interaction.user.id)
 
-        await interaction.response.send_message(lang("music.SuggestionSent"))
+        await interaction.response.send_message(lang("music.suggestion_sent"))
 
 
 class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
-    bot: AkatsukiDuCa
-    logger: logging.Logger
-
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: logging.Logger = bot.logger
+        self.logger = bot.logger
         bot.loop.create_task(self.connect_nodes())
 
     async def cog_load(self) -> None:
@@ -101,8 +224,8 @@ class MusicCog(Cog):
         await NodePool.connect(
             client=self.bot,
             nodes=[
-                Node(uri=node["uri"], password=node["password"])
-                for node in get_lavalink_nodes()
+                Node(uri=node.uri, password=node.password)
+                for node in self.bot.config.lavalink_nodes
             ],
         )
 
@@ -177,7 +300,7 @@ class MusicCog(Cog):
         interaction: Interaction,
         lang: Callable[[str], str],
         connecting: bool = False,
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         """
         Connect checks
         """
@@ -204,7 +327,7 @@ class MusicCog(Cog):
         interaction: Interaction,
         lang: Callable[[str], str],
         connecting: bool = False,
-    ) -> Optional[Player]:
+    ) -> Player | None:
         """
         Initialize a player and connect to a voice channel if there are none.
         """
@@ -240,7 +363,7 @@ class MusicCog(Cog):
 
     async def disconnect_check(
         self, interaction: Interaction, lang: Callable[[str], str]
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         """
         Disconnect checks
         """
@@ -266,7 +389,7 @@ class MusicCog(Cog):
 
     async def _disconnect(
         self, interaction: Interaction, lang: Callable[[str], str]
-    ) -> Optional[Literal[True]]:
+    ) -> Literal[True] | None:
         assert interaction.guild
         assert interaction.guild.voice_client
 
@@ -315,14 +438,16 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
 
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        track = (await YouTubeTrack.search(query))[0]
+        track = await YouTubeTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         await player.queue.put_wait(track)
 
@@ -332,7 +457,7 @@ class MusicCog(Cog):
             return
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -348,28 +473,30 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        playlist = (await YouTubePlaylist.search(query))[0]
+        playlist = await YouTubePlaylist.search(query)
+        if isinstance(playlist, list):
+            playlist = playlist[0]
 
         for track in playlist.tracks:
             await player.queue.put_wait(track)
 
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())  # type: ignore
+
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(
-                NewPlaylistEmbed(playlist, query, lang),
+            embed=rich_embed(
+                NewPlaylistEmbed(playlist, lang),
                 interaction.user,
                 lang,
             ),
         )
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -384,22 +511,26 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        track = (await YouTubeTrack.search(query))[0]
+        track = await YouTubeTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         player.queue.put_at_front(track)
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
+            player.interaction = interaction
+            return
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -415,22 +546,26 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        track = (await SoundCloudTrack.search(query))[0]
+        track = await SoundCloudTrack.search(query)
+        if isinstance(track, list):
+            track = track[0]
 
         await player.queue.put_wait(track)
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
+            player.interaction = interaction
+            return
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embeds(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.75, key=user_cooldown_check)
@@ -446,13 +581,15 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread, VoiceChannel])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        tracks = (await YouTubeTrack.search(query))[:5]
+        tracks = await YouTubeTrack.search(query)
+        if isinstance(tracks, list):
+            tracks = tracks[:5]
 
         embed = Embed(
             title=lang("music.misc.result"),
@@ -589,7 +726,7 @@ class MusicCog(Cog):
             view = View(timeout=60).add_item(select_menu)
 
             await interaction.response.send_message(
-                embed=rich_embeds(queue_embeds[0], interaction.user, lang),
+                embed=rich_embed(queue_embeds[0], interaction.user, lang),
                 view=view,
             )
 
@@ -598,7 +735,7 @@ class MusicCog(Cog):
                 view.children[0].disabled = True
                 await interaction.edit_original_response(view=view)
         await interaction.response.send_message(
-            embed=rich_embeds(queue_embeds[0], interaction.user, lang),
+            embed=rich_embed(queue_embeds[0], interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -618,7 +755,7 @@ class MusicCog(Cog):
             return
 
         track = player.current
-        embed = rich_embeds(
+        embed = rich_embed(
             Embed(
                 title=lang("music.misc.now_playing"),
                 description=f"[**{track.title}**]({track.uri}) - {track.author}\n"

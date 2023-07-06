@@ -2,18 +2,15 @@
 Not Safe for Work commands. 0_0
 """
 
-from logging import Logger
-from typing import Union
-
-from discord import Embed, Interaction, TextChannel, Thread
+from discord import Embed, Interaction
 from discord.app_commands import checks, command
 from discord.ext.commands import GroupCog
 
-from models.bot_models import AkatsukiDuCa
-from modules.checks_and_utils import user_cooldown_check
-from modules.embed_process import rich_embeds
+from akatsuki_du_ca import AkatsukiDuCa
+from modules.common import GuildTextBasedChannel
 from modules.lang import get_lang
-from modules.nsfw import get_nsfw
+from modules.misc import rich_embed, user_cooldown_check
+from modules.waifu import random_image
 
 
 class NSFWCog(GroupCog, name="nsfw"):
@@ -23,7 +20,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger: Logger = bot.logger
+        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -43,24 +40,24 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         lang = await get_lang(interaction.user.id)
 
-        assert isinstance(interaction.channel, Union[TextChannel, Thread])
+        assert isinstance(interaction.channel, GuildTextBasedChannel)
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
-                lang("nsfw.PlsGoToNSFW"), ephemeral=True
+                lang("nsfw.pls_go_to_nsfw"), ephemeral=True
             )
 
-        url, source = await get_nsfw()
+        image = await random_image(nsfw=True)
 
         await interaction.response.send_message(
-            embed=rich_embeds(
+            embed=rich_embed(
                 Embed(
                     title="0.0",
-                    description=lang("fun.PoweredByWaifuim")
-                    + "\n"  # type: ignore
-                    + f"Source: [{source}]({source})",
+                    description=lang("fun.powered_by_waifu_im")
+                    + "\n"
+                    + f"[Source]({image})",
                 ),
                 interaction.user,
                 lang,
-            ).set_image(url=url)
+            ).set_image(url=str(image))
         )

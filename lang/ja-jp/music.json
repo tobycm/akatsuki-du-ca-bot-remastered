@@ -1,50 +1,50 @@
 {
     "voice_client": {
         "status": {
-            "connecting": "接続しています...",
-            "connected": "接続しました。",
-            "disconnecting": "接続を切断中...",
-            "disconnected": "切断されました!"
+            "connecting": "Connecting...",
+            "connected": "Connected!",
+            "disconnecting": "Disconnecting...",
+            "disconnected": "Disconnected!"
         },
         "error": {
-            "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
-            "already_connected": "Kết nối rồi lmao",
-            "user_no_voice": "Vào voice đi chứ :v",
-            "no_permission": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
-            "playing_in_another_channel": "Bot đang phát trong kênh khác!",
-            "different_voice": "Lmao khác kênh voice",
-            "not_found": "Hông tìm được gì hết á ;-;"
+            "not_connected": "I didn't connect, how can you disconnect me???",
+            "already_connected": "I'm in already lol",
+            "user_no_voice": "You need to join the voice channel before calling me >.<",
+            "no_permission": "I have no permission to connect to the voice channel ;-; you should check my permissions and the voice channel member limit!",
+            "playing_in_another_channel": "Bot is playing in another channel bro!",
+            "different_voice": "Your VC != Bot VC",
+            "not_found": "Can't found anything. Sad ;-;"
         }
     },
     "misc": {
         "action": {
             "loop": {
-                "queue": "Đã bật chế độ lặp lại hàng đợi!",
-                "song": "Đã bật chế độ lặp lại bài hát!",
-                "off": "Đã tắt chế độ lặp lại!"
+                "queue": "Looping queue!",
+                "song": "Looping song!",
+                "off": "Loop mode off!"
             },
             "queue": {
-                "cleared": "Đã xóa hàng đợi!",
-                "shuffled": "Đã xáo trộn hàng đợi!",
-                "added": "Đã thêm vào hàng đợi!",
-                "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
+                "cleared": "Queue cleared!",
+                "shuffled": "Queue shuffled!",
+                "added": "Added to queue!",
+                "removed": "Removed %sth song in queue!"
             },
             "music": {
-                "searching": "検索中...",
-                "paused": "一時停止しました!",
-                "resumed": "再開しました!",
-                "skipped": "スキップされました!",
-                "stopped": "停止しました!"
+                "searching": "Searching...",
+                "paused": "Paused!",
+                "resumed": "Resumed!",
+                "skipped": "Skipped!",
+                "stopped": "Stopped!"
             },
             "error": {
-                "invalid_index": "インデックスが無効です!",
-                "no_music": "何も再生されていません",
-                "no_queue": "キューが空です!"
+                "invalid_index": "Invalid index!",
+                "no_music": "Nothing is currently playing!",
+                "no_queue": "Queue empty!"
             }
         },
-        "queue": "キュー",
-        "result": "結果",
-        "now_playing": "지금 재생 중",
-        "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
+        "queue": "Queue",
+        "result": "Results",
+        "now_playing": "Now Playing",
+        "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
     }
 }

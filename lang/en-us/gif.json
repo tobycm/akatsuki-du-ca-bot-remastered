@@ -1,39 +1,34 @@
 {
     "slap": {
         "title": "Slap",
-        "mid_text": " has been slap by "
+        "text": "%s slapped %s. Damn bro"
     },
     "hug": {
         "title": "Hug",
-        "mid_text": " hugged ",
-        "mid_text_2": ". How cute :Đ"
+        "text": "%s hugged %s. How cute :Đ"
     },
     "poke": {
         "title": "Poke",
-        "mid_text": " poked ",
-        "mid_text_2": ". Pokey poke"
+        "text": "%s poked %s. Pokey poke"
     },
     "pat": {
         "title": "Pat",
-        "mid_text": " patted "
+        "text": "%s patted %s. Sleep now"
     },
     "kick": {
         "title": "Kick",
-        "mid_text": " kicked ",
-        "mid_text_2": ". Dead XD"
+        "text": "%s kicked %s. Dead XD"
     },
     "punch": {
         "title": "Punch",
-        "mid_text": " punched "
+        "text": "%s punched %s. KO"
     },
     "cuddle": {
         "title": "Cuddle",
-        "mid_text": " cuddled ",
-        "mid_text_2": ". Wait, when did I add this command :0"
+        "text": "%s cuddled %s. Wait, when did I add this command :0"
     },
     "bite": {
         "title": "Bite",
-        "mid_text": " bit ",
-        "mid_text_2": ". Ayo no biting each other >:|"
+        "text": "%s bit %s. Ayo no biting >:|"
     }
 }
