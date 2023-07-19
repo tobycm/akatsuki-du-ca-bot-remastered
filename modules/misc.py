@@ -12,12 +12,13 @@ from discord.ext.commands import Context
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import get_op, get_prefix
 
-global DEFAULT_PREFIX
+global default_prefix
+default_prefix = "duca!"
 
 
 def load(prefix: str = "duca!"):
-    global DEFAULT_PREFIX
-    DEFAULT_PREFIX = prefix
+    global default_prefix
+    default_prefix = prefix
 
 
 async def check_owners(ctx: Context[AkatsukiDuCa] | Interaction[AkatsukiDuCa]) -> bool:
@@ -68,7 +69,7 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
     """
 
     assert message.guild
-    return await get_prefix(message.guild.id) or DEFAULT_PREFIX
+    return await get_prefix(message.guild.id) or default_prefix
 
 
 def random_color() -> Color:
@@ -88,6 +89,5 @@ def rich_embed(
 
     footer = lang("main.embed_footer")
     embed.color = random_color()
-    text = f"{footer} {author.name}#{author.discriminator}"
-    embed.set_footer(text=text, icon_url=author.display_avatar)
+    embed.set_footer(text=footer % str(author), icon_url=author.display_avatar)
     return embed
