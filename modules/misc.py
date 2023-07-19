@@ -13,7 +13,7 @@ from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import get_op, get_prefix
 
 global default_prefix
-default_prefix = "duca!"
+default_prefix: str
 
 
 def load(prefix: str = "duca!"):

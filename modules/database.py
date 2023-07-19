@@ -10,7 +10,6 @@ from redis.asyncio import ConnectionPool, Redis
 from modules.vault import RedisConfig
 
 global redis
-
 redis: Redis
 
 
@@ -60,6 +59,7 @@ async def get_prefix(server_id: int) -> str | None:
     result = await redis.hget("prefix", str(server_id))
     if result is not None:
         return result.decode()
+    return None
 
 
 # ------------------------------------------- op ----------------------------------------------
@@ -96,6 +96,7 @@ async def get_op(op_id: int) -> OP | None:
     result = await redis.hget("op", str(op_id))
     if result is not None:
         return json.loads(result.decode())
+    return None
 
 
 # ------------------------------------------ user lang --------------------------------------------
@@ -109,7 +110,7 @@ async def set_user_lang(user_id: int, lang_option: str) -> None:
     await redis.hset("user_lang", str(user_id), lang_option)
 
 
-async def get_user_lang(user_id: int) -> str | None:
+async def get_user_lang(user_id: int) -> str:
     """
     Get user language from database
     """

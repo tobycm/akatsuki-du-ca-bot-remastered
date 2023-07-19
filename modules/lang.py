@@ -8,7 +8,7 @@ from typing import Callable
 
 from modules.database import get_user_lang
 
-lang_packs = {}
+lang_packs: dict[str, dict] = {}
 lang_list = ["vi-vn", "en-us", "ja-jp"]
 
 

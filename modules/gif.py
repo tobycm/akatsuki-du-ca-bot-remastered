@@ -6,11 +6,12 @@ from random import choice
 from typing import Callable
 
 from aiohttp import ClientSession
-from discord import Embed, Member, User
+from discord import Embed, Member
 
 Url = str
 
 global session
+session: ClientSession
 
 
 def load(sess: ClientSession):
