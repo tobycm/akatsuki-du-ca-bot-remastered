@@ -72,14 +72,6 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
     return await get_prefix(message.guild.id) or default_prefix
 
 
-def random_color() -> Color:
-    """
-    Make a random Color
-    """
-
-    return Color(int(0xFFFFFF * (1.0 - (0.5 * random()))))
-
-
 def rich_embed(
     embed: Embed, author: User | Member, lang: Callable[[str], str]
 ) -> Embed:
@@ -88,6 +80,6 @@ def rich_embed(
     """
 
     footer = lang("main.embed_footer")
-    embed.color = random_color()
+    embed.color = Color.random()
     embed.set_footer(text=footer % str(author), icon_url=author.display_avatar)
     return embed
