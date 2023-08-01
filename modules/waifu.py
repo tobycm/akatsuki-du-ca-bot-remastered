@@ -7,6 +7,7 @@ from waifuim import WaifuAioClient
 from waifuim.types import Image
 
 global waifuim
+waifuim: WaifuAioClient
 
 
 def load(session: ClientSession):

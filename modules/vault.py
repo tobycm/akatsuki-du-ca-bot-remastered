@@ -47,8 +47,8 @@ class BotConfig:
 
 
 def load() -> BotConfig:
-    with open("config.json", "r", encoding="utf8") as config:
-        config = json.load(config)
+    with open("config.json", "r", encoding="utf8") as file:
+        config = json.load(file)
         return BotConfig(
             token=config["bot"]["token"],
             secret=config["bot"]["secret"],

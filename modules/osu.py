@@ -3,6 +3,7 @@ from aiosu.models import User as Player
 from aiosu.v1 import Client
 
 global client
+client: Client
 
 
 def load(token: str, session: ClientSession):

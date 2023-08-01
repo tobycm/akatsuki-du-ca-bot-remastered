@@ -8,10 +8,6 @@ from time import time
 
 from aiohttp import ClientSession
 
-global quotes
-global updated_at
-updated_at = 0
-
 
 @dataclass
 class Quote:
@@ -19,7 +15,14 @@ class Quote:
     author: str
 
 
+global quotes
+quotes: list[Quote] = []
+global updated_at
+updated_at = 0
+
+
 global session
+session: ClientSession
 
 
 def load(sess: ClientSession):

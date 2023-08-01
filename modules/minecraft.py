@@ -11,7 +11,9 @@ UUID = str
 Image = str
 Thumbnail = str
 
+
 global session
+session: ClientSession
 
 
 def load(sess: ClientSession):
@@ -66,7 +68,7 @@ async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
         data: RawMinecraftServerAPI = await response.json()
 
         if not data["online"]:
-            return
+            return None
 
         return MinecraftServer(
             data["motd"]["clean"][0],
