@@ -10,6 +10,7 @@ from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
 
 from akatsuki_du_ca import AkatsukiDuCa
+from cogs.music import Player
 from modules.database import set_user_lang
 from modules.lang import get_lang, lang_list
 from modules.minecraft import get_minecraft_server
@@ -149,9 +150,15 @@ class UtilsCog(Cog):
         Check and send bot ping/latency
         """
 
-        await interaction.response.send_message(
-            content=f"\U0001f3d3 Pong! `{round(interaction.client.latency * 1000)}ms`"
-        )
+        response = f"\U0001f3d3 Pong! `{round(interaction.client.latency * 1000)}ms`"
+
+        if interaction.guild and interaction.guild.voice_client:
+            assert isinstance(interaction.guild.voice_client, Player)
+            response += (
+                f"\n\U0001f3b5 Music latency: `{interaction.guild.voice_client.ping}ms`"
+            )
+
+        await interaction.response.send_message(content=response)
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="server_info")
