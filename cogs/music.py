@@ -4,7 +4,7 @@ This is the music cog.
 
 from typing import Callable, Literal
 
-from discord import Color, Embed, Interaction, Member, TextChannel, Thread, VoiceChannel
+from discord import Color, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
@@ -70,32 +70,6 @@ class MusicSelect(Select):
         return
 
 
-class PageSelect(Select):
-    """
-    Make a page selection Select
-    class queue_page_select(Select):
-    """
-
-    def __init__(
-        self, embeds: list[Embed], interaction: Interaction, lang: Callable[[str], str]
-    ) -> None:
-        self.embeds = embeds
-        self.interaction = interaction
-        self.lang = lang
-
-        super().__init__(placeholder="Choose page")
-
-    async def callback(self, interaction: Interaction):
-        page = int(self.values[0]) - 1
-
-        await interaction.response.defer()
-        await self.interaction.edit_original_response(
-            embed=rich_embed(self.embeds[page], interaction.user, self.lang)
-        )
-
-        return
-
-
 class NewTrackEmbed(Embed):
     """
     Make a new track embed
@@ -137,7 +111,36 @@ class QueueEmbed(Embed):
         super().__init__(title=lang("music.misc.queue"), description="")
 
 
-def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[Embed]:
+class PageSelect(Select):
+    """
+    Make a page selection Select
+    class queue_page_select(Select):
+    """
+
+    def __init__(
+        self,
+        embeds: list[QueueEmbed],
+        interaction: Interaction,
+        lang: Callable[[str], str],
+    ) -> None:
+        self.embeds = embeds
+        self.interaction = interaction
+        self.lang = lang
+
+        super().__init__(placeholder="Choose page")
+
+    async def callback(self, interaction: Interaction):
+        page = int(self.values[0]) - 1
+
+        await interaction.response.defer()
+        await self.interaction.edit_original_response(
+            embed=rich_embed(self.embeds[page], interaction.user, self.lang)
+        )
+
+        return
+
+
+def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[QueueEmbed]:
     """
     Make queue pages embeds
     """
@@ -199,7 +202,7 @@ class RadioMusic(GroupCog, name="radio"):
         await interaction.response.send_message(lang("music.suggestion_sent"))
 
 
-class MusicCog(Cog):
+class MusicCog(GroupCog, name="music"):
     """Music cog to hold Wavelink related commands and listeners."""
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
@@ -313,13 +316,13 @@ class MusicCog(Cog):
             await interaction.response.send_message(
                 lang("music.voice_client.error.user_no_voice")
             )
-            return
+            return None
         voice_client = interaction.guild.voice_client
         if voice_client and (voice_client.channel is user_voice.channel) and connecting:
             await interaction.response.send_message(
                 lang("music.voice_client.error.already_connected")
             )
-            return
+            return None
         return True
 
     async def _connect(
@@ -332,9 +335,8 @@ class MusicCog(Cog):
         Initialize a player and connect to a voice channel if there are none.
         """
 
-        ok = await self.connect_check(interaction, lang, connecting=connecting)
-        if not ok:
-            return
+        if not await self.connect_check(interaction, lang, connecting=connecting):
+            return None
 
         if connecting:
             await interaction.response.send_message(
@@ -840,3 +842,24 @@ class MusicCog(Cog):
 
         await player.seek(position=position)
         return await interaction.response.send_message("Done!")
+
+    @checks.cooldown(1, 1, key=user_cooldown_check)
+    @command(name="volume")
+    async def volume(self, interaction: Interaction, volume: int):
+        """
+        Change the player volume.
+        """
+
+        lang = await get_lang(interaction.user.id)
+
+        player = await self._connect(interaction, lang)
+        if not player or not player.is_playing() or not player.current:
+            await interaction.response.send_message(
+                lang("music.misc.action.error.no_music")
+            )
+            return
+
+        await player.set_volume(volume)
+        return await interaction.response.send_message(
+            lang("music.misc.action.volume.changed").format(volume)
+        )
