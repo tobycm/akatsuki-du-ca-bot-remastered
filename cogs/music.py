@@ -447,57 +447,28 @@ class MusicCog(GroupCog, name="music"):
             lang("music.misc.action.music.searching")
         )
 
-        track = await YouTubeTrack.search(query)
-        if isinstance(track, list):
-            track = track[0]
+        if "youtube.com/playlist" in query:
+            result = await YouTubePlaylist.search(query)
 
-        await player.queue.put_wait(track)
+            if isinstance(result, list):
+                result = result[0]
+
+            for track in result.tracks:
+                await player.queue.put_wait(track)
+        else:
+            result = await YouTubeTrack.search(query)
+            if isinstance(result, list):
+                result = result[0]
+
+            await player.queue.put_wait(result)
 
         if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
+            await player.play(await player.queue.get_wait())
             player.interaction = interaction
             return
         await interaction.edit_original_response(
             content="",
-            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
-        )
-
-    @checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @command(name="playlist")
-    async def playlist(self, interaction: Interaction, query: str):
-        """
-        Play a list of song.
-        """
-
-        lang = await get_lang(interaction.user.id)
-
-        player = await self._connect(interaction, lang)
-        if not player:
-            return
-
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
-        player.text_channel = interaction.channel
-        await interaction.response.send_message(
-            lang("music.misc.action.music.searching")
-        )
-
-        playlist = await YouTubePlaylist.search(query)
-        if isinstance(playlist, list):
-            playlist = playlist[0]
-
-        for track in playlist.tracks:
-            await player.queue.put_wait(track)
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
-
-        await interaction.edit_original_response(
-            content="",
-            embed=rich_embed(
-                NewPlaylistEmbed(playlist, lang),
-                interaction.user,
-                lang,
-            ),
+            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -519,11 +490,20 @@ class MusicCog(GroupCog, name="music"):
             lang("music.misc.action.music.searching")
         )
 
-        track = await YouTubeTrack.search(query)
-        if isinstance(track, list):
-            track = track[0]
+        if "youtube.com/playlist" in query:
+            result = await YouTubePlaylist.search(query)
 
-        player.queue.put_at_front(track)
+            if isinstance(result, list):
+                result = result[0]
+
+            for track in result.tracks:
+                player.queue.put_at_front(track)
+        else:
+            result = await YouTubeTrack.search(query)
+            if isinstance(result, list):
+                result = result[0]
+
+            player.queue.put_at_front(result)
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
@@ -532,7 +512,7 @@ class MusicCog(GroupCog, name="music"):
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang),
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -862,4 +842,26 @@ class MusicCog(GroupCog, name="music"):
         await player.set_volume(volume)
         return await interaction.response.send_message(
             lang("music.misc.action.volume.changed").format(volume)
+        )
+
+    @checks.cooldown(1, 3, key=user_cooldown_check)
+    @command(name="shuffle")
+    async def shuffle(self, interaction: Interaction):
+        """
+        Shuffle the queue
+        """
+
+        lang = await get_lang(interaction.user.id)
+
+        player = await self._connect(interaction, lang)
+        if not player:
+            return
+        if player.queue.is_empty:
+            return await interaction.response.send_message(
+                lang("music.misc.action.error.no_queue")
+            )
+
+        player.queue.shuffle()
+        return await interaction.response.send_message(
+            lang("music.misc.action.queue.shuffled")
         )
