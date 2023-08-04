@@ -202,7 +202,7 @@ class RadioMusic(GroupCog, name="radio"):
         await interaction.response.send_message(lang("music.suggestion_sent"))
 
 
-class MusicCog(GroupCog, name="music"):
+class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
