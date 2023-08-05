@@ -481,6 +481,8 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
+        is_playlist = False
+
         if "youtube.com/playlist" in query:
             result = await YouTubePlaylist.search(query)
 
@@ -489,6 +491,11 @@ class MusicCog(Cog):
 
             for track in result.tracks:
                 player.queue.put_at_front(track)
+            is_playlist = True
+            await interaction.edit_original_response(
+                content="There's a bug in this command that will make your playlist play in reverse order."
+                + " Please use `/play` command instead thx"
+            )
         else:
             result = await YouTubeTrack.search(query)
             if isinstance(result, list):
@@ -502,9 +509,11 @@ class MusicCog(Cog):
             return
 
         await interaction.edit_original_response(
-            content="",
-            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang),
+            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang)
         )
+
+        if not is_playlist:
+            await interaction.edit_original_response(content="")
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="soundcloud")
