@@ -1,50 +1,51 @@
 {
     "voice_client": {
         "status": {
-            "connecting": "Connecting...",
-            "connected": "Connected!",
-            "disconnecting": "Disconnecting...",
-            "disconnected": "Disconnected!"
+            "connecting": "接続中...",
+            "connected": "接続されました！",
+            "disconnecting": "切断中...",
+            "disconnected": "切断されました！"
         },
         "error": {
-            "not_connected": "I didn't connect, how can you disconnect me???",
-            "already_connected": "I'm in already lol",
-            "user_no_voice": "You need to join the voice channel before calling me >.<",
-            "no_permission": "I have no permission to connect to the voice channel ;-; you should check my permissions and the voice channel member limit!",
-            "playing_in_another_channel": "Bot is playing in another channel bro!",
-            "different_voice": "Your VC != Bot VC",
-            "not_found": "Can't found anything. Sad ;-;"
+            "not_connected": "接続されていませんですが、どうすれば切断できますか？",
+            "already_connected": "もう繋がってるよ (＞ｙ＜)",
+            "user_no_voice": "私に呼ぶ前に音声チャンネルに参加する必要があります >.<",
+            "no_permission": "私は音声チャンネルに接続する権限がありません (TдT) 私の権限と音声チャンネルメンバーの制限を確認してください！",
+            "playing_in_another_channel": "私は別のチャンネルでプレイ中です！",
+            "different_voice": "あなたの音声チャネルと私の音声チャネルは違います。",
+            "not_found": "何も見つかりませんでした。悲しいです (⋟﹏⋞)"
         }
     },
     "misc": {
         "action": {
             "loop": {
-                "queue": "Looping queue!",
-                "song": "Looping song!",
-                "off": "Loop mode off!"
+                "queue": "ループキュー!",
+                "song": "ループ曲！",
+                "off": "ループモードオフ！"
             },
             "queue": {
-                "cleared": "Queue cleared!",
-                "shuffled": "Queue shuffled!",
-                "added": "Added to queue!",
-                "removed": "Removed %sth song in queue!"
+                "cleared": "キューを消しました！",
+                "shuffled": "キューをシャッフルしました！",
+                "added": "キューに追加しました！",
+                "removed": "キュー内の %s番目の曲を削除しました！",
+                "flipped": "Flipped queue!"
             },
             "music": {
-                "searching": "Searching...",
-                "paused": "Paused!",
-                "resumed": "Resumed!",
-                "skipped": "Skipped!",
-                "stopped": "Stopped!"
+                "searching": "検索中...",
+                "paused": "一時停止しました！",
+                "resumed": "再開しました！",
+                "skipped": "スキップしました！",
+                "stopped": "停止しました！"
             },
             "error": {
-                "invalid_index": "Invalid index!",
-                "no_music": "Nothing is currently playing!",
-                "no_queue": "Queue empty!"
+                "invalid_index": "インデックスが無効です！",
+                "no_music": "プレイ中の曲はありません！",
+                "no_queue": "キューが空です！"
             }
         },
-        "queue": "Queue",
-        "result": "Results",
-        "now_playing": "Now Playing",
-        "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
+        "queue": "キュー",
+        "result": "結果",
+        "now_playing": "プレイ中",
+        "suggestion_sent": "あなたの提案はラジオのオーナーに送信されました。ありがとうございました！"
     }
 }

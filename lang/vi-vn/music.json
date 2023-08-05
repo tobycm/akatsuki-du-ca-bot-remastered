@@ -27,7 +27,8 @@
                 "cleared": "Đã xóa hàng đợi!",
                 "shuffled": "Đã xáo trộn hàng đợi!",
                 "added": "Đã thêm vào hàng đợi!",
-                "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!"
+                "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!",
+                "flipped": "Đã lộn ngược hàng đợi!"
             },
             "music": {
                 "searching": "Đang tìm...",

@@ -27,7 +27,8 @@
                 "cleared": "Queue cleared!",
                 "shuffled": "Queue shuffled!",
                 "added": "Added to queue!",
-                "removed": "Removed %sth song in queue!"
+                "removed": "Removed %sth song in queue!",
+                "flipped": "Flipped queue!"
             },
             "music": {
                 "searching": "Searching...",

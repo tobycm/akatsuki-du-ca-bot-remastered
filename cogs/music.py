@@ -283,17 +283,10 @@ class MusicCog(Cog):
         ).set_thumbnail(
             url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
         )
-        try:
-            if player.loop_mode == "song":
-                player.queue.put_at_front(track)
-            elif player.loop_mode == "queue":
-                await player.queue.put_wait(track)
-        except AttributeError:
-            pass
-
-        if player.interaction:
-            await player.interaction.edit_original_response(content="", embed=embed)
-            return
+        if player.loop_mode == "song":
+            player.queue.put_at_front(track)
+        elif player.loop_mode == "queue":
+            await player.queue.put_wait(track)
 
         assert player.text_channel
         await player.text_channel.send(embed=embed)
@@ -864,4 +857,28 @@ class MusicCog(Cog):
         player.queue.shuffle()
         return await interaction.response.send_message(
             lang("music.misc.action.queue.shuffled")
+        )
+
+    @checks.cooldown(1, 3, key=user_cooldown_check)
+    @command(name="flip")
+    async def flip(self, interaction: Interaction):
+        """
+        Flip the queue
+        """
+
+        lang = await get_lang(interaction.user.id)
+
+        player = await self._connect(interaction, lang)
+        if not player:
+            return
+        if player.queue.is_empty:
+            return await interaction.response.send_message(
+                lang("music.misc.action.error.no_queue")
+            )
+
+        for _ in range(len(player.queue)):
+            player.queue.put_at_front(player.queue.get())
+
+        return await interaction.response.send_message(
+            lang("music.misc.action.queue.flipped")
         )
