@@ -297,6 +297,8 @@ class MinecraftCog(GroupCog, name="minecraft"):
 
         lang = await get_lang(interaction.user.id)
 
+        await interaction.response.defer()
+
         data = await get_minecraft_server(server_ip)
 
         if not data:

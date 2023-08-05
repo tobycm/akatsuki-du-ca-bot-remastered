@@ -64,7 +64,9 @@ async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
     """
     Return a Minecraft server's info as an Embed.
     """
-    async with session.get("https://api.mcsrvstat.us/2/" + server_ip) as response:
+    async with session.get(
+        url="https://api.mcsrvstat.us/2/" + server_ip, timeout=30
+    ) as response:
         data: RawMinecraftServerAPI = await response.json()
 
         if not data["online"]:
