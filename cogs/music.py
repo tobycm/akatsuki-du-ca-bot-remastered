@@ -146,16 +146,14 @@ def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[QueueEmbed]:
     """
     embeds = []
     embed = QueueEmbed(lang)
-    counter = 1
 
-    for track in queue:
+    for index, track in enumerate(queue):
         if len(embed) > 1000:
             embeds.append(embed)
             embed = QueueEmbed(lang)
-        if len(embeds) == 5:
+        if len(embeds) == 25:
             break
-        embed.description += f"{counter}. {track.title}\n"  # type: ignore
-        counter += 1
+        embed.description += f"{index}. {track.title}\n"  # type: ignore
 
     if len(embeds) == 0:
         embeds.append(embed)
