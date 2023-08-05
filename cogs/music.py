@@ -877,7 +877,7 @@ class MusicCog(Cog):
             )
 
         for _ in range(len(player.queue)):
-            player.queue.put_at_front(player.queue.get())
+            await player.queue.put_wait(player.queue.get())
 
         return await interaction.response.send_message(
             lang("music.misc.action.queue.flipped")
