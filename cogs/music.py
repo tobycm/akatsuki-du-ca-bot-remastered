@@ -734,7 +734,7 @@ class MusicCog(Cog):
             Embed(
                 title=lang("music.misc.now_playing"),
                 description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                + f"Duration: {seconds_to_time(player.position)}/{seconds_to_time(track.duration)}",
+                + f"Duration: {seconds_to_time(player.position / 1000)}/{seconds_to_time(track.duration / 1000)}",
             ),
             interaction.user,
             lang,
