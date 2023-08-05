@@ -859,26 +859,26 @@ class MusicCog(Cog):
             lang("music.misc.action.queue.shuffled")
         )
 
-    @checks.cooldown(1, 3, key=user_cooldown_check)
-    @command(name="flip")
-    async def flip(self, interaction: Interaction):
-        """
-        Flip the queue
-        """
+    # @checks.cooldown(1, 3, key=user_cooldown_check)
+    # @command(name="flip")
+    # async def flip(self, interaction: Interaction):
+    #     """
+    #     Flip the queue
+    #     """
 
-        lang = await get_lang(interaction.user.id)
+    #     lang = await get_lang(interaction.user.id)
 
-        player = await self._connect(interaction, lang)
-        if not player:
-            return
-        if player.queue.is_empty:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_queue")
-            )
+    #     player = await self._connect(interaction, lang)
+    #     if not player:
+    #         return
+    #     if player.queue.is_empty:
+    #         return await interaction.response.send_message(
+    #             lang("music.misc.action.error.no_queue")
+    #         )
 
-        for _ in range(len(player.queue)):
-            await player.queue.put_wait(player.queue.get())
+    #     for _ in range(len(player.queue)):
+    #         await player.queue.put_wait(player.queue.get())
 
-        return await interaction.response.send_message(
-            lang("music.misc.action.queue.flipped")
-        )
+    #     return await interaction.response.send_message(
+    #         lang("music.misc.action.queue.flipped")
+    #     )
