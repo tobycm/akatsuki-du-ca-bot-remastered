@@ -640,7 +640,7 @@ class MusicCog(Cog):
 
         lang = await get_lang(interaction.user.id)
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not player or player.is_playing() or not player.current:
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
