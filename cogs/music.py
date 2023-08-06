@@ -5,7 +5,7 @@ This is the music cog.
 from typing import Callable, Literal
 
 from discord import Color, Embed, Interaction, Member, TextChannel
-from discord.app_commands import checks, command
+from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
 from wavelink import Node, NodePool, Playable
@@ -400,6 +400,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="connect")
+    @guild_only()
     async def connect(self, interaction: Interaction):
         """
         Connect to a voice channel.
@@ -411,6 +412,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="disconnect")
+    @guild_only()
     async def disconnect(self, interaction: Interaction):
         """
         Disconnect from a voice channel.
@@ -420,6 +422,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="play")
+    @guild_only()
     async def play(self, interaction: Interaction, query: str):
         """
         Play a song.
@@ -464,6 +467,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
+    @guild_only()
     async def playtop(self, interaction: Interaction, query: str):
         """
         Play or add a song on top of the queue
@@ -517,6 +521,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="soundcloud")
+    @guild_only()
     async def soundcloud(self, interaction: Interaction, query: str):
         """
         Search and play a Soundcloud song
@@ -552,6 +557,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.75, key=user_cooldown_check)
     @command(name="search")
+    @guild_only()
     async def search(self, interaction: Interaction, query: str):
         """
         Search for a song.
@@ -605,6 +611,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="pause")
+    @guild_only()
     async def pause(self, interaction: Interaction):
         """
         Pause a song.
@@ -625,6 +632,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="resume")
+    @guild_only()
     async def resume(self, interaction: Interaction):
         """
         Resume a song.
@@ -645,6 +653,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="skip")
+    @guild_only()
     async def skip(self, interaction: Interaction):
         """
         Skip a song
@@ -665,6 +674,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 2, key=user_cooldown_check)
     @command(name="stop")
+    @guild_only()
     async def stop(self, interaction: Interaction):
         """
         Stop playing music.
@@ -684,6 +694,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="queue")
+    @guild_only()
     async def queue(self, interaction: Interaction):
         """
         Show the queue.
@@ -722,6 +733,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="nowplaying")
+    @guild_only()
     async def nowplaying(self, interaction: Interaction):
         """
         Show the now playing song.
@@ -750,6 +762,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.75, key=user_cooldown_check)
     @command(name="clear_queue")
+    @guild_only()
     async def clear_queue(self, interaction: Interaction):
         """
         Clear the queue
@@ -772,6 +785,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="loop")
+    @guild_only()
     async def loop_music(
         self, interaction: Interaction, mode: Literal["off", "queue", "song"]
     ):
@@ -800,6 +814,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="seek")
+    @guild_only()
     async def seek(self, interaction: Interaction, position: int):
         """
         Seeks to a certain point in the current track.
@@ -825,6 +840,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="volume")
+    @guild_only()
     async def volume(self, interaction: Interaction, volume: int):
         """
         Change the player volume.
@@ -846,6 +862,7 @@ class MusicCog(Cog):
 
     @checks.cooldown(1, 3, key=user_cooldown_check)
     @command(name="shuffle")
+    @guild_only()
     async def shuffle(self, interaction: Interaction):
         """
         Shuffle the queue

@@ -3,7 +3,7 @@ Not Safe for Work commands. 0_0
 """
 
 from discord import Embed, Interaction
-from discord.app_commands import checks, command
+from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import GroupCog
 
 from akatsuki_du_ca import AkatsukiDuCa
@@ -33,6 +33,7 @@ class NSFWCog(GroupCog, name="nsfw"):
 
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="art")
+    @guild_only()
     async def nsfw(self, interaction: Interaction):
         """
         Good nsfw art huh?
