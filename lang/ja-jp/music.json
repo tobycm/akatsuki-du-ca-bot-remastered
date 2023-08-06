@@ -43,7 +43,7 @@
                 "no_queue": "キューが空です！"
             }
         },
-        "changed_volume": "Volume changed to %s%",
+        "changed_volume": "Volume changed to %s",
         "queue": "キュー",
         "result": "結果",
         "now_playing": "プレイ中",

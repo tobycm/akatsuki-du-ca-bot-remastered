@@ -857,7 +857,7 @@ class MusicCog(Cog):
 
         await player.set_volume(volume)
         return await interaction.response.send_message(
-            lang("music.misc.changed_volume") % volume
+            lang("music.misc.changed_volume") % f"{volume}%"
         )
 
     @checks.cooldown(1, 3, key=user_cooldown_check)
