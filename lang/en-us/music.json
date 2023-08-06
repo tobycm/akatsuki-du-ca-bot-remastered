@@ -43,6 +43,7 @@
                 "no_queue": "Queue empty!"
             }
         },
+        "changed_volume": "Volume changed to %s%",
         "queue": "Queue",
         "result": "Results",
         "now_playing": "Now Playing",
