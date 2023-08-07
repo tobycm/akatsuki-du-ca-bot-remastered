@@ -341,9 +341,7 @@ class MusicCog(Cog):
 
         player = (
             interaction.guild.voice_client
-            or await interaction.user.voice.channel.connect(
-                self_deaf=True, cls=Player  # type: ignore
-            )
+            or await interaction.user.voice.channel.connect(self_deaf=True, cls=Player)  # type: ignore
         )
 
         assert isinstance(player, Player)
@@ -442,18 +440,11 @@ class MusicCog(Cog):
         )
 
         if "youtube.com/playlist" in query:
-            result = await YouTubePlaylist.search(query)
-
-            if isinstance(result, list):
-                result = result[0]
-
+            result = (await YouTubePlaylist.search(query))[0]
             for track in result.tracks:
                 await player.queue.put_wait(track)
         else:
-            result = await YouTubeTrack.search(query)
-            if isinstance(result, list):
-                result = result[0]
-
+            result = (await YouTubeTrack.search(query))[0]
             await player.queue.put_wait(result)
 
         if not player.is_playing():
@@ -488,11 +479,7 @@ class MusicCog(Cog):
         is_playlist = False
 
         if "youtube.com/playlist" in query:
-            result = await YouTubePlaylist.search(query)
-
-            if isinstance(result, list):
-                result = result[0]
-
+            result = (await YouTubePlaylist.search(query))[0]
             for track in result.tracks:
                 player.queue.put_at_front(track)
             is_playlist = True
@@ -501,10 +488,7 @@ class MusicCog(Cog):
                 + " Please use `/play` command instead thx"
             )
         else:
-            result = await YouTubeTrack.search(query)
-            if isinstance(result, list):
-                result = result[0]
-
+            result = (await YouTubeTrack.search(query))[0]
             player.queue.put_at_front(result)
 
         if not player.is_playing():
