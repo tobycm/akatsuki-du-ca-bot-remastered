@@ -3,7 +3,7 @@ Just some checks and utils function
 """
 
 from datetime import timedelta
-from random import random
+from math import floor
 from typing import Callable
 
 from discord import Color, Embed, Interaction, Member, Message, User
@@ -55,12 +55,25 @@ def guild_cooldown_check(interaction: Interaction) -> int:
     return interaction.guild.id
 
 
-def seconds_to_time(seconds) -> str:
+def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     """
     Convert seconds to time in format hh:mm:ss
     """
 
-    return str(timedelta(seconds=int(seconds)))
+    hours = floor(seconds / 3600)
+    minutes = floor((seconds - hours * 3600) / 60)
+    seconds = seconds - hours * 3600 - minutes * 60
+
+    minutes_str = (
+        f"0{minutes}" if double_zero_in_minutes and minutes < 10 else f"{minutes}"
+    )
+    seconds_str = f"0{seconds}" if seconds < 10 else f"{seconds}"
+
+    time = f"{minutes_str}:{seconds_str}"
+    if hours != 0:
+        time = f"{hours}:{time}"
+
+    return time
 
 
 async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
@@ -72,9 +85,7 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
     return await get_prefix(message.guild.id) or default_prefix
 
 
-def rich_embed(
-    embed: Embed, author: User | Member, lang: Callable[[str], str]
-) -> Embed:
+def rich_embed(embed: Embed, author: User, lang: Callable[[str], str]) -> Embed:
     """
     Added color, author and footer to embed
     """
