@@ -441,7 +441,10 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
+        is_playlist = False
+
         if "youtube.com/playlist" in query:
+            is_playlist = True
             result = await YouTubePlaylist.search(query)
 
             if isinstance(result, list):
@@ -460,6 +463,17 @@ class MusicCog(Cog):
             await player.play(await player.queue.get_wait())
             player.interaction = interaction
             return
+
+        if is_playlist:
+            assert isinstance(result, YouTubePlaylist)
+            await interaction.edit_original_response(
+                content="",
+                embed=rich_embed(
+                    NewPlaylistEmbed(result, lang), interaction.user, lang
+                ),
+            )
+            return
+
         await interaction.edit_original_response(
             content="",
             embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang),
@@ -510,6 +524,13 @@ class MusicCog(Cog):
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
             player.interaction = interaction
+            return
+
+        if is_playlist:
+            assert isinstance(result, YouTubePlaylist)
+            await interaction.edit_original_response(
+                embed=rich_embed(NewPlaylistEmbed(result, lang), interaction.user, lang)
+            )
             return
 
         await interaction.edit_original_response(

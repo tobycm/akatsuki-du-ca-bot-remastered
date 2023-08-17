@@ -10,8 +10,6 @@ from discord.ext.ipc.server import Server
 
 from akatsuki_du_ca import AkatsukiDuCa
 
-# pylint: disable=protected-access
-
 
 class Routes(Cog):
     """
