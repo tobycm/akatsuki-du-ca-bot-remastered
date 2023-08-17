@@ -61,10 +61,10 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     Convert seconds to time in format hh:mm:ss
     """
 
-    seconds = math.floor(seconds)  # just to be sure
     hours = floor(seconds / 3600)
     minutes = floor((seconds - hours * 3600) / 60)
     seconds = seconds - hours * 3600 - minutes * 60
+    seconds = math.floor(seconds)
 
     minutes_str = (
         f"0{minutes}" if double_zero_in_minutes and minutes < 10 else f"{minutes}"
