@@ -14,6 +14,7 @@ from wavelink import (
     Queue,
     SoundCloudTrack,
     TrackEventPayload,
+    WavelinkException,
     WebsocketClosedPayload,
     YouTubePlaylist,
     YouTubeTrack,
@@ -443,21 +444,26 @@ class MusicCog(Cog):
 
         is_playlist = False
 
-        if "youtube.com/playlist" in query:
-            is_playlist = True
-            result = await YouTubePlaylist.search(query)
+        try:
+            if "youtube.com/playlist" in query:
+                is_playlist = True
+                result = await YouTubePlaylist.search(query)
 
-            if isinstance(result, list):
-                result = result[0]
+                if isinstance(result, list):
+                    result = result[0]
 
-            for track in result.tracks:
-                await player.queue.put_wait(track)
-        else:
-            result = await YouTubeTrack.search(query)
-            if isinstance(result, list):
-                result = result[0]
+                for track in result.tracks:
+                    await player.queue.put_wait(track)
+            else:
+                result = await YouTubeTrack.search(query)
+                if isinstance(result, list):
+                    result = result[0]
 
-            await player.queue.put_wait(result)
+                await player.queue.put_wait(result)
+
+        except WavelinkException as e:
+            # it's fine
+            print(e)
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
@@ -501,25 +507,30 @@ class MusicCog(Cog):
 
         is_playlist = False
 
-        if "youtube.com/playlist" in query:
-            result = await YouTubePlaylist.search(query)
+        try:
+            if "youtube.com/playlist" in query:
+                result = await YouTubePlaylist.search(query)
 
-            if isinstance(result, list):
-                result = result[0]
+                if isinstance(result, list):
+                    result = result[0]
 
-            for track in result.tracks:
-                player.queue.put_at_front(track)
-            is_playlist = True
-            await interaction.edit_original_response(
-                content="There's a bug in this command that will make your playlist play in reverse order."
-                + " Please use `/play` command instead thx"
-            )
-        else:
-            result = await YouTubeTrack.search(query)
-            if isinstance(result, list):
-                result = result[0]
+                for track in result.tracks:
+                    player.queue.put_at_front(track)
+                is_playlist = True
+                await interaction.edit_original_response(
+                    content="There's a bug in this command that will make your playlist play in reverse order."
+                    + " Please use `/play` command instead thx"
+                )
+            else:
+                result = await YouTubeTrack.search(query)
+                if isinstance(result, list):
+                    result = result[0]
 
-            player.queue.put_at_front(result)
+                player.queue.put_at_front(result)
+
+        except WavelinkException as e:
+            # it's fine
+            print(e)
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())  # type: ignore
