@@ -765,9 +765,10 @@ class MusicCog(Cog):
                 assert isinstance(view.children[0], PageSelect)
                 view.children[0].disabled = True
                 await interaction.edit_original_response(view=view)
-        await interaction.response.send_message(
-            embed=rich_embed(queue_embeds[0], interaction.user, lang),
-        )
+        else:
+            await interaction.response.send_message(
+                embed=rich_embed(queue_embeds[0], interaction.user, lang),
+            )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="nowplaying")
