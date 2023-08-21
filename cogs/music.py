@@ -373,7 +373,10 @@ class MusicCog(Cog):
         Search for a song or playlist
         """
 
-        result = await Playable.search(query)
+        try:
+            result = await Playable.search(query)
+        except:
+            return None
 
         if isinstance(result, list):
             result = result[0]
