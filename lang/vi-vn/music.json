@@ -43,7 +43,10 @@
                 "no_queue": "Không có nhạc nào trong hàng đợi!"
             }
         },
-        "changed_volume": "Đã thay đổi âm lượng thành %s",
+        "volume": {
+            "current": "Âm lượng hiện tại: %s",
+            "changed": "Đã thay đổi âm lượng thành %s"
+        },
         "queue": "Hàng đợi",
         "result": "Kết quả",
         "now_playing": "Đang phát",

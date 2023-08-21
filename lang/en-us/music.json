@@ -43,7 +43,10 @@
                 "no_queue": "Queue empty!"
             }
         },
-        "changed_volume": "Volume changed to %s",
+        "volume": {
+            "current": "Current volume: %s",
+            "changed": "Volume changed to %s"
+        },
         "queue": "Queue",
         "result": "Results",
         "now_playing": "Now Playing",

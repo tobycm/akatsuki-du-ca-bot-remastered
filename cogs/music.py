@@ -22,6 +22,7 @@ from wavelink import (
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.common import GuildTextBasedChannel
+from modules.exceptions import UnknownException
 from modules.lang import get_lang
 from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
@@ -60,7 +61,7 @@ class MusicSelect(Select):
                 Embed(
                     title=self.lang("music.misc.action.queue.added"),
                     description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                    + f"Duration: {seconds_to_time(track.duration / 1000)}",
+                    + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
                 ).set_thumbnail(
                     url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
                 ),
@@ -80,7 +81,7 @@ class NewTrackEmbed(Embed):
         super().__init__(
             title=lang("music.misc.action.queue.added"),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-            + f"Duration: {seconds_to_time(track.duration / 1000)}",
+            + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
         )
         self.set_thumbnail(
             url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
@@ -277,7 +278,7 @@ class MusicCog(Cog):
         embed = Embed(
             title="Now playing",
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-            + f"Duration: {seconds_to_time(track.duration / 1000)}",
+            + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
             color=Color.random(),
         ).set_thumbnail(
             url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
@@ -590,7 +591,7 @@ class MusicCog(Cog):
     @checks.cooldown(1, 1.75, key=user_cooldown_check)
     @command(name="search")
     @guild_only()
-    async def search(self, interaction: Interaction, query: str):
+    async def search(self, interaction: Interaction, query: str | None = None):
         """
         Search for a song.
         """
@@ -598,8 +599,22 @@ class MusicCog(Cog):
         lang = await get_lang(interaction.user.id)
 
         player = await self._connect(interaction, lang)
+
         if not player:
-            return
+            raise UnknownException()
+
+        if not query:
+            if not player.current:
+                await interaction.response.send_message(
+                    lang("music.misc.action.error.no_music")
+                )
+                return
+
+            if not player.is_playing():
+                await player.resume()
+                return await interaction.response.send_message(
+                    lang("music.misc.action.music.resumed")
+                )
 
         assert isinstance(interaction.channel, GuildTextBasedChannel)
         player.text_channel = interaction.channel
@@ -607,6 +622,7 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
+        assert isinstance(query, str)
         tracks = await YouTubeTrack.search(query)
         if isinstance(tracks, list):
             tracks = tracks[:5]
@@ -672,16 +688,6 @@ class MusicCog(Cog):
 
         lang = await get_lang(interaction.user.id)
         player = await self._connect(interaction, lang)
-        if not player or player.is_playing() or not player.current:
-            await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
-            )
-            return
-
-        await player.resume()
-        return await interaction.response.send_message(
-            lang("music.misc.action.music.resumed")
-        )
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="skip")
@@ -785,7 +791,7 @@ class MusicCog(Cog):
             Embed(
                 title=lang("music.misc.now_playing"),
                 description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                + f"Duration: {seconds_to_time(player.position / 1000)}/{seconds_to_time(track.duration / 1000)}",
+                + f"Duration: {seconds_to_time(round(player.position / 1000))}/{seconds_to_time(round(track.duration / 1000))}",
             ),
             interaction.user,
             lang,
@@ -873,7 +879,7 @@ class MusicCog(Cog):
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="volume")
     @guild_only()
-    async def volume(self, interaction: Interaction, volume: int):
+    async def volume(self, interaction: Interaction, volume: int | None = None):
         """
         Change the player volume.
         """
@@ -887,9 +893,14 @@ class MusicCog(Cog):
             )
             return
 
+        if volume is None:
+            return await interaction.response.send_message(
+                lang("music.misc.volume.current") % f"{player.volume}%"
+            )
+
         await player.set_volume(volume)
         return await interaction.response.send_message(
-            lang("music.misc.changed_volume") % f"{volume}%"
+            lang("music.misc.volume.changed") % f"{volume}%"
         )
 
     @checks.cooldown(1, 3, key=user_cooldown_check)

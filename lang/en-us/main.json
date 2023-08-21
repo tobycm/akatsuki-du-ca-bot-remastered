@@ -6,7 +6,8 @@
         "ping_for_prefix": "Why ping LOL, prefix for this server is `%s`. ||Just kidding, feel free to ping me||",
         "language_not_available": "This command is not available in English yet!",
         "missing_permission": "You are missing permission to use this command! ||Want perms? Ask Toby :D||",
-        "wrong_argument_type": "Bruh you typed in the wrong argument type haizzz `%shelp` to see where did you type the wrong argument!"
+        "wrong_argument_type": "Bruh you typed in the wrong argument type haizzz `%shelp` to see where did you type the wrong argument!",
+        "unknown": "Uh oh, something went wrong :Đ. Please contact the developer of this bot!"
     },
     "missing_guild_permission": "Uh oh, no permissions for you :)",
     "embed_footer": "Requested by: %s",

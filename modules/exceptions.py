@@ -34,3 +34,9 @@ class MusicException:
         """
         Raised when the bot and author in different voice channels.
         """
+
+
+class UnknownException(Exception):
+    """
+    Raised when the bot encounters an unknown error.
+    """
