@@ -5,21 +5,11 @@ Fun cog for the bot.
 from random import choice, randint
 from string import ascii_letters
 
-from discord import (
-    Embed,
-    File,
-    Interaction,
-    InteractionType,
-    Member,
-    TextChannel,
-    Thread,
-    VoiceChannel,
-)
+from discord import Embed, File, Interaction, Member, TextChannel
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules.common import GuildTextBasedChannel
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif import construct_gif_embed
@@ -52,7 +42,7 @@ class GIFCog(GroupCog, name="gif"):
 
         lang = await get_lang(interaction.user.id)
 
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
+        assert isinstance(interaction.channel, TextChannel)
         assert isinstance(interaction.user, Member)
         assert interaction.command
 
@@ -164,6 +154,7 @@ class FunCog(Cog):
 
     @checks.cooldown(1, 5, key=user_cooldown_check)
     @command(name="alarm")
+    @guild_only()
     async def alarm(self, interaction: Interaction):
         """
         Send an alarm >:)
@@ -173,7 +164,7 @@ class FunCog(Cog):
         if lang_option != "vi-vn":
             raise LangNotAvailable
 
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
+        assert isinstance(interaction.channel, TextChannel)
 
         await interaction.response.send_message("Đang gửi...", ephemeral=True)
         if randint(1, 50) == 25:
@@ -235,7 +226,7 @@ class FunCog(Cog):
             lang("fun.free_nitro.success"), ephemeral=True
         )
 
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
+        assert isinstance(interaction.channel, TextChannel)
         return await interaction.channel.send(embed=embed)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)

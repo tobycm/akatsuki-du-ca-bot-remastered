@@ -12,17 +12,16 @@ from wavelink import Node, NodePool, Playable
 from wavelink import Player as WavelinkPlayer
 from wavelink import (
     Queue,
+    SoundCloudPlaylist,
     SoundCloudTrack,
     TrackEventPayload,
-    WavelinkException,
     WebsocketClosedPayload,
+    YouTubeMusicTrack,
     YouTubePlaylist,
     YouTubeTrack,
 )
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules.common import GuildTextBasedChannel
-from modules.exceptions import UnknownException
 from modules.lang import get_lang
 from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
@@ -33,43 +32,8 @@ class Player(WavelinkPlayer):
     """
 
     interaction: Interaction | None = None
-    text_channel: GuildTextBasedChannel | None = None
-    loop_mode: Literal["song", "queue"] | None = None
-
-
-class MusicSelect(Select):
-    """
-    Make a music selection Select
-    """
-
-    def __init__(
-        self, tracks: list[YouTubeTrack], player: Player, lang: Callable[[str], str]
-    ) -> None:
-        self.lang = lang
-        self.tracks = tracks
-        self.player = player
-
-        super().__init__(placeholder="Make your music selection")
-
-    async def callback(self, interaction: Interaction):
-        track = self.tracks[int(self.values[0]) - 1]
-        await self.player.queue.put_wait(track)
-        if not self.player.is_playing():
-            await self.player.play(await self.player.queue.get_wait())  # type: ignore
-        await interaction.response.send_message(
-            embed=rich_embed(
-                Embed(
-                    title=self.lang("music.misc.action.queue.added"),
-                    description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
-                    + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
-                ).set_thumbnail(
-                    url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
-                ),
-                interaction.user,
-                self.lang,
-            )
-        )
-        return
+    text_channel: TextChannel | None = None
+    loop_mode: Literal["song", "queue", "off"] = "off"
 
 
 class NewTrackEmbed(Embed):
@@ -93,7 +57,9 @@ class NewPlaylistEmbed(Embed):
     Make a new playlist embed
     """
 
-    def __init__(self, playlist: YouTubePlaylist, lang: Callable[[str], str]) -> None:
+    def __init__(
+        self, playlist: YouTubePlaylist | SoundCloudPlaylist, lang: Callable[[str], str]
+    ) -> None:
         super().__init__(
             title=lang("music.misc.action.queue.added"),
             description=f"[**{playlist.name}**]({playlist.uri})\n"
@@ -260,7 +226,7 @@ class MusicCog(Cog):
 
         await player.text_channel.send(f"{payload.track.title} has ended")
         if player.queue.is_empty:
-            player.text_channel, player.loop_mode = None, None
+            player.text_channel, player.loop_mode = None, "off"
             return await player.disconnect()
 
         await player.play(await player.queue.get_wait())  # type: ignore
@@ -400,6 +366,29 @@ class MusicCog(Cog):
         )
         return True
 
+    async def search(
+        self, query: str
+    ) -> YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | YouTubePlaylist | SoundCloudPlaylist | None:
+        """
+        Search for a song or playlist
+        """
+
+        result = await Playable.search(query)
+
+        if isinstance(result, list):
+            result = result[0]
+
+        if isinstance(result, YouTubePlaylist) or isinstance(
+            result, SoundCloudPlaylist
+        ):
+            return result
+        elif (
+            isinstance(result, YouTubeTrack)
+            or isinstance(result, SoundCloudTrack)
+            or isinstance(result, YouTubeMusicTrack)
+        ):
+            return result
+
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="connect")
     @guild_only()
@@ -436,55 +425,35 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
-
+        assert isinstance(interaction.channel, TextChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        is_playlist = False
+        result = await self.search(query)
+        if not result:
+            return await interaction.response.send_message(
+                lang("music.voice_client.error.not_found")
+            )
 
-        try:
-            if "youtube.com/playlist" in query:
-                is_playlist = True
-                result = await YouTubePlaylist.search(query)
+        await player.queue.put_wait(result)
 
-                if isinstance(result, list):
-                    result = result[0]
+        embed = (
+            NewPlaylistEmbed(result, lang)
+            if isinstance(result, YouTubePlaylist)
+            and isinstance(result, SoundCloudPlaylist)
+            else NewTrackEmbed(result, lang)
+        )
 
-                for track in result.tracks:
-                    await player.queue.put_wait(track)
-            else:
-                result = await YouTubeTrack.search(query)
-                if isinstance(result, list):
-                    result = result[0]
-
-                await player.queue.put_wait(result)
-
-        except WavelinkException as e:
-            # it's fine
-            print(e)
+        await interaction.edit_original_response(
+            content="",
+            embed=rich_embed(embed, interaction.user, lang),
+        )
 
         if not player.is_playing():
             await player.play(await player.queue.get_wait())
             player.interaction = interaction
-            return
-
-        if is_playlist:
-            assert isinstance(result, YouTubePlaylist)
-            await interaction.edit_original_response(
-                content="",
-                embed=rich_embed(
-                    NewPlaylistEmbed(result, lang), interaction.user, lang
-                ),
-            )
-            return
-
-        await interaction.edit_original_response(
-            content="",
-            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang),
-        )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -500,162 +469,35 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
+        assert isinstance(interaction.channel, TextChannel)
         player.text_channel = interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
 
-        is_playlist = False
-
-        try:
-            if "youtube.com/playlist" in query:
-                result = await YouTubePlaylist.search(query)
-
-                if isinstance(result, list):
-                    result = result[0]
-
-                for track in result.tracks:
-                    player.queue.put_at_front(track)
-                is_playlist = True
-                await interaction.edit_original_response(
-                    content="There's a bug in this command that will make your playlist play in reverse order."
-                    + " Please use `/play` command instead thx"
-                )
-            else:
-                result = await YouTubeTrack.search(query)
-                if isinstance(result, list):
-                    result = result[0]
-
-                player.queue.put_at_front(result)
-
-        except WavelinkException as e:
-            # it's fine
-            print(e)
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
-            player.interaction = interaction
-            return
-
-        if is_playlist:
-            assert isinstance(result, YouTubePlaylist)
-            await interaction.edit_original_response(
-                embed=rich_embed(NewPlaylistEmbed(result, lang), interaction.user, lang)
+        result = await self.search(query)
+        if not result:
+            return await interaction.response.send_message(
+                lang("music.voice_client.error.not_found")
             )
-            return
 
-        await interaction.edit_original_response(
-            embed=rich_embed(NewTrackEmbed(result, lang), interaction.user, lang)
+        player.queue.put_at_front(result)
+
+        embed = (
+            NewPlaylistEmbed(result, lang)
+            if isinstance(result, YouTubePlaylist)
+            and isinstance(result, SoundCloudPlaylist)
+            else NewTrackEmbed(result, lang)
         )
-
-        if not is_playlist:
-            await interaction.edit_original_response(content="")
-
-    @checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @command(name="soundcloud")
-    @guild_only()
-    async def soundcloud(self, interaction: Interaction, query: str):
-        """
-        Search and play a Soundcloud song
-        """
-
-        lang = await get_lang(interaction.user.id)
-
-        player = await self._connect(interaction, lang)
-        if not player:
-            return
-
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
-        player.text_channel = interaction.channel
-        await interaction.response.send_message(
-            lang("music.misc.action.music.searching")
-        )
-
-        track = await SoundCloudTrack.search(query)
-        if isinstance(track, list):
-            track = track[0]
-
-        await player.queue.put_wait(track)
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())  # type: ignore
-            player.interaction = interaction
-            return
 
         await interaction.edit_original_response(
             content="",
-            embed=rich_embed(NewTrackEmbed(track, lang), interaction.user, lang),
+            embed=rich_embed(embed, interaction.user, lang),
         )
 
-    @checks.cooldown(1, 1.75, key=user_cooldown_check)
-    @command(name="search")
-    @guild_only()
-    async def search(self, interaction: Interaction, query: str | None = None):
-        """
-        Search for a song.
-        """
-
-        lang = await get_lang(interaction.user.id)
-
-        player = await self._connect(interaction, lang)
-
-        if not player:
-            raise UnknownException()
-
-        if not query:
-            if not player.current:
-                await interaction.response.send_message(
-                    lang("music.misc.action.error.no_music")
-                )
-                return
-
-            if not player.is_playing():
-                await player.resume()
-                return await interaction.response.send_message(
-                    lang("music.misc.action.music.resumed")
-                )
-
-        assert isinstance(interaction.channel, GuildTextBasedChannel)
-        player.text_channel = interaction.channel
-        await interaction.response.send_message(
-            lang("music.misc.action.music.searching")
-        )
-
-        assert isinstance(query, str)
-        tracks = await YouTubeTrack.search(query)
-        if isinstance(tracks, list):
-            tracks = tracks[:5]
-
-        embed = Embed(
-            title=lang("music.misc.result"),
-            description="",
-            color=0x00FF00,
-        )
-        counter = 1
-
-        select_menu = MusicSelect(tracks, player, lang)
-        view = View(timeout=30)
-
-        for track in tracks:
-            title = track.title if len(track.title) < 50 else track.title[:50] + "..."
-            assert isinstance(embed.description, str)
-            embed.description += f"{counter}. [{track.title}]({track.uri})\n"
-            select_menu.add_option(label=f"{counter}. {title}", value=str(counter))
-            counter += 1
-
-        view.add_item(select_menu)
-
-        await interaction.edit_original_response(
-            content=lang("music.misc.result"),  # type: ignore
-            embed=embed,
-            view=view,
-        )
-
-        if await view.wait():
-            assert isinstance(view.children[0], MusicSelect)
-            view.children[0].disabled = True
-            return await interaction.edit_original_response(view=view)
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
+            player.interaction = interaction
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="pause")
@@ -677,17 +519,6 @@ class MusicCog(Cog):
         return await interaction.response.send_message(
             lang("music.misc.action.music.paused")
         )
-
-    @checks.cooldown(1, 1.25, key=user_cooldown_check)
-    @command(name="resume")
-    @guild_only()
-    async def resume(self, interaction: Interaction):
-        """
-        Resume a song.
-        """
-
-        lang = await get_lang(interaction.user.id)
-        player = await self._connect(interaction, lang)
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="skip")
@@ -826,7 +657,9 @@ class MusicCog(Cog):
     @command(name="loop")
     @guild_only()
     async def loop_music(
-        self, interaction: Interaction, mode: Literal["off", "queue", "song"]
+        self,
+        interaction: Interaction,
+        mode: Literal["off", "queue", "song"] | None = None,
     ):
         """
         Loop queue, song or turn loop off
@@ -841,14 +674,15 @@ class MusicCog(Cog):
             )
             return
 
+        if mode:
+            player.loop_mode = mode
         if mode == "song":
             player.queue.put_at_front(player.current)
         if mode == "off" and player.loop_mode == "song":
             await player.queue.get_wait()
-        player.loop_mode = mode if mode != "off" else None
 
         await interaction.response.send_message(
-            lang("music.misc.action.loop")[mode]  # type: ignore
+            lang("music.misc.action.loop")[player.loop_mode or "off"]  # type: ignore
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
