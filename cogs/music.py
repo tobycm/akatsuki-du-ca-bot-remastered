@@ -20,6 +20,8 @@ from wavelink import (
     YouTubePlaylist,
     YouTubeTrack,
 )
+from wavelink.ext import spotify
+from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.lang import get_lang
@@ -31,7 +33,6 @@ class Player(WavelinkPlayer):
     Custom player class
     """
 
-    interaction: Interaction | None = None
     text_channel: TextChannel | None = None
     loop_mode: Literal["song", "queue", "off"] = "off"
 
@@ -43,17 +44,27 @@ class NewTrackEmbed(Embed):
 
     def __init__(
         self,
-        track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack,
+        track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | SpotifyTrack,
         lang: Callable[[str], str],
     ) -> None:
+        if isinstance(track, SpotifyTrack):
+            author = ", ".join(track.artists)
+        else:
+            author = track.author
+
         super().__init__(
             title=lang("music.misc.action.queue.added"),
-            description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
+            description=f"[**{track.title}**]({track.uri}) - {author}\n"
             + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
         )
-        self.set_thumbnail(
-            url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
-        )
+
+        if isinstance(track, SpotifyTrack):
+            self.set_thumbnail(url=track.images)
+
+        if isinstance(track, YouTubeTrack) or isinstance(track, YouTubeMusicTrack):
+            self.set_thumbnail(
+                url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
+            )
 
 
 class NewPlaylistEmbed(Embed):
@@ -68,9 +79,10 @@ class NewPlaylistEmbed(Embed):
             title=lang("music.misc.action.queue.added"),
             description=f"**{playlist.name}**\n" + f"Items: {len(playlist.tracks)}",
         )
-        self.set_thumbnail(
-            url=f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
-        )
+        if isinstance(playlist, YouTubePlaylist):
+            self.set_thumbnail(
+                url=f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
+            )
 
 
 class QueueEmbed(Embed):
@@ -193,12 +205,18 @@ class MusicCog(Cog):
         """
         await self.bot.wait_until_ready()
 
+        spotify = SpotifyClient(
+            client_id=self.bot.config.spotify.client_id,
+            client_secret=self.bot.config.spotify.client_secret,
+        )
+
         await NodePool.connect(
             client=self.bot,
             nodes=[
                 Node(uri=node.uri, password=node.password)
                 for node in self.bot.config.lavalink_nodes
             ],
+            spotify=spotify,
         )
 
     @Cog.listener()
@@ -371,13 +389,16 @@ class MusicCog(Cog):
 
     async def search(
         self, query: str
-    ) -> YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | YouTubePlaylist | SoundCloudPlaylist | None:
+    ) -> YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | SpotifyTrack | YouTubePlaylist | SoundCloudPlaylist | None:
         """
         Search for a song or playlist
         """
 
         try:
-            result = await Playable.search(query)
+            if spotify.decode_url(query):
+                result = await SpotifyTrack.search(query)
+            else:
+                result = await Playable.search(query)
         except:
             return None
 
@@ -392,6 +413,7 @@ class MusicCog(Cog):
             isinstance(result, YouTubeTrack)
             or isinstance(result, SoundCloudTrack)
             or isinstance(result, YouTubeMusicTrack)
+            or isinstance(result, SpotifyTrack)
         ):
             return result
 
@@ -443,6 +465,7 @@ class MusicCog(Cog):
                 content=lang("music.voice_client.error.not_found")
             )
 
+        player.autoplay = True
         await player.queue.put_wait(result)
 
         if isinstance(result, YouTubePlaylist) or isinstance(
@@ -456,10 +479,6 @@ class MusicCog(Cog):
             content="",
             embed=rich_embed(embed, interaction.user, lang),
         )
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())
-            player.interaction = interaction
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -487,6 +506,7 @@ class MusicCog(Cog):
                 content=lang("music.voice_client.error.not_found")
             )
 
+        player.autoplay = True
         player.queue.put_at_front(result)
 
         if isinstance(result, YouTubePlaylist) or isinstance(
@@ -500,10 +520,6 @@ class MusicCog(Cog):
             content="",
             embed=rich_embed(embed, interaction.user, lang),
         )
-
-        if not player.is_playing():
-            await player.play(await player.queue.get_wait())
-            player.interaction = interaction
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="pause")

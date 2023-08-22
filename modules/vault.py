@@ -19,6 +19,12 @@ class ApiKeys:
 
 
 @dataclass
+class SpotifyConfig:
+    client_id: str
+    client_secret: str
+
+
+@dataclass
 class BotLavalinkConfig:
     uri: str = "http://localhost:2333"
     password: str = "youshallnotpass"
@@ -42,6 +48,7 @@ class BotConfig:
     home_guild_invite: str
     channels: ChannelsConfig
     api_keys: ApiKeys
+    spotify: SpotifyConfig
     lavalink_nodes: list[BotLavalinkConfig]
     redis: RedisConfig
 
@@ -62,6 +69,10 @@ def load() -> BotConfig:
             api_keys=ApiKeys(
                 osu=config["api_keys"]["osu"],
                 tenor=config["api_keys"]["tenor"],
+            ),
+            spotify=SpotifyConfig(
+                client_id=config["spotify"]["client_id"],
+                client_secret=config["spotify"]["client_secret"],
             ),
             lavalink_nodes=[
                 BotLavalinkConfig(
