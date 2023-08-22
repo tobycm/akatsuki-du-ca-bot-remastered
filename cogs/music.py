@@ -66,8 +66,7 @@ class NewPlaylistEmbed(Embed):
     ) -> None:
         super().__init__(
             title=lang("music.misc.action.queue.added"),
-            description=f"[**{playlist.name}**]({playlist.uri})\n"
-            + f"Items: {len(playlist.tracks)}",
+            description=f"**{playlist.name}**\n" + f"Items: {len(playlist.tracks)}",
         )
         self.set_thumbnail(
             url=f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
