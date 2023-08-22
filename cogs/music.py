@@ -52,9 +52,15 @@ class NewTrackEmbed(Embed):
         else:
             author = track.author
 
+        title = (
+            f"**{track.title}**"
+            if isinstance(track, SpotifyTrack)
+            else f"[**{track.title}**]({track.uri})"
+        )
+
         super().__init__(
             title=lang("music.misc.action.queue.added"),
-            description=f"[**{track.title}**]({track.uri}) - {author}\n"
+            description=f"{title} - {author}\n"
             + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
         )
 
