@@ -259,17 +259,21 @@ class MusicCog(Cog):
         """
 
         track = payload.track
-        assert isinstance(payload.player, Player)
         player = payload.player
+        assert isinstance(player, Player)
 
         embed = Embed(
             title="Now playing",
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
             + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
             color=Color.random(),
-        ).set_thumbnail(
-            url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
         )
+
+        if isinstance(track, (YouTubeTrack, YouTubeMusicTrack)):
+            embed.set_thumbnail(
+                url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
+            )
+
         if player.loop_mode == "song":
             player.queue.put_at_front(track)
         elif player.loop_mode == "queue":
