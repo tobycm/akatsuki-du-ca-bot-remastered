@@ -14,6 +14,10 @@
     "osu": "",
     "tenor": ""
   },
+  "spotify": {
+    "client_id": "",
+    "client_secret": ""
+  },
   "lavalink_nodes": [
     {
       "uri": "http://localhost:2333",
