@@ -6,7 +6,7 @@ Main bot file.
 
 import asyncio
 
-from discord import Game, Guild, Intents, Message
+from discord import Game, Guild, Intents, Message, TextChannel
 from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
@@ -113,6 +113,22 @@ async def on_guild_remove(guild: Guild):
     """
 
     bot.logger.info(f"Left {guild.name}")
+
+
+@bot.event
+async def on_command_error(ctx: Context, error: Exception):
+    """
+    Command error handler
+    """
+
+    # send error to channel
+    error_channel = bot.get_channel(bot.config.channels.error)
+    assert isinstance(error_channel, TextChannel)
+
+    await error_channel.send(f"```py\n{error}\n```")
+
+    # throw again
+    raise error
 
 
 async def setup_hook():
