@@ -430,9 +430,9 @@ class MusicCog(Cog):
                 or url.host == "m.soundcloud.com"
             ):
                 if "sets" in url.parts:
-                    result = await SoundCloudPlaylist.search(query)
+                    result = await SoundCloudPlaylist.search(url.path)
                 else:
-                    result = await SoundCloudTrack.search(query)
+                    result = await SoundCloudTrack.search(url.path)
 
             if url.host == "open.spotify.com":
                 result = await SpotifyTrack.search(query)
