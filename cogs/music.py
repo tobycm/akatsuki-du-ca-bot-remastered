@@ -10,16 +10,9 @@ from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
 from wavelink import Node, NodePool
 from wavelink import Player as WavelinkPlayer
-from wavelink import (
-    Queue,
-    SoundCloudPlaylist,
-    SoundCloudTrack,
-    TrackEventPayload,
-    WebsocketClosedPayload,
-    YouTubeMusicTrack,
-    YouTubePlaylist,
-    YouTubeTrack,
-)
+from wavelink import (Queue, SoundCloudPlaylist, SoundCloudTrack,
+                      TrackEventPayload, WebsocketClosedPayload,
+                      YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
 from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 from yarl import URL
 
@@ -268,9 +261,20 @@ class MusicCog(Cog):
         player = payload.player
         assert isinstance(player, Player)
 
+        if isinstance(track, SpotifyTrack):
+            author = ", ".join(track.artists)
+        else:
+            author = track.author
+
+        title = (
+            f"**{track.title}**"
+            if isinstance(track, SpotifyTrack)
+            else f"[**{track.title}**]({track.uri})"
+        )
+
         embed = Embed(
             title="Now playing",
-            description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
+            description=f"{title} - {author}\n"
             + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
             color=Color.random(),
         )
