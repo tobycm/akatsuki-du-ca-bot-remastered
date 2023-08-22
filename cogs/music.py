@@ -41,7 +41,11 @@ class NewTrackEmbed(Embed):
     Make a new track embed
     """
 
-    def __init__(self, track: Playable, lang: Callable[[str], str]) -> None:
+    def __init__(
+        self,
+        track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack,
+        lang: Callable[[str], str],
+    ) -> None:
         super().__init__(
             title=lang("music.misc.action.queue.added"),
             description=f"[**{track.title}**]({track.uri}) - {track.author}\n"
@@ -436,18 +440,18 @@ class MusicCog(Cog):
 
         result = await self.search(query)
         if not result:
-            return await interaction.response.send_message(
-                lang("music.voice_client.error.not_found")
+            return await interaction.edit_original_response(
+                content=lang("music.voice_client.error.not_found")
             )
 
         await player.queue.put_wait(result)
 
-        embed = (
-            NewPlaylistEmbed(result, lang)
-            if isinstance(result, YouTubePlaylist)
-            and isinstance(result, SoundCloudPlaylist)
-            else NewTrackEmbed(result, lang)
-        )
+        if isinstance(result, YouTubePlaylist) or isinstance(
+            result, SoundCloudPlaylist
+        ):
+            embed = NewPlaylistEmbed(result, lang)
+        else:
+            embed = NewTrackEmbed(result, lang)
 
         await interaction.edit_original_response(
             content="",
@@ -480,18 +484,18 @@ class MusicCog(Cog):
 
         result = await self.search(query)
         if not result:
-            return await interaction.response.send_message(
-                lang("music.voice_client.error.not_found")
+            return await interaction.edit_original_response(
+                content=lang("music.voice_client.error.not_found")
             )
 
         player.queue.put_at_front(result)
 
-        embed = (
-            NewPlaylistEmbed(result, lang)
-            if isinstance(result, YouTubePlaylist)
-            and isinstance(result, SoundCloudPlaylist)
-            else NewTrackEmbed(result, lang)
-        )
+        if isinstance(result, YouTubePlaylist) or isinstance(
+            result, SoundCloudPlaylist
+        ):
+            embed = NewPlaylistEmbed(result, lang)
+        else:
+            embed = NewTrackEmbed(result, lang)
 
         await interaction.edit_original_response(
             content="",
