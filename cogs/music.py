@@ -484,7 +484,7 @@ class MusicCog(Cog):
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="play")
     @guild_only()
-    async def play(self, interaction: Interaction, query: str):
+    async def play(self, interaction: Interaction, query: str | None = None):
         """
         Play a song.
         """
@@ -494,6 +494,13 @@ class MusicCog(Cog):
         player = await self._connect(interaction, lang)
         if not player:
             return
+
+        if not query:
+            if not player.is_paused():
+                return await interaction.response.send_message(
+                    lang("music.misc.action.error.no_music")
+                )
+            return await player.resume()
 
         assert isinstance(interaction.channel, TextChannel)
         player.text_channel = interaction.channel
@@ -507,7 +514,6 @@ class MusicCog(Cog):
                 content=lang("music.voice_client.error.not_found")
             )
 
-        player.autoplay = True
         await player.queue.put_wait(result)
 
         if isinstance(result, YouTubePlaylist) or isinstance(
@@ -521,6 +527,9 @@ class MusicCog(Cog):
             content="",
             embed=rich_embed(embed, interaction.user, lang),
         )
+
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="playtop")
@@ -548,7 +557,6 @@ class MusicCog(Cog):
                 content=lang("music.voice_client.error.not_found")
             )
 
-        player.autoplay = True
         player.queue.put_at_front(result)
 
         if isinstance(result, YouTubePlaylist) or isinstance(
@@ -562,6 +570,9 @@ class MusicCog(Cog):
             content="",
             embed=rich_embed(embed, interaction.user, lang),
         )
+
+        if not player.is_playing():
+            await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="pause")
