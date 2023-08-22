@@ -8,7 +8,7 @@ from discord import Color, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
-from wavelink import Node, NodePool, Playable
+from wavelink import Node, NodePool
 from wavelink import Player as WavelinkPlayer
 from wavelink import (
     Queue,
@@ -20,7 +20,6 @@ from wavelink import (
     YouTubePlaylist,
     YouTubeTrack,
 )
-from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 from yarl import URL
 
@@ -410,9 +409,10 @@ class MusicCog(Cog):
         result = []
 
         try:
+            if not url.host:
+                result = await YouTubeTrack.search(query)
             if (
-                url.host == ""
-                or url.host == "youtube.com"
+                url.host == "youtube.com"
                 or url.host == "youtu.be"
                 or url.host == "m.youtube.com"
             ):
