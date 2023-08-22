@@ -33,6 +33,7 @@ class Player(WavelinkPlayer):
     Custom player class
     """
 
+    dj: Member | None = None
     text_channel: TextChannel | None = None
     loop_mode: Literal["song", "queue", "off"] = "off"
 
@@ -67,7 +68,7 @@ class NewTrackEmbed(Embed):
         if isinstance(track, SpotifyTrack):
             self.set_thumbnail(url=track.images[0])
 
-        if isinstance(track, YouTubeTrack) or isinstance(track, YouTubeMusicTrack):
+        if isinstance(track, (YouTubeTrack, YouTubeMusicTrack)):
             self.set_thumbnail(
                 url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
             )
@@ -253,7 +254,7 @@ class MusicCog(Cog):
 
         await player.text_channel.send(f"{payload.track.title} has ended")
         if player.queue.is_empty:
-            player.text_channel, player.loop_mode = None, "off"
+            player.dj, player.text_channel, player.loop_mode = None, None, "off"
             return await player.disconnect()
 
         await player.play(await player.queue.get_wait())  # type: ignore
@@ -265,31 +266,18 @@ class MusicCog(Cog):
         """
 
         track = payload.track
+        assert isinstance(
+            track, (YouTubeTrack, YouTubeMusicTrack, SpotifyTrack, SoundCloudTrack)
+        )
         player = payload.player
         assert isinstance(player, Player)
 
-        if isinstance(track, SpotifyTrack):
-            author = ", ".join(track.artists)
-        else:
-            author = track.author
+        assert player.dj
+        lang = await get_lang(player.dj.id)
 
-        title = (
-            f"**{track.title}**"
-            if isinstance(track, SpotifyTrack)
-            else f"[**{track.title}**]({track.uri})"
-        )
+        embed = NewTrackEmbed(track, lang)
 
-        embed = Embed(
-            title="Now playing",
-            description=f"{title} - {author}\n"
-            + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
-            color=Color.random(),
-        )
-
-        if isinstance(track, (YouTubeTrack, YouTubeMusicTrack)):
-            embed.set_thumbnail(
-                url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
-            )
+        embed.title = lang("music.misc.now_playing")
 
         if player.loop_mode == "song":
             player.queue.put_at_front(track)
@@ -514,7 +502,8 @@ class MusicCog(Cog):
             return await player.resume()
 
         assert isinstance(interaction.channel, TextChannel)
-        player.text_channel = interaction.channel
+        assert isinstance(interaction.user, Member)
+        player.dj, player.text_channel = interaction.user, interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
@@ -557,7 +546,8 @@ class MusicCog(Cog):
             return
 
         assert isinstance(interaction.channel, TextChannel)
-        player.text_channel = interaction.channel
+        assert isinstance(interaction.user, Member)
+        player.dj, player.text_channel = interaction.user, interaction.channel
         await interaction.response.send_message(
             lang("music.misc.action.music.searching")
         )
