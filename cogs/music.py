@@ -266,16 +266,13 @@ class MusicCog(Cog):
         """
 
         track = payload.track
-        assert isinstance(
-            track, (YouTubeTrack, YouTubeMusicTrack, SpotifyTrack, SoundCloudTrack)
-        )
         player = payload.player
         assert isinstance(player, Player)
 
         assert player.dj
         lang = await get_lang(player.dj.id)
 
-        embed = NewTrackEmbed(track, lang)
+        embed = NewTrackEmbed(track, lang)  # type: ignore
 
         embed.title = lang("music.misc.now_playing")
 
