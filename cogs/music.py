@@ -22,6 +22,7 @@ from wavelink import (
 )
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
+from yarl import URL
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.lang import get_lang
@@ -404,12 +405,41 @@ class MusicCog(Cog):
         Search for a song or playlist
         """
 
+        url = URL(query)
+
+        result = []
+
         try:
-            if spotify.decode_url(query):
+            if (
+                url.host == ""
+                or url.host == "youtube.com"
+                or url.host == "youtu.be"
+                or url.host == "m.youtube.com"
+            ):
+                if url.query.get("list"):
+                    result = await YouTubePlaylist.search(query)
+                else:
+                    result = await YouTubeTrack.search(query)
+
+            if url.host == "music.youtube.com":
+                result = await YouTubeMusicTrack.search(query)
+
+            if (
+                url.host == "soundcloud.com"
+                or url.host == "on.soundcloud.com"
+                or url.host == "m.soundcloud.com"
+            ):
+                if "sets" in url.parts:
+                    result = await SoundCloudPlaylist.search(query)
+                else:
+                    result = await SoundCloudTrack.search(query)
+
+            if url.host == "open.spotify.com":
                 result = await SpotifyTrack.search(query)
-            else:
-                result = await Playable.search(query)
         except:
+            return None
+
+        if len(result) == 0:
             return None
 
         if isinstance(result, list):
