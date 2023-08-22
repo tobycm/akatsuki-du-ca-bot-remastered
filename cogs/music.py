@@ -409,10 +409,11 @@ class MusicCog(Cog):
                 result = await YouTubeTrack.search(query)
             if (
                 url.host == "youtube.com"
+                or url.host == "www.youtube.com"
                 or url.host == "youtu.be"
                 or url.host == "m.youtube.com"
             ):
-                if url.parts[1] == "playlist":
+                if url.query.get("list"):
                     result = await YouTubePlaylist.search(query)
                 else:
                     result = await YouTubeTrack.search(query)
