@@ -439,10 +439,12 @@ class MusicCog(Cog):
         except:
             return None
 
-        if len(result) == 0:
+        if not result:
             return None
 
         if isinstance(result, list):
+            if len(result) == 0:
+                return None
             result = result[0]
 
         if isinstance(result, YouTubePlaylist) or isinstance(
