@@ -10,9 +10,16 @@ from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
 from wavelink import Node, NodePool
 from wavelink import Player as WavelinkPlayer
-from wavelink import (Queue, SoundCloudPlaylist, SoundCloudTrack,
-                      TrackEventPayload, WebsocketClosedPayload,
-                      YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
+from wavelink import (
+    Queue,
+    SoundCloudPlaylist,
+    SoundCloudTrack,
+    TrackEventPayload,
+    WebsocketClosedPayload,
+    YouTubeMusicTrack,
+    YouTubePlaylist,
+    YouTubeTrack,
+)
 from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 from yarl import URL
 
@@ -58,7 +65,7 @@ class NewTrackEmbed(Embed):
         )
 
         if isinstance(track, SpotifyTrack):
-            self.set_thumbnail(url=track.images)
+            self.set_thumbnail(url=track.images[0])
 
         if isinstance(track, YouTubeTrack) or isinstance(track, YouTubeMusicTrack):
             self.set_thumbnail(
