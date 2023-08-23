@@ -8,3 +8,4 @@ wavelink
 discord.py
 better-ipc
 yarl
+validators

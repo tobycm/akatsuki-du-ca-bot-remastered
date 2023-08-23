@@ -2,9 +2,10 @@
 This is the music cog.
 """
 
-from typing import Callable, Literal
+from typing import Callable, Literal, cast
 
-from discord import Color, Embed, Interaction, Member, TextChannel
+import validators
+from discord import Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
@@ -15,6 +16,7 @@ from wavelink import (
     SoundCloudPlaylist,
     SoundCloudTrack,
     TrackEventPayload,
+    TrackSource,
     WebsocketClosedPayload,
     YouTubeMusicTrack,
     YouTubePlaylist,
@@ -55,7 +57,7 @@ class NewTrackEmbed(Embed):
 
         title = (
             f"**{track.title}**"
-            if isinstance(track, SpotifyTrack)
+            if not hasattr(track, "uri") or not validators.url(track.uri)
             else f"[**{track.title}**]({track.uri})"
         )
 
@@ -65,13 +67,17 @@ class NewTrackEmbed(Embed):
             + f"Duration: {seconds_to_time(round(track.duration / 1000))}",
         )
 
-        if isinstance(track, SpotifyTrack):
-            self.set_thumbnail(url=track.images[0])
+        if hasattr(track, "images"):
+            cast(SpotifyTrack, track)
 
-        if isinstance(track, (YouTubeTrack, YouTubeMusicTrack)):
-            self.set_thumbnail(
-                url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
-            )
+            if len(track.images) > 0:  # type: ignore
+                self.set_thumbnail(url=track.images[0])  # type: ignore
+
+        if hasattr(track, "source"):
+            if track.source == TrackSource.YouTube:  # type: ignore
+                self.set_thumbnail(
+                    url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"  # type: ignore
+                )
 
 
 class NewPlaylistEmbed(Embed):
@@ -248,16 +254,13 @@ class MusicCog(Cog):
         Event fired when a track ends.
         """
 
-        assert isinstance(payload.player, Player)
         player = payload.player
-        assert player.text_channel
-
-        await player.text_channel.send(f"{payload.track.title} has ended")
+        assert isinstance(player, Player)
         if player.queue.is_empty:
             player.dj, player.text_channel, player.loop_mode = None, None, "off"
             return await player.disconnect()
 
-        await player.play(await player.queue.get_wait())  # type: ignore
+        await player.play(await player.queue.get_wait())
 
     @Cog.listener()
     async def on_wavelink_track_start(self, payload: TrackEventPayload):
@@ -282,7 +285,7 @@ class MusicCog(Cog):
             await player.queue.put_wait(track)
 
         assert player.text_channel
-        await player.text_channel.send(embed=embed)
+        await player.text_channel.send(embed=rich_embed(embed, player.dj, lang))
 
     async def connect_check(
         self,
