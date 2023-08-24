@@ -500,7 +500,10 @@ class MusicCog(Cog):
                 return await interaction.response.send_message(
                     lang("music.misc.action.error.no_music")
                 )
-            return await player.resume()
+            await player.resume()
+            return await interaction.response.send_message(
+                lang("music.misc.action.music.resumed")
+            )
 
         assert isinstance(interaction.channel, TextChannel)
         assert isinstance(interaction.user, Member)
