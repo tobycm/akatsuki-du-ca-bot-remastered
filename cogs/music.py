@@ -2,13 +2,13 @@
 This is the music cog.
 """
 
-from typing import Callable, Literal, cast
+from typing import Literal, cast
 
 import validators
-from discord import Embed, Interaction, Member, TextChannel
+from discord import ButtonStyle, Embed, Interaction, Member, TextChannel
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
-from discord.ui import Select, View
+from discord.ui import Button, View, button
 from wavelink import Node, NodePool
 from wavelink import Player as WavelinkPlayer
 from wavelink import (
@@ -26,7 +26,7 @@ from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 from yarl import URL
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules.lang import get_lang
+from modules.lang import Lang, get_lang
 from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
 
@@ -48,7 +48,7 @@ class NewTrackEmbed(Embed):
     def __init__(
         self,
         track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | SpotifyTrack,
-        lang: Callable[[str], str],
+        lang: Lang,
     ) -> None:
         if isinstance(track, SpotifyTrack):
             author = ", ".join(track.artists)
@@ -86,7 +86,7 @@ class NewPlaylistEmbed(Embed):
     """
 
     def __init__(
-        self, playlist: YouTubePlaylist | SoundCloudPlaylist, lang: Callable[[str], str]
+        self, playlist: YouTubePlaylist | SoundCloudPlaylist, lang: Lang
     ) -> None:
         super().__init__(
             title=lang("music.misc.action.queue.added"),
@@ -103,58 +103,75 @@ class QueueEmbed(Embed):
     Make a queue page embed
     """
 
-    def __init__(self, lang: Callable[[str], str]) -> None:
+    def __init__(self, lang: Lang) -> None:
         super().__init__(title=lang("music.misc.queue"), description="")
 
 
-class PageSelect(Select):
-    """
-    Make a page selection Select
-    class queue_page_select(Select):
-    """
-
+class QueuePaginator(View):
     def __init__(
         self,
-        embeds: list[QueueEmbed],
+        first_embed: QueueEmbed,
+        offset: int,
+        queue: Queue,
         interaction: Interaction,
-        lang: Callable[[str], str],
-    ) -> None:
-        self.embeds = embeds
-        self.interaction = interaction
+        lang: Lang,
+    ):
+        self.embeds: list[QueueEmbed] = [first_embed]
+        self.page = 0
+        self.position = offset
+        self.queue = queue
+        self.original_interaction = interaction
         self.lang = lang
 
-        super().__init__(placeholder="Choose page")
+        super().__init__(timeout=60)
 
-    async def callback(self, interaction: Interaction):
-        page = int(self.values[0]) - 1
+    def disable(self):
+        for child in self.children:
+            cast(Button, child).disabled = True
 
-        await interaction.response.defer()
-        await self.interaction.edit_original_response(
-            embed=rich_embed(self.embeds[page], interaction.user, self.lang)
+    @button(label="◀", style=ButtonStyle.blurple)
+    async def previous(self, interaction: Interaction, button: Button):
+        self.page -= 1
+        if self.page < 0:
+            self.page = 0
+            return
+        embed = self.embeds[self.page]
+        await self.original_interaction.response.edit_message(
+            embed=rich_embed(embed, interaction.user, self.lang)
         )
 
-        return
+    @button(label="▶", style=ButtonStyle.blurple)
+    async def next(self, interaction: Interaction, button: Button):
+        self.page += 1
+        if len(self.embeds) < self.page:  # make embed
+            new_embed, self.position = make_queue_embed(
+                self.queue, self.position, self.lang
+            )
+            self.embeds.append(new_embed)
+
+        embed = self.embeds[self.page]
+
+        await self.original_interaction.response.edit_message(
+            embed=rich_embed(embed, interaction.user, self.lang)
+        )
 
 
-def make_queue(queue: Queue, lang: Callable[[str], str]) -> list[QueueEmbed]:
+def make_queue_embed(queue: Queue, offset: int, lang: Lang) -> tuple[QueueEmbed, int]:
     """
     Make queue pages embeds
     """
-    embeds = []
+
     embed = QueueEmbed(lang)
+    new_offset = 0 + offset  # sợ shallow copy
 
-    for index, track in enumerate(queue):
+    for index, track in enumerate(queue, start=offset):
         if len(embed) > 1000:
-            embeds.append(embed)
-            embed = QueueEmbed(lang)
-        if len(embeds) == 25:
+            # stop
             break
-        embed.description += f"{index}. {track.title}\n"  # type: ignore
+        embed.description += f"{index + 1}. {track.title}\n"  # type: ignore
+        new_offset += 1
 
-    if len(embeds) == 0:
-        embeds.append(embed)
-
-    return embeds
+    return embed, new_offset
 
 
 class RadioMusic(GroupCog, name="radio"):
@@ -290,7 +307,7 @@ class MusicCog(Cog):
     async def connect_check(
         self,
         interaction: Interaction,
-        lang: Callable[[str], str],
+        lang: Lang,
         connecting: bool = False,
     ) -> Literal[True] | None:
         """
@@ -317,7 +334,7 @@ class MusicCog(Cog):
     async def _connect(
         self,
         interaction: Interaction,
-        lang: Callable[[str], str],
+        lang: Lang,
         connecting: bool = False,
     ) -> Player | None:
         """
@@ -353,7 +370,7 @@ class MusicCog(Cog):
         return player
 
     async def disconnect_check(
-        self, interaction: Interaction, lang: Callable[[str], str]
+        self, interaction: Interaction, lang: Lang
     ) -> Literal[True] | None:
         """
         Disconnect checks
@@ -379,7 +396,7 @@ class MusicCog(Cog):
         return True
 
     async def _disconnect(
-        self, interaction: Interaction, lang: Callable[[str], str]
+        self, interaction: Interaction, lang: Lang
     ) -> Literal[True] | None:
         assert interaction.guild
         assert interaction.guild.voice_client
@@ -416,8 +433,12 @@ class MusicCog(Cog):
                 or url.host == "youtu.be"
                 or url.host == "m.youtube.com"
             ):
-                if url.query.get("list"):
-                    result = await YouTubePlaylist.search(query)
+                playlist_id = url.query.get("list")
+                video_id = url.query.get("v")
+                if video_id:
+                    result = await YouTubeTrack.search(video_id)
+                elif playlist_id and url.path == "/playlist":
+                    result = await YouTubePlaylist.search(playlist_id)
                 else:
                     result = await YouTubeTrack.search(query)
 
@@ -458,6 +479,8 @@ class MusicCog(Cog):
             or isinstance(result, SpotifyTrack)
         ):
             return result
+        else:
+            return None
 
     @checks.cooldown(1, 1.5, key=user_cooldown_check)
     @command(name="connect")
@@ -659,27 +682,18 @@ class MusicCog(Cog):
                 lang("music.misc.action.error.no_queue")
             )
 
-        queue_embeds = make_queue(player.queue, lang)
+        first_embed, offset = make_queue_embed(player.queue, 0, lang)
 
-        if len(queue_embeds) > 1:
-            select_menu = PageSelect(queue_embeds, interaction, lang)
-            for i in range(len(queue_embeds)):
-                select_menu.add_option(label=str(i + 1), value=str(i + 1))
-            view = View(timeout=60).add_item(select_menu)
+        await interaction.response.send_message(
+            embed=rich_embed(first_embed, interaction.user, lang),
+        )
 
-            await interaction.response.send_message(
-                embed=rich_embed(queue_embeds[0], interaction.user, lang),
-                view=view,
-            )
-
-            if await view.wait():
-                assert isinstance(view.children[0], PageSelect)
-                view.children[0].disabled = True
-                await interaction.edit_original_response(view=view)
-        else:
-            await interaction.response.send_message(
-                embed=rich_embed(queue_embeds[0], interaction.user, lang),
-            )
+        if offset > len(player.queue):
+            view = QueuePaginator(first_embed, offset, player.queue, interaction, lang)
+            await interaction.edit_original_response(view=view)
+            await view.wait()
+            view.disable()
+            await interaction.edit_original_response(view=view)
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
     @command(name="nowplaying")

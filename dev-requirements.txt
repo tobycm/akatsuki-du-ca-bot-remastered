@@ -1,3 +1,0 @@
-mypy
-black
-types-redis

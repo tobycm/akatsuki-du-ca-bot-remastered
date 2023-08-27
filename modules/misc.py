@@ -12,6 +12,7 @@ from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import get_op, get_prefix
+from modules.lang import Lang
 
 global default_prefix
 default_prefix: str
@@ -87,9 +88,7 @@ async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
     return await get_prefix(message.guild.id) or default_prefix
 
 
-def rich_embed(
-    embed: Embed, author: User | Member, lang: Callable[[str], str]
-) -> Embed:
+def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
     """
     Added color, author and footer to embed
     """

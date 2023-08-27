@@ -8,6 +8,8 @@ from typing import Callable
 from aiohttp import ClientSession
 from discord import Embed, Member
 
+from modules.lang import Lang
+
 Url = str
 
 global session
@@ -35,7 +37,7 @@ async def construct_gif_embed(
     target: Member,
     method: str,
     api_key: str,
-    lang: Callable[[str], str],
+    lang: Lang,
 ) -> Embed:
     """
     Construct a GIF embed

@@ -56,3 +56,6 @@ async def get_lang(user_id: int) -> Callable[[str], str]:
         return result_lang
 
     return get_lang_by_address
+
+
+Lang = Callable[[str], str]
