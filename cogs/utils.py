@@ -191,14 +191,14 @@ class UtilsCog(Cog):
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="user_info")
     @guild_only()
-    async def user_info(self, interaction: Interaction, user: Optional[Member]):  # type: ignore
+    async def user_info(self, interaction: Interaction, user: Optional[Member]):
         """
         Send user info
         """
 
         if not user:
             assert isinstance(interaction.user, Member)
-            user: Member = interaction.user
+            user = interaction.user
         assert user.joined_at
 
         embed = Embed(title="User Info", description="")
@@ -231,14 +231,16 @@ class UtilsCog(Cog):
     @checks.cooldown(1, 1, key=user_cooldown_check)
     @command(name="avatar")
     @guild_only()
-    async def avatar(self, interaction: Interaction, user: Optional[Member] = None):  # type: ignore
+    async def avatar(self, interaction: Interaction, user: Optional[Member] = None):
         """
         Get a user avatar
         """
 
+        assert isinstance(interaction.user, Member)
         if not user:
-            assert isinstance(interaction.user, Member)
             user: Member = interaction.user
+
+        assert user
 
         embed = rich_embed(
             Embed(title="Avatar"), interaction.user, await get_lang(interaction.user.id)

@@ -70,13 +70,13 @@ class NewTrackEmbed(Embed):
         if hasattr(track, "images"):
             cast(SpotifyTrack, track)
 
-            if len(track.images) > 0:  # type: ignore
-                self.set_thumbnail(url=track.images[0])  # type: ignore
+            if len(track.images) > 0:
+                self.set_thumbnail(url=track.images[0])
 
         if hasattr(track, "source"):
-            if track.source == TrackSource.YouTube:  # type: ignore
+            if track.source == TrackSource.YouTube:
                 self.set_thumbnail(
-                    url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"  # type: ignore
+                    url=f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
                 )
 
 
@@ -294,7 +294,7 @@ class MusicCog(Cog):
         assert player.dj
         lang = await get_lang(player.dj.id)
 
-        embed = NewTrackEmbed(track, lang)  # type: ignore
+        embed = NewTrackEmbed(track, lang)
 
         embed.title = lang("music.misc.now_playing")
 
@@ -358,16 +358,14 @@ class MusicCog(Cog):
 
         player = (
             interaction.guild.voice_client
-            or await interaction.user.voice.channel.connect(
-                self_deaf=True, cls=Player  # type: ignore
-            )
+            or await interaction.user.voice.channel.connect(self_deaf=True, cls=Player)
         )
 
         assert isinstance(player, Player)
 
         if connecting:
             await interaction.edit_original_response(
-                content=lang("music.voice_client.status.connected")  # type: ignore
+                content=lang("music.voice_client.status.connected")
             )
         return player
 
@@ -411,7 +409,7 @@ class MusicCog(Cog):
 
         await interaction.guild.voice_client.disconnect(force=True)
         await interaction.edit_original_response(
-            content=lang("music.voice_client.status.disconnected")  # type: ignore
+            content=lang("music.voice_client.status.disconnected")
         )
         return True
 
@@ -547,6 +545,7 @@ class MusicCog(Cog):
 
         await player.queue.put_wait(result)
 
+        embed: Embed
         if isinstance(result, YouTubePlaylist) or isinstance(
             result, SoundCloudPlaylist
         ):
@@ -559,7 +558,7 @@ class MusicCog(Cog):
             embed=rich_embed(embed, interaction.user, lang),
         )
 
-        if not player.is_playing():
+        if not player.is_playing() and not player.current:
             await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -591,6 +590,7 @@ class MusicCog(Cog):
 
         player.queue.put_at_front(result)
 
+        embed: Embed
         if isinstance(result, YouTubePlaylist) or isinstance(
             result, SoundCloudPlaylist
         ):
@@ -603,7 +603,7 @@ class MusicCog(Cog):
             embed=rich_embed(embed, interaction.user, lang),
         )
 
-        if not player.is_playing():
+        if not player.is_playing() and not player.current:
             await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)
@@ -780,7 +780,7 @@ class MusicCog(Cog):
             await player.queue.get_wait()
 
         await interaction.response.send_message(
-            lang("music.misc.action.loop")[player.loop_mode or "off"]  # type: ignore
+            lang("music.misc.action.loop")[player.loop_mode]  # type: ignore
         )
 
     @checks.cooldown(1, 1.25, key=user_cooldown_check)

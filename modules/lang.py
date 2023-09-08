@@ -48,7 +48,7 @@ async def get_lang(user_id: int) -> Callable[[str], str]:
         result_lang = user_lang_pack
         for child in address.split("."):
             try:
-                child = int(child)
+                child = int(child)  # type: ignore
             except:
                 pass
             result_lang = result_lang[child]

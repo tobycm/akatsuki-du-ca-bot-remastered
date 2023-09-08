@@ -142,7 +142,7 @@ async def setup_hook():
     bot.logger.info("Loaded jishaku")
 
 
-bot.setup_hook = setup_hook
+setattr(bot, "setup_hook", setup_hook)
 
 bot.run(bot.config.token)
 

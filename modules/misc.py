@@ -94,6 +94,6 @@ def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
     """
 
     footer = lang("main.embed_footer")
-    embed.color = Color.random()
+    setattr(embed, "color", Color.random())
     embed.set_footer(text=footer % str(author), icon_url=author.display_avatar)
     return embed
