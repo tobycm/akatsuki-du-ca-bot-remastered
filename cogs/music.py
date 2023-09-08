@@ -164,11 +164,13 @@ def make_queue_embed(queue: Queue, offset: int, lang: Lang) -> tuple[QueueEmbed,
     embed = QueueEmbed(lang)
     new_offset = 0 + offset  # sợ shallow copy
 
+    assert embed.description
+
     for index, track in enumerate(queue, start=offset):
         if len(embed) > 1000:
             # stop
             break
-        embed.description += f"{index + 1}. {track.title}\n"  # type: ignore
+        embed.description += f"{index + 1}. {track.title}\n"
         new_offset += 1
 
     return embed, new_offset
