@@ -32,7 +32,7 @@ class Routes(Cog):
         await self.bot.ipc.stop()
         self.bot.ipc = None
 
-    @Server.route()
+    @Server.route("/user/mutual_servers")
     async def get_user_mutual_server(self, data: ClientPayload) -> str:
         """
         Get user mutual servers
@@ -44,7 +44,7 @@ class Routes(Cog):
         mutual_servers = user.mutual_guilds
         return dumps({"servers": mutual_servers})
 
-    @Server.route()
+    @Server.route("/force_join")
     async def user_join_through_oauth(self, data: ClientPayload) -> str:
         """
         An event telling the bot to apoligize when user get force-added :troll:
@@ -54,7 +54,7 @@ class Routes(Cog):
 
         return "lol"
 
-    @Server.route()
+    @Server.route("/")
     async def alive(self, *_) -> str:
         """
         Check if bot is alive lmao
