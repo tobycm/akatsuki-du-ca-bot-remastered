@@ -164,7 +164,7 @@ def make_queue_embed(queue: Queue, offset: int, lang: Lang) -> tuple[QueueEmbed,
     embed = QueueEmbed(lang)
     new_offset = 0 + offset  # sợ shallow copy
 
-    assert embed.description
+    assert embed.description is not None
 
     for index, track in enumerate(queue, start=offset):
         if len(embed) > 1000:
