@@ -1,34 +1,33 @@
 {
-  "bot": {
-    "token": "",
-    "secret": "",
-    "prefix": "",
-    "home_guild_id": 912563175919083571,
-    "home_guild_invite": "https://discord.gg/JJvSA2fjb5",
-    "channels": {
-      "error": 912563176447561796,
-      "bug": 912563176447561796
-    }
-  },
   "api_keys": {
     "osu": "",
     "tenor": ""
   },
-  "spotify": {
-    "client_id": "",
-    "client_secret": ""
+  "bot": {
+    "channels": {
+      "bug": 912563176447561796,
+      "error": 912563176447561796
+    },
+    "home_guild_id": 912563175919083571,
+    "home_guild_invite": "https://discord.gg/JJvSA2fjb5",
+    "prefix": "",
+    "secret": "",
+    "token": ""
   },
   "lavalink_nodes": [
     {
-      "uri": "http://localhost:2333",
-      "password": "youshallnotpass"
+      "password": "youshallnotpass",
+      "uri": "http://localhost:2333"
     }
   ],
   "redis": {
+    "database": 0,
     "host": "localhost",
-    "port": 6379,
-    "username": "",
     "password": "",
-    "database": 0
+    "port": 6379
+  },
+  "spotify": {
+    "client_id": "",
+    "client_secret": ""
   }
 }
