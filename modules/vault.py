@@ -34,7 +34,6 @@ class BotLavalinkConfig:
 class RedisConfig:
     host: str = "localhost"
     port: int = 6379
-    password: str = ""
     database: str = "0"
 
 
@@ -82,7 +81,6 @@ def load() -> BotConfig:
             redis=RedisConfig(
                 host=config["redis"]["host"],
                 port=config["redis"]["port"],
-                password=config["redis"]["password"],
                 database=config["redis"]["database"],
             ),
         )

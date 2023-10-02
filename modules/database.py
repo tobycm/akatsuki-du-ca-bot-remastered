@@ -23,7 +23,7 @@ def load(config: RedisConfig = RedisConfig()):
         max_connections=2,
     )
     global redis
-    redis = Redis(connection_pool=pool, password=config.password)
+    redis = Redis(connection_pool=pool)
 
 
 async def cleanup():
