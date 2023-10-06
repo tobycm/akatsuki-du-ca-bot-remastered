@@ -4,8 +4,9 @@ Main bot file.
 """
 
 import asyncio
+from typing import cast
 
-from discord import Game, Guild, Intents, Message, TextChannel
+from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
@@ -76,7 +77,7 @@ async def on_ready():
 
 
 @bot.event
-async def on_message(message: Message): # pylint: disable=arguments-differ
+async def on_message(message: Message):
     """
     Run on new message.
     """
@@ -87,10 +88,8 @@ async def on_message(message: Message): # pylint: disable=arguments-differ
     assert bot.user
     if message.content == f"<@{bot.user.id}>":
         prefix = await misc.get_prefix_for_bot(bot, message)
-        await message.reply(
-            (await lang.get_lang(message.author.id
-                                 ))("main.exceptions.ping_for_prefix") % prefix
-        )
+        lang = await lang.get_lang(message.author.id)
+        await message.reply(lang("main.exceptions.ping_for_prefix") % prefix)
 
     await bot.process_commands(message)
 
@@ -121,7 +120,8 @@ async def on_command_error(ctx: Context, error: Exception):
 
     # send error to channel
     error_channel = bot.get_channel(config.bot.channels.error)
-    assert isinstance(error_channel, TextChannel)
+    assert isinstance(error_channel, misc.TextableChannel)
+    error_channel = cast(misc.TextableChannel, error_channel) # nhức đầu :)))
 
     await error_channel.send(f"```py\n{error}\n```")
 

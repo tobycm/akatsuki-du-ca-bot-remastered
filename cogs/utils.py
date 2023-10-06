@@ -2,11 +2,7 @@
 Utilities for the bot.
 """
 
-from typing import Optional
-
-from discord import (
-    AllowedMentions, Embed, Interaction, Member, TextChannel, User
-)
+from discord import AllowedMentions, Embed, Interaction, Member, User
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Select, View
@@ -17,7 +13,7 @@ from config import config
 from modules.database import set_user_lang
 from modules.lang import get_lang, lang_list
 from modules.minecraft import get_minecraft_server
-from modules.misc import rich_embed, user_cooldown_check
+from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.osu import get_player
 
 
@@ -112,7 +108,7 @@ class UtilsCog(Cog):
             lang("utils.bug_report.success")
         )
 
-        assert isinstance(bug_channel, TextChannel)
+        assert isinstance(bug_channel, GuildTextableChannel)
 
         await bug_channel.send(
             f"{interaction.user} báo lỗi: {bug_description}",
@@ -201,7 +197,7 @@ class UtilsCog(Cog):
     @command(name = "user_info")
     @guild_only()
     async def user_info(
-        self, interaction: Interaction, user: Optional[Member]
+        self, interaction: Interaction, user: Member | None = None
     ):
         """
         Send user info
@@ -247,7 +243,7 @@ class UtilsCog(Cog):
     @command(name = "avatar")
     @guild_only()
     async def avatar(
-        self, interaction: Interaction, user: Optional[Member] = None
+        self, interaction: Interaction, user: Member | None = None
     ):
         """
         Get a user avatar

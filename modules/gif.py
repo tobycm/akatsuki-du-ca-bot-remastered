@@ -3,7 +3,6 @@ GIF backend functions.
 """
 
 from random import choice
-from typing import Callable
 
 from aiohttp import ClientSession
 from discord import Embed, Member

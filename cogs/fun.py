@@ -5,10 +5,9 @@ Fun cog for the bot.
 from random import choice, randint
 from string import ascii_letters
 
-from discord import Embed, File, Interaction, Member, TextChannel
+from discord import Embed, File, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
-from discord.guild import GuildChannel
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
@@ -16,7 +15,7 @@ from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif import construct_gif_embed
 from modules.lang import get_lang
-from modules.misc import rich_embed, user_cooldown_check
+from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.quote import get_quote
 from modules.waifu import random_image
 
@@ -26,29 +25,17 @@ class GIFCog(GroupCog, name = "gif"):
     GIF related commands.
     """
 
-    def __init__(self, bot: AkatsukiDuCa) -> None:
-        self.logger = bot.logger
-        super().__init__()
-
-    async def cog_load(self) -> None:
-        self.logger.info("Fun cog loaded")
-        return await super().cog_load()
-
-    async def cog_unload(self) -> None:
-        self.logger.info("Fun cog unloaded")
-        return await super().cog_unload()
-
     async def _gif(self, interaction: Interaction, target: Member):
+        assert isinstance(interaction.channel, GuildTextableChannel)
+        assert isinstance(interaction.user, Member)
+        assert interaction.command
+
         if target is interaction.client.user:
             return await interaction.response.send_message(
                 "etou...", ephemeral = True
             )
 
         lang = await get_lang(interaction.user.id)
-
-        assert isinstance(interaction.channel, TextChannel)
-        assert isinstance(interaction.user, Member)
-        assert interaction.command
 
         await interaction.channel.send(
             embed = rich_embed(
@@ -67,85 +54,41 @@ class GIFCog(GroupCog, name = "gif"):
             "Sent!", ephemeral = True
         )
 
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "slap")
-    @guild_only()
-    async def slap(self, interaction: Interaction, target: Member) -> None:
-        """
-        Slap someone xD
-        """
+    def __init__(self, bot: AkatsukiDuCa) -> None:
+        self.logger = bot.logger
+        super().__init__()
 
-        await self._gif(interaction, target)
+        async def gif_command(self, interaction: Interaction, target: Member):
+            """
+            Pat someone xD
+            """
 
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "hug")
-    @guild_only()
-    async def hug(self, interaction: Interaction, target: Member):
-        """
-        Hug someone xD
-        """
+            await self._gif(interaction, target)
 
-        await self._gif(interaction, target)
+        for command_name in [
+            "hug",
+            "pat",
+            "punch",
+            "kick",
+            "bite",
+            "cuddle",
+            "poke",
+        ]:
+            setattr(
+                self,
+                command_name,
+                checks.cooldown(1, 1, key = user_cooldown_check)(
+                    command(name = command_name)(guild_only()(gif_command))
+                ),
+            )
 
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "pat")
-    @guild_only()
-    async def pat(self, interaction: Interaction, target: Member):
-        """
-        Pat someone xD
-        """
+    async def cog_load(self) -> None:
+        self.logger.info("Fun cog loaded")
+        return await super().cog_load()
 
-        await self._gif(interaction, target)
-
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "punch")
-    @guild_only()
-    async def punch(self, interaction: Interaction, target: Member):
-        """
-        Punch someone xD
-        """
-
-        await self._gif(interaction, target)
-
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "kick")
-    @guild_only()
-    async def kick(self, interaction: Interaction, target: Member):
-        """
-        Kick someone xD
-        """
-
-        await self._gif(interaction, target)
-
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "bite")
-    @guild_only()
-    async def bite(self, interaction: Interaction, target: Member):
-        """
-        Bite someone xD
-        """
-
-        await self._gif(interaction, target)
-
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "cuddle")
-    @guild_only()
-    async def cuddle(self, interaction: Interaction, target: Member):
-        """
-        Cuddle someone xD
-        """
-
-        await self._gif(interaction, target)
-
-    @checks.cooldown(1, 1, key = user_cooldown_check)
-    @command(name = "poke")
-    @guild_only()
-    async def poke(self, interaction: Interaction, target: Member):
-        """
-        Poke someone xD
-        """
-
-        await self._gif(interaction, target)
+    async def cog_unload(self) -> None:
+        self.logger.info("Fun cog unloaded")
+        return await super().cog_unload()
 
 
 class FunCog(Cog):
@@ -170,7 +113,7 @@ class FunCog(Cog):
         if lang_option != "vi-vn":
             raise LangNotAvailable
 
-        assert isinstance(interaction.channel, TextChannel)
+        assert isinstance(interaction.channel, GuildTextableChannel)
 
         await interaction.response.send_message(
             "Đang gửi...", ephemeral = True
@@ -236,7 +179,7 @@ class FunCog(Cog):
             lang("fun.free_nitro.success"), ephemeral = True
         )
 
-        assert isinstance(interaction.channel, TextChannel)
+        assert isinstance(interaction.channel, GuildTextableChannel)
         return await interaction.channel.send(embed = embed)
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)

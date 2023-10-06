@@ -3,11 +3,12 @@ Just some checks and utils function
 """
 
 import math
-from datetime import timedelta
 from math import floor
-from typing import Callable
 
-from discord import Color, Embed, Interaction, Member, Message, User
+from discord import (
+    Color, DMChannel, Embed, GroupChannel, Interaction, Member, Message,
+    StageChannel, TextChannel, Thread, User, VoiceChannel
+)
 from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
@@ -102,3 +103,7 @@ def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
         text = footer % str(author), icon_url = author.display_avatar
     )
     return embed
+
+
+GuildTextableChannel = TextChannel | Thread | VoiceChannel | StageChannel
+TextableChannel = GuildTextableChannel | DMChannel | GroupChannel

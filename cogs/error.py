@@ -5,13 +5,8 @@ File for error handler cog
 from logging import Logger
 
 from discord.ext.commands import (
-    Cog,
-    CommandInvokeError,
-    CommandNotFound,
-    CommandOnCooldown,
-    Context,
-    MissingPermissions,
-    MissingRequiredArgument,
+    Cog, CommandInvokeError, CommandNotFound, CommandOnCooldown, Context,
+    MissingPermissions, MissingRequiredArgument
 )
 
 from akatsuki_du_ca import AkatsukiDuCa
@@ -41,7 +36,7 @@ class ErrorHandler(Cog):
     @Cog.listener("on_command_error")
     async def error_message_handler(
         self, ctx: Context, exception: Exception
-    ) -> None: # pylint: disable=arguments-differ
+    ) -> None:
         """
         Command error handler
         """

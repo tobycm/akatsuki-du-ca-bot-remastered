@@ -5,7 +5,7 @@ This is the music cog.
 from typing import Literal, cast
 
 import validators
-from discord import ButtonStyle, Embed, Interaction, Member, TextChannel
+from discord import ButtonStyle, Embed, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from discord.ui import Button, View, button
@@ -21,7 +21,9 @@ from yarl import URL
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
 from modules.lang import Lang, get_lang
-from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
+from modules.misc import (
+    GuildTextableChannel, rich_embed, seconds_to_time, user_cooldown_check
+)
 
 
 class Player(WavelinkPlayer):
@@ -30,7 +32,7 @@ class Player(WavelinkPlayer):
     """
 
     dj: Member | None = None
-    text_channel: TextChannel | None = None
+    text_channel: GuildTextableChannel | None = None
     loop_mode: Literal["song", "queue", "off"] = "off"
 
 
@@ -202,7 +204,7 @@ class RadioMusic(GroupCog, name = "radio"):
         """
 
         suggests_channel = self.bot.get_channel(957341782721585223)
-        if not isinstance(suggests_channel, TextChannel):
+        if not isinstance(suggests_channel, GuildTextableChannel):
             return
 
         await suggests_channel.send(
@@ -538,7 +540,7 @@ class MusicCog(Cog):
                 lang("music.misc.action.music.resumed")
             )
 
-        assert isinstance(interaction.channel, TextChannel)
+        assert isinstance(interaction.channel, GuildTextableChannel)
         assert isinstance(interaction.user, Member)
         player.dj, player.text_channel = interaction.user, interaction.channel
         await interaction.response.send_message(
@@ -582,7 +584,7 @@ class MusicCog(Cog):
         if not player:
             return
 
-        assert isinstance(interaction.channel, TextChannel)
+        assert isinstance(interaction.channel, GuildTextableChannel)
         assert isinstance(interaction.user, Member)
         player.dj, player.text_channel = interaction.user, interaction.channel
         await interaction.response.send_message(
