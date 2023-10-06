@@ -8,52 +8,49 @@
 
 # What is this?
 ### History
-One day, Toby saw his friend (stranger 👨 at that moment) with his Discord bot 🤖 being advertise on Facebook 😱. Toby thought it is so cool 🤯 to make a Discord bot 🤖 so he DMed 📧 the owner of that bot ([@KenjiKobayashi126](https://github.com/KenjiKobayashi126)) and asked for permission 👍 to code 💻 the Discord bot with him. Luckily 🍀 and sadly 😭, he accepted ✅. The sad 😭 part is that I only know 🧠 Python 🐍 at that moment 🕒 and no Javascript 💀. Toby decided to create 🔧 his own Discord bot 🤖 and named it "Akatsuki Du Ca". (LETS GO BIG TOBY W 😎)
+One day, Toby saw his friend (stranger 👨 at that moment) with his Discord bot 🤖 being advertise on Facebook 😱.
+Toby thought it is so cool 🤯 to make a Discord bot 🤖 so he DMed 📧 the owner of that bot ([@KenjiKobayashi126](https://github.com/KenjiKobayashi126)) and asked for permission 👍 to code 💻 the Discord bot with him.
+Luckily 🍀 and sadly 😭, he accepted ✅. The sad 😭 part is that I only know 🧠 Python 🐍 at that moment 🕒 and no Javascript 💀.
+Toby decided to create 🔧 his own Discord bot 🤖 and named it "Akatsuki Du Ca". (LETS GO BIG TOBY W 😎)
 
 ### How to use my bot
-After you have added ➕ my bot (if you didn't just click [here](https://discord.com/api/oauth2/authorize?client_id=897216814096990308&permissions=8&redirect_uri=https%3A%2F%2Fakatsukiduca.tk%2Fjoin&response_type=code&scope=identify%20guilds.join%20bot%20applications.commands)), you can use its slash commands 📣 by typing `/` in your chat ⌨️ bar and it will show available ✔️ commands for you to use. Clicking 🖱️ on Akatsuki Du Ca bot icon will simply only show 👁️ you its commands.
+After you have added ➕ my bot (if you didn't just click [here](https://discord.com/api/oauth2/authorize?client_id=897216814096990308&permissions=8&redirect_uri=https%3A%2F%2Fakatsukiduca.tk%2Fjoin&response_type=code&scope=identify%20guilds.join%20bot%20applications.commands)),
+you can use its slash commands 📣 by typing `/` in your chat ⌨️ bar and it will show available ✔️ commands for you to use.
+Clicking 🖱️ on Akatsuki Du Ca bot icon will simply only show 👁️ you its commands.
 
 # How to install
 
-Requirements:
+## Requirements:
  - Bot with full intents ![https://i.ibb.co/r7JMbGf/image.png](https://i.ibb.co/r7JMbGf/image.png)
- - Python 3.8 or higher with its venv package (if I have python3.10 on my machine, I also need to install python3.10-venv from apt or something else)
- - This script only works on Linux systems with bash
+ - Python 3.11+
 
-First, clone this git repository: 🖨️
+## Steps:
+### 1. Clone this git repository: 🖨️
 ```bash
 git clone https://github.com/tobycm/akatsuki-du-ca-bot-remastered.git
 ```
 
-Second, create a venv using the convenience script: 🗳️
+### 2. Install the dependencies: 🔧
 ```bash
-./bot create_venv
-```
-Enter the path to create the venv in (blank means ".venv")
-
-Third, know how to activate the venv by running: 🏃
-```bash
-./bot activate_venv
-```
-Run the command it prints out in the bottom
-
-Forth, install the dependencies: 🔧
-```bash
-./bot install
+pip install -U -r requirements.txt
 ```
 
-If you want to install a development environment, run this instead: 💻
+If you want to install development environment packages, run this too: 💻
 ```bash
-./bot setup_dev
+pip install -U -r requirements-dev.txt
 ```
 
-Also pls change the settings in config/settings.json
-
-Lastly, run the bot: 🚀
+### 3. Change your config file: ⚙
 ```bash
-./bot run
+cp config.example.py config.py
 ```
 
-If you have any errors 🛑 or bugs 🐛, please file them on Issues of this repo or contact `tobycm#7395` on Discord. 
+Put values into `config.py` file
 
 
+### 4. Run the bot: 🚀
+```bash
+python3 main.py
+```
+
+If you have any errors 🛑 or bugs 🐛, please file them on Issues of this repo or contact `tobycm` on Discord.
