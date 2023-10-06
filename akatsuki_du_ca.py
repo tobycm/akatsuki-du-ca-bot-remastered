@@ -11,7 +11,7 @@ from discord import Intents
 from discord.ext.commands import Bot
 from discord.ext.ipc.server import Server
 
-from modules.vault import BotConfig
+from modules.vault import Config
 
 
 class AkatsukiDuCa(Bot):
@@ -24,7 +24,7 @@ class AkatsukiDuCa(Bot):
 
     logger: logging.Logger = logging.getLogger("discord")
     ipc: Server | None = None
-    config: BotConfig
+    config: Config
     session = ClientSession()
 
     if not os.path.exists("logs"):

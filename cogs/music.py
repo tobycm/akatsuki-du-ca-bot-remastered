@@ -11,21 +11,14 @@ from discord.ext.commands import Cog, GroupCog
 from discord.ui import Button, View, button
 from wavelink import Node, NodePool
 from wavelink import Player as WavelinkPlayer
-from wavelink import (
-    Queue,
-    SoundCloudPlaylist,
-    SoundCloudTrack,
-    TrackEventPayload,
-    TrackSource,
-    WebsocketClosedPayload,
-    YouTubeMusicTrack,
-    YouTubePlaylist,
-    YouTubeTrack,
-)
+from wavelink import (Queue, SoundCloudPlaylist, SoundCloudTrack,
+                      TrackEventPayload, TrackSource, WebsocketClosedPayload,
+                      YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
 from wavelink.ext.spotify import SpotifyClient, SpotifyTrack
 from yarl import URL
 
 from akatsuki_du_ca import AkatsukiDuCa
+from config import config
 from modules.lang import Lang, get_lang
 from modules.misc import rich_embed, seconds_to_time, user_cooldown_check
 
@@ -238,15 +231,15 @@ class MusicCog(Cog):
         await self.bot.wait_until_ready()
 
         spotify = SpotifyClient(
-            client_id=self.bot.config.spotify.client_id,
-            client_secret=self.bot.config.spotify.client_secret,
+            client_id=config.api.spotify.client_id,
+            client_secret=config.api.spotify.client_secret,
         )
 
         await NodePool.connect(
             client=self.bot,
             nodes=[
                 Node(uri=node.uri, password=node.password)
-                for node in self.bot.config.lavalink_nodes
+                for node in config.lavalink_nodes
             ],
             spotify=spotify,
         )

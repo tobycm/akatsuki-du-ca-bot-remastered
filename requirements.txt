@@ -9,3 +9,4 @@ discord.py
 better-ipc
 yarl
 validators
+redis-om

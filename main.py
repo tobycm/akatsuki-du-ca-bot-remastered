@@ -10,7 +10,8 @@ from discord import Game, Guild, Intents, Message, TextChannel
 from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
-from modules import database, gif, lang, minecraft, misc, osu, quote, vault, waifu
+from config import config
+from modules import database, gif, lang, minecraft, misc, osu, quote, waifu
 
 bot = AkatsukiDuCa(
     command_prefix=misc.get_prefix_for_bot,
@@ -57,10 +58,9 @@ async def reload(ctx: Context):
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv assembling bot
 
-bot.config = vault.load()
-database.load()
+database.load(config.redis)
 lang.load()
-osu.load(bot.config.api_keys.osu, bot.session)
+osu.load(config.api.osu.key, bot.session)
 minecraft.load(bot.session)
 waifu.load(bot.session)
 quote.load(bot.session)
@@ -122,7 +122,7 @@ async def on_command_error(ctx: Context, error: Exception):
     """
 
     # send error to channel
-    error_channel = bot.get_channel(bot.config.channels.error)
+    error_channel = bot.get_channel(config.bot.channels.error)
     assert isinstance(error_channel, TextChannel)
 
     await error_channel.send(f"```py\n{error}\n```")
@@ -144,7 +144,7 @@ async def setup_hook():
 
 setattr(bot, "setup_hook", setup_hook)
 
-bot.run(bot.config.token)
+bot.run(config.bot.token)
 
 
 async def cleanup():

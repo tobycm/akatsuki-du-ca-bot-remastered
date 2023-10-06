@@ -9,6 +9,7 @@ from discord.ext.ipc.objects import ClientPayload
 from discord.ext.ipc.server import Server
 
 from akatsuki_du_ca import AkatsukiDuCa
+from config import config
 
 
 class Routes(Cog):
@@ -19,7 +20,7 @@ class Routes(Cog):
     def __init__(self, bot: AkatsukiDuCa):
         self.bot = bot
         self.logger = bot.logger
-        bot.ipc = Server(bot, secret_key=bot.config.secret)
+        bot.ipc = Server(bot, secret_key=config.bot.secret)
 
     async def cog_load(self) -> None:
         self.logger.info("IPC Cog and Server started")

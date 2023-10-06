@@ -7,7 +7,7 @@ from typing import TypedDict
 
 from redis.asyncio import ConnectionPool, Redis
 
-from modules.vault import RedisConfig
+from modules.vault import Redis as RedisConfig
 
 global redis
 redis: Redis
@@ -19,8 +19,8 @@ def load(config: RedisConfig = RedisConfig()):
     """
 
     pool = ConnectionPool.from_url(
-        f"redis://{config.host}:{config.port}/{config.database}",
-        max_connections=2,
+        f"redis://{'' if not config.username and not config.password else f'{config.username}:{config.password}@'}{config.host}:{config.port}/{config.database}",
+        max_connections=5,
     )
     global redis
     redis = Redis(connection_pool=pool)
