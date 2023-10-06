@@ -29,7 +29,8 @@ async def get_gif_url(method: str, api_key: str) -> Url:
     async with session.get(
         f"https://g.tenor.com/v1/random?q=Anime {method} GIF&key={api_key}&limit=9"
     ) as response:
-        return choice((await response.json())["results"])["media"][0]["gif"]["url"]
+        return choice((await
+                       response.json())["results"])["media"][0]["gif"]["url"]
 
 
 async def construct_gif_embed(
@@ -45,6 +46,6 @@ async def construct_gif_embed(
 
     description = lang(f"gif.{method}.text") % (author.mention, target.mention)
 
-    return Embed(title=lang(f"gif.{method}.title"), description=description).set_image(
-        url=await get_gif_url(method, api_key)
-    )
+    return Embed(
+        title = lang(f"gif.{method}.title"), description = description
+    ).set_image(url = await get_gif_url(method, api_key))

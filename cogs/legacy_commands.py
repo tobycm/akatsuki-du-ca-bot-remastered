@@ -34,7 +34,7 @@ class LegacyCommands(Cog):
         self.logger.info("Legacy Command unloaded")
         return await super().cog_unload()
 
-    @command(name="say")
+    @command(name = "say")
     @guild_only()
     async def say(self, ctx: Context, *, value: str):
         """
@@ -44,12 +44,12 @@ class LegacyCommands(Cog):
         if not await check_owners(ctx):
             raise NotOwner
         if value == "":
-            raise MissingRequiredArgument  # type: ignore
+            raise MissingRequiredArgument # type: ignore
 
         await ctx.message.delete()
         return await ctx.send(value)
 
-    @command(name="sayemoji")
+    @command(name = "sayemoji")
     @guild_only()
     async def sayemoji(
         self,
@@ -62,7 +62,7 @@ class LegacyCommands(Cog):
         """
 
         if not emoji_name:
-            raise MissingRequiredArgument  # type: ignore
+            raise MissingRequiredArgument # type: ignore
 
         assert ctx.guild
 
@@ -72,8 +72,8 @@ class LegacyCommands(Cog):
             guild = self.bot.get_guild(guild_id)
             if not guild:
                 await ctx.send("Guild not found")
-            guild_emojis = self.bot.get_guild(guild_id).emojis  # type: ignore
+            guild_emojis = self.bot.get_guild(guild_id).emojis # type: ignore
 
-        emoji = utils.get(guild_emojis, name=emoji_name)
+        emoji = utils.get(guild_emojis, name = emoji_name)
         await ctx.message.delete()
         await ctx.send(str(emoji) or "lmao")

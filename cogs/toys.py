@@ -2,7 +2,6 @@
 Toys for kids lmao
 """
 
-from logging import Logger
 from random import randint
 
 from discord import Interaction
@@ -31,16 +30,18 @@ class ToysCog(Cog):
         self.logger.info("Toys Cog unloaded")
         return await super().cog_unload()
 
-    @checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @command(name="random")
-    async def random(self, interaction: Interaction, min: int = 0, max: int = 10):
+    @checks.cooldown(1, 0.25, key = user_cooldown_check)
+    @command(name = "random")
+    async def random(
+        self, interaction: Interaction, min: int = 0, max: int = 10
+    ):
         """
         Feeling lucky?
         """
         await interaction.response.send_message(randint(min, max))
 
-    @checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @command(name="coinflip")
+    @checks.cooldown(1, 0.25, key = user_cooldown_check)
+    @command(name = "coinflip")
     async def coinflip(self, interaction: Interaction):
         """
         Flip a coin
@@ -49,8 +50,8 @@ class ToysCog(Cog):
             "Heads" if randint(0, 1) == 0 else "Tails"
         )
 
-    @checks.cooldown(1, 0.25, key=user_cooldown_check)
-    @command(name="dice")
+    @checks.cooldown(1, 0.25, key = user_cooldown_check)
+    @command(name = "dice")
     async def dice(self, interaction: Interaction):
         """
         Roll a dice

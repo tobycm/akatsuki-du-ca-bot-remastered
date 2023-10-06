@@ -23,7 +23,9 @@ def load(prefix: str = "duca!"):
     default_prefix = prefix
 
 
-async def check_owners(ctx: Context[AkatsukiDuCa] | Interaction[AkatsukiDuCa]) -> bool:
+async def check_owners(
+    ctx: Context[AkatsukiDuCa] | Interaction[AkatsukiDuCa]
+) -> bool:
     """
     Check if user is owner
     """
@@ -68,7 +70,8 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     seconds = math.floor(seconds)
 
     minutes_str = (
-        f"0{minutes}" if double_zero_in_minutes and minutes < 10 else f"{minutes}"
+        f"0{minutes}"
+        if double_zero_in_minutes and minutes < 10 else f"{minutes}"
     )
     seconds_str = f"0{seconds}" if seconds < 10 else f"{seconds}"
 
@@ -95,5 +98,7 @@ def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
 
     footer = lang("main.embed_footer")
     setattr(embed, "color", Color.random())
-    embed.set_footer(text=footer % str(author), icon_url=author.display_avatar)
+    embed.set_footer(
+        text = footer % str(author), icon_url = author.display_avatar
+    )
     return embed

@@ -41,7 +41,7 @@ class ErrorHandler(Cog):
     @Cog.listener("on_command_error")
     async def error_message_handler(
         self, ctx: Context, exception: Exception
-    ) -> None:  # pylint: disable=arguments-differ
+    ) -> None: # pylint: disable=arguments-differ
         """
         Command error handler
         """
@@ -64,7 +64,8 @@ class ErrorHandler(Cog):
         async def on_cooldown(ctx: Context):
             assert isinstance(exception, CommandOnCooldown)
             await ctx.send(
-                lang("main.command_on_cooldown") % round(exception.retry_after, 1)
+                lang("main.command_on_cooldown") %
+                round(exception.retry_after, 1)
             )
 
         async def no_lang_available(ctx: Context):

@@ -11,7 +11,6 @@ UUID = str
 Image = str
 Thumbnail = str
 
-
 global session
 session: ClientSession
 
@@ -35,7 +34,7 @@ async def get_minecraft_user(username: str) -> tuple[UUID, Image, Thumbnail]:
         image = f"https://crafatar.com/renders/body/{uuid}"
         thumbnail = f"https://crafatar.com/avatars/{uuid}"
 
-        return (uuid, image, thumbnail)
+        return ( uuid, image, thumbnail )
 
 
 class RawMinecraftServerAPI(TypedDict):
@@ -65,7 +64,7 @@ async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
     Return a Minecraft server's info as an Embed.
     """
     async with session.get(
-        url="https://api.mcsrvstat.us/2/" + server_ip, timeout=30
+        url = "https://api.mcsrvstat.us/2/" + server_ip, timeout = 30
     ) as response:
         data: RawMinecraftServerAPI = await response.json()
 

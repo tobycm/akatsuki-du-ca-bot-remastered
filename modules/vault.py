@@ -10,10 +10,12 @@ class ChannelsConfig:
     error: int
     bug: int
 
+
 @dataclass
 class LavalinkNode:
     uri: str = "http://localhost:2333"
     password: str = "youshallnotpass"
+
 
 @dataclass
 class Redis:
@@ -23,10 +25,12 @@ class Redis:
     password: str = ""
     database: int = 0
 
+
 @dataclass
 class HomeGuild:
     id: int
     invite: str
+
 
 @dataclass
 class Bot:
@@ -36,24 +40,29 @@ class Bot:
     home_guild: HomeGuild
     channels: ChannelsConfig
 
+
 @dataclass
 class Spotify:
     client_id: str
     client_secret: str
 
+
 @dataclass
 class OsuAPI:
     key: str
 
+
 @dataclass
 class TenorAPI:
     key: str
+
 
 @dataclass
 class API:
     osu: OsuAPI
     tenor: TenorAPI
     spotify: Spotify
+
 
 @dataclass
 class Config:

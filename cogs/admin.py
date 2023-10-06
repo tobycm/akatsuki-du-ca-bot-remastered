@@ -2,7 +2,6 @@
 Admin commands for bot in guild.
 """
 
-from logging import Logger
 
 from discord import Interaction
 from discord.app_commands import MissingPermissions, checks, command, guild_only
@@ -14,7 +13,7 @@ from modules.database import delete_prefix, set_prefix
 from modules.misc import check_owners, guild_cooldown_check
 
 
-class PrefixCog(GroupCog, name="prefix"):
+class PrefixCog(GroupCog, name = "prefix"):
     """
     Prefix related commands.
     """
@@ -32,9 +31,9 @@ class PrefixCog(GroupCog, name="prefix"):
         self.logger.info("Prefix Cog unloaded")
         return await super().cog_unload()
 
-    @checks.cooldown(1, 1, key=guild_cooldown_check)
-    @checks.has_permissions(manage_guild=True)
-    @command(name="set")
+    @checks.cooldown(1, 1, key = guild_cooldown_check)
+    @checks.has_permissions(manage_guild = True)
+    @command(name = "set")
     @guild_only()
     async def setprefix(self, interaction: Interaction, prefix: str):
         """
@@ -43,11 +42,13 @@ class PrefixCog(GroupCog, name="prefix"):
 
         assert interaction.guild
         await set_prefix(interaction.guild.id, prefix)
-        return await interaction.response.send_message(f"Prefix set to `{prefix}`")
+        return await interaction.response.send_message(
+            f"Prefix set to `{prefix}`"
+        )
 
-    @checks.cooldown(1, 1, key=guild_cooldown_check)
-    @checks.has_permissions(manage_guild=True)
-    @command(name="reset")
+    @checks.cooldown(1, 1, key = guild_cooldown_check)
+    @checks.has_permissions(manage_guild = True)
+    @command(name = "reset")
     @guild_only()
     async def resetprefix(self, interaction: Interaction):
         """
@@ -77,7 +78,7 @@ class BotAdminCog(Cog):
         self.logger.info("Bot Admin Cog unloaded")
         return await super().cog_unload()
 
-    @commands.command(name="resetguildprefix")
+    @commands.command(name = "resetguildprefix")
     async def resetguildprefix(self, ctx: Context, guild_id: int):
         """
         Reset a guild prefix

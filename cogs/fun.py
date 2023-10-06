@@ -8,8 +8,10 @@ from string import ascii_letters
 from discord import Embed, File, Interaction, Member, TextChannel
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
+from discord.guild import GuildChannel
 
 from akatsuki_du_ca import AkatsukiDuCa
+from config import config
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif import construct_gif_embed
@@ -19,7 +21,7 @@ from modules.quote import get_quote
 from modules.waifu import random_image
 
 
-class GIFCog(GroupCog, name="gif"):
+class GIFCog(GroupCog, name = "gif"):
     """
     GIF related commands.
     """
@@ -36,9 +38,11 @@ class GIFCog(GroupCog, name="gif"):
         self.logger.info("Fun cog unloaded")
         return await super().cog_unload()
 
-    async def _gif(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def _gif(self, interaction: Interaction, target: Member):
         if target is interaction.client.user:
-            return await interaction.response.send_message("etou...", ephemeral=True)
+            return await interaction.response.send_message(
+                "etou...", ephemeral = True
+            )
 
         lang = await get_lang(interaction.user.id)
 
@@ -47,94 +51,96 @@ class GIFCog(GroupCog, name="gif"):
         assert interaction.command
 
         await interaction.channel.send(
-            embed=rich_embed(
+            embed = rich_embed(
                 await construct_gif_embed(
                     interaction.user,
                     target,
                     interaction.command.name,
-                    interaction.client.config.api_keys.tenor,
+                    config.api.tenor.key,
                     lang,
                 ),
                 interaction.user,
                 lang,
             )
         )
-        return await interaction.response.send_message("Sent!", ephemeral=True)
+        return await interaction.response.send_message(
+            "Sent!", ephemeral = True
+        )
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="slap")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "slap")
     @guild_only()
-    async def slap(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def slap(self, interaction: Interaction, target: Member) -> None:
         """
         Slap someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="hug")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "hug")
     @guild_only()
-    async def hug(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def hug(self, interaction: Interaction, target: Member):
         """
         Hug someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="pat")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "pat")
     @guild_only()
-    async def pat(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def pat(self, interaction: Interaction, target: Member):
         """
         Pat someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="punch")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "punch")
     @guild_only()
-    async def punch(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def punch(self, interaction: Interaction, target: Member):
         """
         Punch someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="kick")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "kick")
     @guild_only()
-    async def kick(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def kick(self, interaction: Interaction, target: Member):
         """
         Kick someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="bite")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "bite")
     @guild_only()
-    async def bite(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def bite(self, interaction: Interaction, target: Member):
         """
         Bite someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="cuddle")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "cuddle")
     @guild_only()
-    async def cuddle(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def cuddle(self, interaction: Interaction, target: Member):
         """
         Cuddle someone xD
         """
 
         await self._gif(interaction, target)
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="poke")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "poke")
     @guild_only()
-    async def poke(self, interaction: Interaction[AkatsukiDuCa], target: Member):
+    async def poke(self, interaction: Interaction, target: Member):
         """
         Poke someone xD
         """
@@ -152,8 +158,8 @@ class FunCog(Cog):
         self.logger = bot.logger
         super().__init__()
 
-    @checks.cooldown(1, 5, key=user_cooldown_check)
-    @command(name="alarm")
+    @checks.cooldown(1, 5, key = user_cooldown_check)
+    @command(name = "alarm")
     @guild_only()
     async def alarm(self, interaction: Interaction):
         """
@@ -166,22 +172,26 @@ class FunCog(Cog):
 
         assert isinstance(interaction.channel, TextChannel)
 
-        await interaction.response.send_message("Đang gửi...", ephemeral=True)
+        await interaction.response.send_message(
+            "Đang gửi...", ephemeral = True
+        )
         if randint(1, 50) == 25:
             # bro got lucky
             await interaction.channel.send(
-                content="Bạn may mắn thật đấy, bạn được Ban Mai gọi dậy nè :))",
-                file=File("assets/banmai.mp4"),
+                content =
+                "Bạn may mắn thật đấy, bạn được Ban Mai gọi dậy nè :))",
+                file = File("assets/banmai.mp4"),
             )
         else:
             await interaction.channel.send(
-                content="Ngủ nhiều là không tốt đâu đó nha :D \n - Du Ca said - ",
-                file=File("assets/duca.mp4"),
+                content =
+                "Ngủ nhiều là không tốt đâu đó nha :D \n - Du Ca said - ",
+                file = File("assets/duca.mp4"),
             )
-        return await interaction.edit_original_response(content="Đã gửi :D")
+        return await interaction.edit_original_response(content = "Đã gửi :D")
 
-    @checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @command(name="waifu")
+    @checks.cooldown(1, 1.5, key = user_cooldown_check)
+    @command(name = "waifu")
     async def waifu(self, interaction: Interaction):
         """
         Wan sum waifu?
@@ -191,18 +201,18 @@ class FunCog(Cog):
         image = await random_image()
 
         return await interaction.response.send_message(
-            embed=rich_embed(
+            embed = rich_embed(
                 Embed(
-                    title="Waifu",
-                    description=lang("fun.waifu") % image,
+                    title = "Waifu",
+                    description = lang("fun.waifu") % image,
                 ),
                 interaction.user,
                 lang,
-            ).set_image(url=str(image))
+            ).set_image(url = str(image))
         )
 
-    @checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @command(name="freenitro")
+    @checks.cooldown(1, 1.5, key = user_cooldown_check)
+    @command(name = "freenitro")
     @guild_only()
     async def freenitro(self, interaction: Interaction):
         """
@@ -216,21 +226,21 @@ class FunCog(Cog):
         lang = await get_lang(interaction.user.id)
 
         embed = Embed(
-            title=lang("fun.free_nitro.title"),
-            description=lang("fun.free_nitro.description")
-            % f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
-            color=0x2F3136,
+            title = lang("fun.free_nitro.title"),
+            description = lang("fun.free_nitro.description") %
+            f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
+            color = 0x2F3136,
         )
-        embed.set_image(url="https://i.ibb.co/5LDTWSj/freenitro.png")
+        embed.set_image(url = "https://i.ibb.co/5LDTWSj/freenitro.png")
         await interaction.response.send_message(
-            lang("fun.free_nitro.success"), ephemeral=True
+            lang("fun.free_nitro.success"), ephemeral = True
         )
 
         assert isinstance(interaction.channel, TextChannel)
-        return await interaction.channel.send(embed=embed)
+        return await interaction.channel.send(embed = embed)
 
-    @checks.cooldown(1, 1.5, key=user_cooldown_check)
-    @command(name="quote")
+    @checks.cooldown(1, 1.5, key = user_cooldown_check)
+    @command(name = "quote")
     async def quote(self, interaction: Interaction):
         """
         A good quote for the day
@@ -239,10 +249,10 @@ class FunCog(Cog):
         quote = await get_quote()
 
         return await interaction.response.send_message(
-            embed=rich_embed(
-                Embed(title=quote.author, description=quote.quote),
+            embed = rich_embed(
+                Embed(title = quote.author, description = quote.quote),
                 interaction.user,
                 await get_lang(interaction.user.id),
             ),
-            ephemeral=True,
+            ephemeral = True,
         )

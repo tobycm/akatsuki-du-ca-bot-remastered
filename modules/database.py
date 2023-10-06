@@ -20,10 +20,10 @@ def load(config: RedisConfig = RedisConfig()):
 
     pool = ConnectionPool.from_url(
         f"redis://{'' if not config.username and not config.password else f'{config.username}:{config.password}@'}{config.host}:{config.port}/{config.database}",
-        max_connections=5,
+        max_connections = 5,
     )
     global redis
-    redis = Redis(connection_pool=pool)
+    redis = Redis(connection_pool = pool)
 
 
 async def cleanup():
@@ -74,7 +74,10 @@ async def set_op(new_op_id: int, reason: str, adder_id: int) -> None:
     """
 
     await redis.hset(
-        "op", str(new_op_id), str({"reason": reason, "adder_id": adder_id})
+        "op", str(new_op_id), str({
+            "reason": reason,
+            "adder_id": adder_id
+        })
     )
 
 

@@ -20,7 +20,7 @@ class Routes(Cog):
     def __init__(self, bot: AkatsukiDuCa):
         self.bot = bot
         self.logger = bot.logger
-        bot.ipc = Server(bot, secret_key=config.bot.secret)
+        bot.ipc = Server(bot, secret_key = config.bot.secret)
 
     async def cog_load(self) -> None:
         self.logger.info("IPC Cog and Server started")
@@ -41,9 +41,9 @@ class Routes(Cog):
 
         user = self.bot.get_user(data.user_id)
         if not user:
-            return dumps({"error": "User not found"})
+            return dumps({ "error": "User not found"})
         mutual_servers = user.mutual_guilds
-        return dumps({"servers": mutual_servers})
+        return dumps({ "servers": mutual_servers })
 
     @Server.route("/force_join")
     async def user_join_through_oauth(self, data: ClientPayload) -> str:
@@ -61,4 +61,4 @@ class Routes(Cog):
         Check if bot is alive lmao
         """
 
-        return dumps({"alive": True})
+        return dumps({ "alive": True })

@@ -19,8 +19,8 @@ class AkatsukiDuCa(Bot):
     Custom bot class
     """
 
-    def __init__(self, *args, intents=Intents.all(), **kwargs):
-        super().__init__(*args, intents=intents, **kwargs)
+    def __init__(self, *args, intents = Intents.all(), **kwargs):
+        super().__init__(*args, intents = intents, **kwargs)
 
     logger: logging.Logger = logging.getLogger("discord")
     ipc: Server | None = None
@@ -31,11 +31,13 @@ class AkatsukiDuCa(Bot):
         os.mkdir("logs")
 
     if os.path.exists("logs/full_bot_log.txt"):
-        os.rename("logs/full_bot_log.txt", f"logs/full_bot_log_{int(time())}.txt")
+        os.rename(
+            "logs/full_bot_log.txt", f"logs/full_bot_log_{int(time())}.txt"
+        )
 
     logging.basicConfig(
-        filename="logs/full_bot_log.txt",
-        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.INFO,
+        filename = "logs/full_bot_log.txt",
+        format = "%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt = "%H:%M:%S",
+        level = logging.INFO,
     )

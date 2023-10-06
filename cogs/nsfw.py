@@ -12,7 +12,7 @@ from modules.misc import rich_embed, user_cooldown_check
 from modules.waifu import random_image
 
 
-class NSFWCog(GroupCog, name="nsfw"):
+class NSFWCog(GroupCog, name = "nsfw"):
     """
     NSFW related commands.
     """
@@ -30,8 +30,8 @@ class NSFWCog(GroupCog, name="nsfw"):
         self.logger.info("NSFW Cog unloaded")
         return await super().cog_unload()
 
-    @checks.cooldown(1, 1, key=user_cooldown_check)
-    @command(name="art")
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "art")
     @guild_only()
     async def nsfw(self, interaction: Interaction):
         """
@@ -44,20 +44,19 @@ class NSFWCog(GroupCog, name="nsfw"):
 
         if not interaction.channel.is_nsfw():
             await interaction.response.send_message(
-                lang("nsfw.pls_go_to_nsfw"), ephemeral=True
+                lang("nsfw.pls_go_to_nsfw"), ephemeral = True
             )
 
-        image = await random_image(nsfw=True)
+        image = await random_image(nsfw = True)
 
         await interaction.response.send_message(
-            embed=rich_embed(
+            embed = rich_embed(
                 Embed(
-                    title="0.0",
-                    description=lang("fun.powered_by_waifu_im")
-                    + "\n"
-                    + f"[Source]({image})",
+                    title = "0.0",
+                    description = lang("fun.powered_by_waifu_im") + "\n" +
+                    f"[Source]({image})",
                 ),
                 interaction.user,
                 lang,
-            ).set_image(url=str(image))
+            ).set_image(url = str(image))
         )

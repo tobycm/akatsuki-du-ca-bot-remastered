@@ -25,10 +25,12 @@ def load() -> None:
         full_lang = {}
 
         for option in options:
-            with open(f"lang/{lang}/{option}", "r", encoding="utf8") as file:
-                full_lang.update({option.replace(".json", ""): json.load(file)})
+            with open(f"lang/{lang}/{option}", "r", encoding = "utf8") as file:
+                full_lang.update({
+                    option.replace(".json", ""): json.load(file)
+                })
 
-        lang_packs.update({lang: full_lang})
+        lang_packs.update({ lang: full_lang })
 
 
 async def get_lang(user_id: int) -> Callable[[str], str]:
@@ -48,7 +50,7 @@ async def get_lang(user_id: int) -> Callable[[str], str]:
         result_lang = user_lang_pack
         for child in address.split("."):
             try:
-                child = int(child)  # type: ignore
+                child = int(child) # type: ignore
             except:
                 pass
             result_lang = result_lang[child]

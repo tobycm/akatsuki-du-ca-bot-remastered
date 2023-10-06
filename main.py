@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 Main bot file.
 """
@@ -14,19 +13,18 @@ from config import config
 from modules import database, gif, lang, minecraft, misc, osu, quote, waifu
 
 bot = AkatsukiDuCa(
-    command_prefix=misc.get_prefix_for_bot,
-    activity=Game(name="Hibiki Ban Mai"),
-    intents=Intents.all(),
-    help_command=None,
+    command_prefix = misc.get_prefix_for_bot,
+    activity = Game(name = "Hibiki Ban Mai"),
+    intents = Intents.all(),
+    help_command = None,
 )
-
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot settings
 # -----------------------------------------------------
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv bot commands
 
 
-@bot.command(name="sc", hidden=True)
+@bot.command(name = "sc", hidden = True)
 async def sync_command(ctx: Context):
     """
     Sync commands to global.
@@ -38,7 +36,7 @@ async def sync_command(ctx: Context):
     await ctx.send("Synced!")
 
 
-@bot.command(name="reload", hidden=True)
+@bot.command(name = "reload", hidden = True)
 async def reload(ctx: Context):
     """
     Reload bot.
@@ -78,7 +76,7 @@ async def on_ready():
 
 
 @bot.event
-async def on_message(message: Message):  # pylint: disable=arguments-differ
+async def on_message(message: Message): # pylint: disable=arguments-differ
     """
     Run on new message.
     """
@@ -90,8 +88,8 @@ async def on_message(message: Message):  # pylint: disable=arguments-differ
     if message.content == f"<@{bot.user.id}>":
         prefix = await misc.get_prefix_for_bot(bot, message)
         await message.reply(
-            (await lang.get_lang(message.author.id))("main.exceptions.ping_for_prefix")
-            % prefix
+            (await lang.get_lang(message.author.id
+                                 ))("main.exceptions.ping_for_prefix") % prefix
         )
 
     await bot.process_commands(message)

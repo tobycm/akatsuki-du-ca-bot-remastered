@@ -20,7 +20,6 @@ quotes: list[Quote] = []
 global updated_at
 updated_at = 0
 
-
 global session
 session: ClientSession
 
