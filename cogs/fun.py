@@ -58,30 +58,6 @@ class GIFCog(GroupCog, name = "gif"):
         self.logger = bot.logger
         super().__init__()
 
-        async def gif_command(self, interaction: Interaction, target: Member):
-            """
-            Pat someone xD
-            """
-
-            await self._gif(interaction, target)
-
-        for command_name in [
-            "hug",
-            "pat",
-            "punch",
-            "kick",
-            "bite",
-            "cuddle",
-            "poke",
-        ]:
-            setattr(
-                self,
-                command_name,
-                checks.cooldown(1, 1, key = user_cooldown_check)(
-                    command(name = command_name)(guild_only()(gif_command))
-                ),
-            )
-
     async def cog_load(self) -> None:
         self.logger.info("Fun cog loaded")
         return await super().cog_load()
@@ -89,6 +65,86 @@ class GIFCog(GroupCog, name = "gif"):
     async def cog_unload(self) -> None:
         self.logger.info("Fun cog unloaded")
         return await super().cog_unload()
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "slap")
+    @guild_only()
+    async def slap(self, interaction: Interaction, target: Member) -> None:
+        """
+        Slap someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "hug")
+    @guild_only()
+    async def hug(self, interaction: Interaction, target: Member):
+        """
+        Hug someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "pat")
+    @guild_only()
+    async def pat(self, interaction: Interaction, target: Member):
+        """
+        Pat someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "punch")
+    @guild_only()
+    async def punch(self, interaction: Interaction, target: Member):
+        """
+        Punch someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "kick")
+    @guild_only()
+    async def kick(self, interaction: Interaction, target: Member):
+        """
+        Kick someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "bite")
+    @guild_only()
+    async def bite(self, interaction: Interaction, target: Member):
+        """
+        Bite someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "cuddle")
+    @guild_only()
+    async def cuddle(self, interaction: Interaction, target: Member):
+        """
+        Cuddle someone xD
+        """
+
+        await self._gif(interaction, target)
+
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "poke")
+    @guild_only()
+    async def poke(self, interaction: Interaction, target: Member):
+        """
+        Poke someone xD
+        """
+
+        await self._gif(interaction, target)
 
 
 class FunCog(Cog):
