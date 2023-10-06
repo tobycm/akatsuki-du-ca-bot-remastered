@@ -5,7 +5,7 @@ Fun cog for the bot.
 from random import choice, randint
 from string import ascii_letters
 
-from discord import Embed, File, Interaction, Member
+from discord import Button, ButtonStyle, Embed, File, Interaction, Member, View
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 
@@ -224,10 +224,11 @@ class FunCog(Cog):
 
         lang = await get_lang(interaction.user.id)
 
+        riel = f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})"
+
         embed = Embed(
             title = lang("fun.free_nitro.title"),
-            description = lang("fun.free_nitro.description") %
-            f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
+            description = lang("fun.free_nitro.description") % riel,
             color = 0x2F3136,
         )
         embed.set_image(url = "https://i.ibb.co/5LDTWSj/freenitro.png")
@@ -235,8 +236,13 @@ class FunCog(Cog):
             lang("fun.free_nitro.success"), ephemeral = True
         )
 
+        view = View(timeout = 600)
+        view.add_item(
+            Button(style = ButtonStyle.blurple, label = "Claim", url = riel)
+        )
+
         assert isinstance(interaction.channel, GuildTextableChannel)
-        return await interaction.channel.send(embed = embed)
+        return await interaction.channel.send(riel, embed = embed, view = view)
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "quote")
