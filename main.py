@@ -88,8 +88,10 @@ async def on_message(message: Message):
     assert bot.user
     if message.content == f"<@{bot.user.id}>":
         prefix = await misc.get_prefix_for_bot(bot, message)
-        lang = await lang.get_lang(message.author.id)
-        await message.reply(lang("main.exceptions.ping_for_prefix") % prefix)
+        await message.reply(
+            (await lang.get_lang(message.author.id
+                                 ))("main.exceptions.ping_for_prefix") % prefix
+        )
 
     await bot.process_commands(message)
 
