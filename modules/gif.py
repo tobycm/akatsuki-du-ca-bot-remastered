@@ -7,6 +7,7 @@ from random import choice
 from aiohttp import ClientSession
 from discord import Embed, Member
 
+from config import config
 from modules.lang import Lang
 
 Url = str
@@ -20,31 +21,13 @@ def load(sess: ClientSession):
     session = sess
 
 
-async def get_gif_url(method: str, api_key: str) -> Url:
+async def get_gif_url(action: str, api_key: str) -> Url:
     """
     Get a GIF url using search query
     """
 
     async with session.get(
-        f"https://g.tenor.com/v1/random?q=Anime {method} GIF&key={api_key}&limit=9"
+        f"https://g.tenor.com/v1/random?q=Anime {action} GIF&key={api_key}&limit=9"
     ) as response:
         return choice((await
                        response.json())["results"])["media"][0]["gif"]["url"]
-
-
-async def construct_gif_embed(
-    author: Member,
-    target: Member,
-    method: str,
-    api_key: str,
-    lang: Lang,
-) -> Embed:
-    """
-    Construct a GIF embed
-    """
-
-    description = lang(f"gif.{method}.text") % (author.mention, target.mention)
-
-    return Embed(
-        title = lang(f"gif.{method}.title"), description = description
-    ).set_image(url = await get_gif_url(method, api_key))

@@ -13,7 +13,7 @@ from akatsuki_du_ca import AkatsukiDuCa
 from config import config
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
-from modules.gif import construct_gif_embed
+from modules.gif import construct_gif_embed, get_gif_url
 from modules.lang import get_lang
 from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.quote import get_quote
@@ -36,18 +36,17 @@ class GIFCog(GroupCog, name = "gif"):
             )
 
         lang = await get_lang(interaction.user.id)
+        action = interaction.command.name
 
         await interaction.channel.send(
             embed = rich_embed(
-                await construct_gif_embed(
-                    interaction.user,
-                    target,
-                    interaction.command.name,
-                    config.api.tenor.key,
-                    lang,
-                ),
-                interaction.user,
-                lang,
+                Embed(
+                    title = lang(f"gif.{action}.title"),
+                    description = lang(f"gif.{action}.text") %
+                    (interaction.user.mention, target.mention)
+                ).set_image(
+                    url = await get_gif_url(action, config.api.tenor.key)
+                )
             )
         )
         return await interaction.response.send_message(
