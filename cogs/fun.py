@@ -13,7 +13,7 @@ from akatsuki_du_ca import AkatsukiDuCa
 from config import config
 from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
-from modules.gif import construct_gif_embed, get_gif_url
+from modules.gif import get_gif_url
 from modules.lang import get_lang
 from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.quote import get_quote
