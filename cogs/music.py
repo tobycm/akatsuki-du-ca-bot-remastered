@@ -24,6 +24,7 @@ from modules.lang import Lang, get_lang
 from modules.misc import (
     GuildTextableChannel, rich_embed, seconds_to_time, user_cooldown_check
 )
+from modules.wavelink_helpers import check_soundcloud, check_youtube
 
 
 class Player(WavelinkPlayer):
@@ -319,7 +320,7 @@ class MusicCog(Cog):
         interaction: Interaction,
         lang: Lang,
         connecting: bool = False,
-    ) -> Literal[True] | None:
+    ) -> bool:
         """
         Connect checks
         """
@@ -332,15 +333,14 @@ class MusicCog(Cog):
             await interaction.response.send_message(
                 lang("music.voice_client.error.user_no_voice")
             )
-            return None
+            return False
         voice_client = interaction.guild.voice_client
-        if voice_client and (
-            voice_client.channel is user_voice.channel
-        ) and connecting:
+        if not voice_client and not connecting: return True
+        if voice_client.channel is user_voice.channel:
             await interaction.response.send_message(
                 lang("music.voice_client.error.already_connected")
             )
-            return None
+            return False
         return True
 
     async def _connect(
@@ -381,8 +381,9 @@ class MusicCog(Cog):
             )
         return player
 
-    async def disconnect_check(self, interaction: Interaction,
-                               lang: Lang) -> Literal[True] | None:
+    async def disconnect_check(
+        self, interaction: Interaction, lang: Lang
+    ) -> bool:
         """
         Disconnect checks
         """
@@ -394,25 +395,24 @@ class MusicCog(Cog):
             await interaction.response.send_message(
                 lang("music.voice_client.error.user_no_voice")
             )
-            return None
+            return False
         if not interaction.guild.voice_client: # bot didn't even connect lol
             await interaction.response.send_message(
                 lang("music.voice_client.error.not_connected")
             )
-            return None
+            return False
         if interaction.guild.voice_client.channel != interaction.user.voice.channel:
             await interaction.response.send_message(
                 lang("music.voice_client.error.playing_in_another_channel")
             )
         return True
 
-    async def _disconnect(self, interaction: Interaction,
-                          lang: Lang) -> Literal[True] | None:
+    async def _disconnect(self, interaction: Interaction, lang: Lang) -> bool:
         assert interaction.guild
         assert interaction.guild.voice_client
 
         if not await self.disconnect_check(interaction, lang):
-            return None
+            return False
         await interaction.response.send_message(
             lang("music.voice_client.status.disconnecting")
         )
@@ -422,6 +422,13 @@ class MusicCog(Cog):
             content = lang("music.voice_client.status.disconnected")
         )
         return True
+
+    async def check_playing(self, player: Player | None) -> bool:
+        """
+        Check if bot is playing music
+        """
+
+        return player and player.is_playing()
 
     async def search(
         self, query: str
@@ -435,37 +442,16 @@ class MusicCog(Cog):
         result = []
 
         try:
-            if not url.host:
-                result = await YouTubeTrack.search(query)
-            if (
-                url.host == "youtube.com" or url.host == "www.youtube.com"
-                or url.host == "youtu.be" or url.host == "m.youtube.com"
-            ):
-                playlist_id = url.query.get("list")
-                video_id = url.query.get("v")
-                if video_id:
-                    result = await YouTubeTrack.search(video_id)
-                elif playlist_id and url.path == "/playlist":
-                    result = await YouTubePlaylist.search(playlist_id)
-                else:
-                    result = await YouTubeTrack.search(query)
-
             if url.host == "music.youtube.com":
                 result = await YouTubeMusicTrack.search(query)
-
-            if (
-                url.host == "soundcloud.com" or url.host == "on.soundcloud.com"
-                or url.host == "m.soundcloud.com"
-            ):
-                if "sets" in url.parts:
-                    result = await SoundCloudPlaylist.search(
-                        "/".join(part for part in url.parts if part != "sets")
-                    )
-                else:
-                    result = await SoundCloudTrack.search(url.path)
-
             if url.host == "open.spotify.com":
                 result = await SpotifyTrack.search(query)
+
+            result = result or await check_soundcloud(
+                url
+            ) or await check_youtube(url, query
+                                     ) or await YouTubeTrack.search(query)
+
         except:
             return None
 
@@ -473,22 +459,16 @@ class MusicCog(Cog):
             return None
 
         if isinstance(result, list):
-            if len(result) == 0:
-                return None
             result = result[0]
-
-        if isinstance(result, YouTubePlaylist
-                      ) or isinstance(result, SoundCloudPlaylist):
+        if isinstance(result, (YouTubePlaylist, SoundCloudPlaylist)):
             return result
-        elif (
-            isinstance(result, YouTubeTrack)
-            or isinstance(result, SoundCloudTrack)
-            or isinstance(result, YouTubeMusicTrack)
-            or isinstance(result, SpotifyTrack)
+        if isinstance(
+            result,
+            (YouTubeTrack, SoundCloudTrack, SpotifyTrack, YouTubeMusicTrack)
         ):
             return result
-        else:
-            return None
+
+        return None
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "connect")
@@ -624,7 +604,7 @@ class MusicCog(Cog):
 
         lang = await get_lang(interaction.user.id)
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not player or not player.current:
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
@@ -645,7 +625,7 @@ class MusicCog(Cog):
 
         lang = await get_lang(interaction.user.id)
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not player or not player.current:
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
@@ -718,9 +698,8 @@ class MusicCog(Cog):
         """
 
         lang = await get_lang(interaction.user.id)
-
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not await self.check_playing(player):
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
@@ -777,7 +756,7 @@ class MusicCog(Cog):
         lang = await get_lang(interaction.user.id)
 
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not await self.check_playing(player):
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
@@ -805,7 +784,7 @@ class MusicCog(Cog):
         lang = await get_lang(interaction.user.id)
 
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not self.check_playing(player):
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
@@ -833,7 +812,7 @@ class MusicCog(Cog):
         lang = await get_lang(interaction.user.id)
 
         player = await self._connect(interaction, lang)
-        if not player or not player.is_playing() or not player.current:
+        if not self.check_playing(player):
             await interaction.response.send_message(
                 lang("music.misc.action.error.no_music")
             )
