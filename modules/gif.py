@@ -5,10 +5,6 @@ GIF backend functions.
 from random import choice
 
 from aiohttp import ClientSession
-from discord import Embed, Member
-
-from config import config
-from modules.lang import Lang
 
 Url = str
 

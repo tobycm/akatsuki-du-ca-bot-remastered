@@ -1,0 +1,165 @@
+import copy
+from typing import Generator, cast
+
+import validators
+from discord import ButtonStyle, Embed, Interaction
+from discord.ui import Button, View, button
+from wavelink import (
+    Queue, SoundCloudPlaylist, SoundCloudTrack, TrackSource, YouTubeMusicTrack,
+    YouTubePlaylist, YouTubeTrack
+)
+from wavelink.ext.spotify import SpotifyTrack
+
+from modules.lang import Lang
+from modules.misc import rich_embed, seconds_to_time
+
+
+class NewTrackEmbed(Embed):
+    """
+    Make a new track embed
+    """
+
+    def __init__(
+        self,
+        track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack
+        | SpotifyTrack,
+        lang: Lang,
+    ) -> None:
+        if isinstance(track, SpotifyTrack):
+            author = ", ".join(track.artists)
+        else:
+            author = track.author
+
+        title = (
+            f"**{track.title}**"
+            if not hasattr(track, "uri") or not validators.url(track.uri) else
+            f"[**{track.title}**]({track.uri})"
+        )
+
+        super().__init__(
+            title = lang("music.misc.action.queue.added"),
+            description = f"{title} - {author}\n" +
+            f"Duration: {seconds_to_time(round(track.duration / 1000))}",
+        )
+
+        if hasattr(track, "images") and len(track.images) > 0:
+            self.set_thumbnail(url = track.images[0])
+
+        if hasattr(track, "source") and track.source == TrackSource.YouTube:
+            self.set_thumbnail(
+                url =
+                f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
+            )
+
+
+class NewPlaylistEmbed(Embed):
+    """
+    Make a new playlist embed
+    """
+
+    def __init__(
+        self, playlist: YouTubePlaylist | SoundCloudPlaylist, lang: Lang
+    ) -> None:
+        super().__init__(
+            title = lang("music.misc.action.queue.added"),
+            description = f"**{playlist.name}**\n" +
+            f"Items: {len(playlist.tracks)}",
+        )
+        if isinstance(playlist, YouTubePlaylist):
+            self.set_thumbnail(
+                url =
+                f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
+            )
+
+
+class QueueEmbed(Embed):
+    """
+    Make a queue page embed
+    """
+
+    description: str
+
+    def __init__(self, lang: Lang) -> None:
+        super().__init__(title = lang("music.misc.queue"), description = "")
+
+
+class QueuePaginator(View):
+    embeds: list[QueueEmbed]
+    page: int
+    original_interaction: Interaction
+    lang: Lang
+    embed_generator: Generator[tuple[QueueEmbed, int] | None, None, None]
+
+    def __init__(
+        self,
+        embeds_init: list[QueueEmbed],
+        interaction: Interaction,
+        lang: Lang,
+        embed_generator: Generator[tuple[QueueEmbed, int] | None, None, None],
+    ):
+        self.page = 0
+        self.embeds = embeds_init
+        self.original_interaction = interaction
+        self.lang = lang
+        self.embed_generator = embed_generator
+
+        super().__init__(timeout = 60)
+
+    def disable(self):
+        for child in self.children:
+            cast(Button, child).disabled = True
+
+    @button(label = "◀", style = ButtonStyle.blurple)
+    async def previous(self, interaction: Interaction, button: Button):
+        self.page -= 1
+        if self.page < 0:
+            self.page = 0
+            return await interaction.response.send_message(
+                content = "No more pages"
+            )
+
+        embed = self.embeds[self.page]
+        await interaction.response.send_message(content = "Changed page")
+        await self.original_interaction.response.edit_message(
+            embed = rich_embed(embed, interaction.user, self.lang)
+        )
+
+    @button(label = "▶", style = ButtonStyle.blurple)
+    async def next(self, interaction: Interaction, button: Button):
+        self.page += 1
+        if len(self.embeds) < self.page: # make embed
+            new_embed = next(self.embed_generator)
+            if not new_embed:
+                self.page -= 1
+                return await interaction.response.send_message(
+                    content = "No more pages"
+                )
+
+            self.embeds.append(new_embed[0])
+            self.page = new_embed[1]
+
+        embed = self.embeds[self.page]
+
+        await interaction.response.send_message(content = "Changed page")
+        await self.original_interaction.response.edit_message(
+            embed = rich_embed(embed, interaction.user, self.lang)
+        )
+
+
+def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
+    """
+    Make queue pages embeds
+    """
+
+    page = 0
+
+    original_embed = QueueEmbed(lang)
+
+    for index, track in enumerate(queue):
+        embed = copy.deepcopy(original_embed)
+        embed.description += f"{index + 1}. {track.title}\n"
+        page += 1
+        yield embed, page
+
+    while True:
+        yield None
