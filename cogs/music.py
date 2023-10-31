@@ -24,7 +24,7 @@ from modules.lang import Lang, get_lang
 from modules.misc import (
     GuildTextableChannel, rich_embed, seconds_to_time, user_cooldown_check
 )
-from modules.wavelink_helpers import check_soundcloud, check_youtube
+from modules.wavelink_helpers import check_soundcloud, check_youtube, search
 
 
 class Player(WavelinkPlayer):
@@ -302,7 +302,6 @@ class MusicCog(Cog):
         lang = await get_lang(player.dj.id)
 
         embed = NewTrackEmbed(track, lang)
-
         embed.title = lang("music.misc.now_playing")
 
         if player.loop_mode == "song":
@@ -430,46 +429,6 @@ class MusicCog(Cog):
 
         return player and player.is_playing()
 
-    async def search(
-        self, query: str
-    ) -> YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | SpotifyTrack | YouTubePlaylist | SoundCloudPlaylist | None:
-        """
-        Search for a song or playlist
-        """
-
-        url = URL(query)
-
-        result = []
-
-        try:
-            if url.host == "music.youtube.com":
-                result = await YouTubeMusicTrack.search(query)
-            if url.host == "open.spotify.com":
-                result = await SpotifyTrack.search(query)
-
-            result = result or await check_soundcloud(
-                url
-            ) or await check_youtube(url, query
-                                     ) or await YouTubeTrack.search(query)
-
-        except:
-            return None
-
-        if not result:
-            return None
-
-        if isinstance(result, list):
-            result = result[0]
-        if isinstance(result, (YouTubePlaylist, SoundCloudPlaylist)):
-            return result
-        if isinstance(
-            result,
-            (YouTubeTrack, SoundCloudTrack, SpotifyTrack, YouTubeMusicTrack)
-        ):
-            return result
-
-        return None
-
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "connect")
     @guild_only()
@@ -527,7 +486,7 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        result = await self.search(query)
+        result = await search(query)
         if not result:
             return await interaction.edit_original_response(
                 content = lang("music.voice_client.error.not_found")
@@ -571,7 +530,7 @@ class MusicCog(Cog):
             lang("music.misc.action.music.searching")
         )
 
-        result = await self.search(query)
+        result = await search(query)
         if not result:
             return await interaction.edit_original_response(
                 content = lang("music.voice_client.error.not_found")

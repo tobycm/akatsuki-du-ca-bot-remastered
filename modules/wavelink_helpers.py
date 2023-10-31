@@ -1,6 +1,8 @@
 from wavelink import (
-    SoundCloudPlaylist, SoundCloudTrack, YouTubePlaylist, YouTubeTrack
+    SoundCloudPlaylist, SoundCloudTrack, YouTubeMusicTrack, YouTubePlaylist,
+    YouTubeTrack
 )
+from wavelink.ext.spotify import SpotifyTrack
 from yarl import URL
 
 
@@ -34,3 +36,43 @@ async def check_soundcloud(
             "/".join(part for part in url.parts if part != "sets")
         )
     return await SoundCloudTrack.search(url.path)
+
+
+async def search(
+    query: str
+) -> YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack | SpotifyTrack | YouTubePlaylist | SoundCloudPlaylist | None:
+    """
+    Search for a song or playlist
+    """
+
+    url = URL(query)
+
+    result = []
+
+    try:
+        if url.host == "music.youtube.com":
+            result = await YouTubeMusicTrack.search(query)
+        if url.host == "open.spotify.com":
+            result = await SpotifyTrack.search(query)
+
+        result = result or await check_soundcloud(url) or await check_youtube(
+            url, query
+        ) or await YouTubeTrack.search(query)
+
+    except:
+        return None
+
+    if not result:
+        return None
+
+    if isinstance(result, list):
+        result = result[0]
+    if isinstance(result, (YouTubePlaylist, SoundCloudPlaylist)):
+        return result
+    if isinstance(
+        result,
+        (YouTubeTrack, SoundCloudTrack, SpotifyTrack, YouTubeMusicTrack)
+    ):
+        return result
+
+    return None
