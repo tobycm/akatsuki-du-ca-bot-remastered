@@ -2,7 +2,6 @@
 Just some checks and utils function
 """
 
-import math
 from math import floor
 
 from discord import (
@@ -68,7 +67,7 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     hours = floor(seconds / 3600)
     minutes = floor((seconds - hours * 3600) / 60)
     seconds = seconds - hours * 3600 - minutes * 60
-    seconds = math.floor(seconds)
+    seconds = floor(seconds)
 
     minutes_str = (
         f"0{minutes}"
