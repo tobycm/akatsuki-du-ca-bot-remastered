@@ -5,10 +5,10 @@ import validators
 from discord import ButtonStyle, Embed, Interaction
 from discord.ui import Button, View, button
 from wavelink import (
-    Queue, SoundCloudPlaylist, SoundCloudTrack, TrackSource, YouTubeMusicTrack,
-    YouTubePlaylist, YouTubeTrack
+    Queue,
+    Playable,
+    Playlist,
 )
-from wavelink.ext.spotify import SpotifyTrack
 
 from modules.lang import Lang
 from modules.misc import rich_embed, seconds_to_time
@@ -21,15 +21,9 @@ class NewTrackEmbed(Embed):
 
     def __init__(
         self,
-        track: YouTubeTrack | YouTubeMusicTrack | SoundCloudTrack
-        | SpotifyTrack,
+        track: Playable,
         lang: Lang,
     ) -> None:
-        if isinstance(track, SpotifyTrack):
-            author = ", ".join(track.artists)
-        else:
-            author = track.author
-
         title = (
             f"**{track.title}**"
             if not hasattr(track, "uri") or not validators.url(track.uri) else
@@ -38,16 +32,16 @@ class NewTrackEmbed(Embed):
 
         super().__init__(
             title = lang("music.misc.action.queue.added"),
-            description = f"{title} - {author}\n" +
-            f"Duration: {seconds_to_time(round(track.duration / 1000))}",
+            description = f"{title} - {track.artist}\n" +
+            f"Duration: {seconds_to_time(round(track.length / 1000))}",
         )
 
-        if hasattr(track, "images") and len(track.images) > 0:
-            self.set_thumbnail(url = track.images[0])
+        if track.artwork:
+            self.set_thumbnail(url = track.artwork)
 
-        if hasattr(track, "source") and track.source == TrackSource.YouTube:
+        if track.source == "youtube":
             self.set_thumbnail(
-                url =
+                url = track.artwork or
                 f"https://i.ytimg.com/vi/{track.identifier}/maxresdefault.jpg"
             )
 
@@ -57,19 +51,22 @@ class NewPlaylistEmbed(Embed):
     Make a new playlist embed
     """
 
-    def __init__(
-        self, playlist: YouTubePlaylist | SoundCloudPlaylist, lang: Lang
-    ) -> None:
+    def __init__(self, playlist: Playlist, lang: Lang) -> None:
         super().__init__(
             title = lang("music.misc.action.queue.added"),
-            description = f"**{playlist.name}**\n" +
-            f"Items: {len(playlist.tracks)}",
+            description = f"**{playlist.name}**\n" + f"Items: {len(playlist)}",
         )
-        if isinstance(playlist, YouTubePlaylist):
+
+        if playlist.artwork:
+            self.set_thumbnail(url = playlist.artwork)
+            return
+        try:
             self.set_thumbnail(
                 url =
                 f"https://i.ytimg.com/vi/{playlist.tracks[0].identifier}/maxresdefault.jpg"
             )
+        except:
+            pass
 
 
 class QueueEmbed(Embed):
@@ -110,7 +107,7 @@ class QueuePaginator(View):
             cast(Button, child).disabled = True
 
     @button(label = "◀", style = ButtonStyle.blurple)
-    async def previous(self, interaction: Interaction, button: Button):
+    async def previous(self, interaction: Interaction, _: Button):
         self.page -= 1
         if self.page < 0:
             self.page = 0
@@ -125,7 +122,7 @@ class QueuePaginator(View):
         )
 
     @button(label = "▶", style = ButtonStyle.blurple)
-    async def next(self, interaction: Interaction, button: Button):
+    async def next(self, interaction: Interaction, _: Button):
         self.page += 1
         if len(self.embeds) < self.page: # make embed
             new_embed = next(self.embed_generator)

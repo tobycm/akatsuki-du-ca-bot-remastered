@@ -1,5 +1,6 @@
 from modules.vault import (
-    API, Bot, ChannelsConfig, Config, HomeGuild, LavalinkNode, Redis, Spotify
+    API, Bot, ChannelsConfig, Config, HomeGuild, LavalinkNode, Redis, Spotify,
+    OsuAPI, TenorAPI
 )
 
 config = Config(
@@ -11,12 +12,12 @@ config = Config(
         channels = ChannelsConfig(error = 0, bug = 0)
     ),
     api = API(
-        osu = "",
-        tenor = "",
+        osu = OsuAPI(key = ""),
+        tenor = TenorAPI(key = ""),
         spotify = Spotify(client_id = "", client_secret = "")
     ),
     lavalink_nodes = [LavalinkNode(uri = "", password = "")],
     redis = Redis(
-        host = "", port = 0, username = "", password = "", database = ""
+        host = "", port = 0, username = "", password = "", database = 0
     )
 )

@@ -1,7 +1,9 @@
 from typing import Literal
 
-from discord import GuildTextableChannel, Member
+from discord import Member
 from wavelink import Player as WavelinkPlayer
+
+from modules.misc import GuildTextableChannel
 
 
 class Player(WavelinkPlayer):
@@ -12,3 +14,4 @@ class Player(WavelinkPlayer):
     dj: Member | None = None
     text_channel: GuildTextableChannel | None = None
     loop_mode: Literal["song", "queue", "off"] = "off"
+    end_behavior: Literal["disconnect"] | None = "disconnect"

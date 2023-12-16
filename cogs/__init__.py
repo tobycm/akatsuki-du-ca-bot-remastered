@@ -26,6 +26,8 @@ async def setup(bot: AkatsukiDuCa):
     for cog in COGS_LIST:
         await bot.add_cog(cog(bot))
 
+    await MusicCog.connect_nodes(bot)
+
     bot.logger.info("Cogs loaded")
 
 

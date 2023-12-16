@@ -82,7 +82,7 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     return time
 
 
-async def get_prefix_for_bot(bot: AkatsukiDuCa, message: Message) -> str:
+async def get_prefix_for_bot(_: AkatsukiDuCa, message: Message) -> str:
     """
     Return the prefix for the bot.
     """

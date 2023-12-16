@@ -48,7 +48,7 @@ class Routes(Cog):
     @Server.route("/force_join")
     async def user_join_through_oauth(self, data: ClientPayload) -> str:
         """
-        An event telling the bot to apoligize when user get force-added :troll:
+        An event telling the bot to apologize when user get force-added :troll:
         """
 
         # doesn't do anything yet
