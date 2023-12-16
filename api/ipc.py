@@ -46,7 +46,7 @@ class Routes(Cog):
         return dumps({ "servers": mutual_servers })
 
     @Server.route("/force_join")
-    async def user_join_through_oauth(self, data: ClientPayload) -> str:
+    async def user_join_through_oauth(self, _: ClientPayload) -> str:
         """
         An event telling the bot to apologize when user get force-added :troll:
         """

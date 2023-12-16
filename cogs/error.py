@@ -2,8 +2,6 @@
 File for error handler cog
 """
 
-from logging import Logger
-
 from discord.ext.commands import (
     Cog, CommandInvokeError, CommandNotFound, CommandOnCooldown, Context,
     MissingPermissions, MissingRequiredArgument
@@ -47,23 +45,23 @@ class ErrorHandler(Cog):
         if isinstance(exception, CommandInvokeError):
             exception = exception.original
 
-        async def user_no_perms(ctx: Context):
+        async def user_no_perms():
             await ctx.send(lang("main.missing_guild_permission") % prefix)
 
-        async def not_found(ctx: Context):
+        async def not_found():
             await ctx.send(lang("main.command_not_found") % prefix)
 
-        async def miss_args(ctx: Context):
+        async def miss_args():
             await ctx.send(lang("main.missing_required_argument") % prefix)
 
-        async def on_cooldown(ctx: Context):
+        async def on_cooldown():
             assert isinstance(exception, CommandOnCooldown)
             await ctx.send(
                 lang("main.command_on_cooldown") %
                 round(exception.retry_after, 1)
             )
 
-        async def no_lang_available(ctx: Context):
+        async def no_lang_available():
             await ctx.send(lang("main.language_not_available"))
 
         mapping: dict = {
@@ -74,4 +72,4 @@ class ErrorHandler(Cog):
             LangNotAvailable: no_lang_available,
         }
 
-        await mapping[exception](ctx)
+        await mapping[exception]()

@@ -4,7 +4,6 @@ Main bot file.
 """
 
 import asyncio
-from typing import cast
 
 from discord import Game, Guild, Intents, Message
 from discord.ext.commands import Context
@@ -115,7 +114,7 @@ async def on_guild_remove(guild: Guild):
 
 
 @bot.event
-async def on_command_error(ctx: Context, error: Exception):
+async def on_command_error(_: Context, error: Exception):
     """
     Command error handler
     """
@@ -123,7 +122,6 @@ async def on_command_error(ctx: Context, error: Exception):
     # send error to channel
     error_channel = bot.get_channel(config.bot.channels.error)
     assert isinstance(error_channel, misc.TextableChannel)
-    error_channel = cast(misc.TextableChannel, error_channel) # nhức đầu :)))
 
     await error_channel.send(f"```py\n{error}\n```")
 

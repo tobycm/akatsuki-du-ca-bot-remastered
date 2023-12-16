@@ -13,5 +13,4 @@ class Player(WavelinkPlayer):
 
     dj: Member | None = None
     text_channel: GuildTextableChannel | None = None
-    loop_mode: Literal["song", "queue", "off"] = "off"
     end_behavior: Literal["disconnect"] | None = "disconnect"

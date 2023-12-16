@@ -34,7 +34,7 @@ async def get_minecraft_user(username: str) -> tuple[UUID, Image, Thumbnail]:
         image = f"https://crafatar.com/renders/body/{uuid}"
         thumbnail = f"https://crafatar.com/avatars/{uuid}"
 
-        return ( uuid, image, thumbnail )
+        return uuid, image, thumbnail
 
 
 class RawMinecraftServerAPI(TypedDict):

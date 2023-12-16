@@ -5,9 +5,10 @@ Fun cog for the bot.
 from random import choice, randint
 from string import ascii_letters
 
-from discord import Button, ButtonStyle, Embed, File, Interaction, Member, View
+from discord import ButtonStyle, Embed, File, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
+from discord.ui import View, Button
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
@@ -25,7 +26,8 @@ class GIFCog(GroupCog, name = "gif"):
     GIF related commands.
     """
 
-    async def _gif(self, interaction: Interaction, target: Member):
+    @staticmethod
+    async def _gif(interaction: Interaction, target: Member):
         assert isinstance(interaction.channel, GuildTextableChannel)
         assert isinstance(interaction.user, Member)
         assert interaction.command
@@ -46,7 +48,9 @@ class GIFCog(GroupCog, name = "gif"):
                     (interaction.user.mention, target.mention)
                 ).set_image(
                     url = await get_gif_url(action, config.api.tenor.key)
-                )
+                ),
+                interaction.user,
+                lang,
             )
         )
         return await interaction.response.send_message(

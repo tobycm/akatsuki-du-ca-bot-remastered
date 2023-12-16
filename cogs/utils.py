@@ -141,8 +141,9 @@ class UtilsCog(Cog):
         )
 
         if await view.wait():
-            assert isinstance(view.children[0], ChangeLang)
-            view.children[0].disabled = True
+            item = view.children[0]
+            assert isinstance(item, ChangeLang)
+            item.disabled = True
             return await interaction.edit_original_response(view = view)
 
     @checks.cooldown(1, 2, key = user_cooldown_check)
@@ -154,10 +155,11 @@ class UtilsCog(Cog):
 
         response = f"\U0001f3d3 Pong! `{round(interaction.client.latency * 1000)}ms`"
 
-        if interaction.guild and interaction.guild.voice_client:
-            assert isinstance(interaction.guild.voice_client, Player)
+        voice_client = interaction.client.voice_clients
+
+        if interaction.guild and isinstance(voice_client, Player):
             response += (
-                f"\n\U0001f3b5 Music latency: `{interaction.guild.voice_client.ping}ms`"
+                f"\n\U0001f3b5 Music latency: `{voice_client.ping}ms`"
             )
 
         await interaction.response.send_message(content = response)
