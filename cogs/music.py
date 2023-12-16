@@ -209,7 +209,7 @@ class MusicCog(Cog):
                 content = lang("music.voice_client.error.not_found")
             )
 
-        await player.queue.put_wait(result)
+        await player.queue.put_wait(result, atomic = False)
 
         embed: Embed
         if isinstance(result, Playlist):
