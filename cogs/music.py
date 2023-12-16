@@ -484,6 +484,27 @@ class MusicCog(Cog):
             lang("music.misc.volume.changed") % f"{volume}%"
         )
 
+    @checks.cooldown(1, 1, key = user_cooldown_check)
+    @command(name = "speed")
+    @guild_only()
+    async def speed(self, interaction: Interaction, speed: float):
+        """
+        Change the player speed.
+        """
+
+        lang, player = await get_lang_and_player(interaction)
+        if not player.playing:
+            return await interaction.response.send_message(
+                lang("music.misc.action.error.no_music")
+            )
+
+        filters = player.filters
+        filters.timescale.set(speed = speed)
+        await player.set_filters(filters)
+        return await interaction.response.send_message(
+            f"Speed changed to {speed}"
+        )
+
     @checks.cooldown(1, 3, key = user_cooldown_check)
     @command(name = "shuffle")
     @guild_only()

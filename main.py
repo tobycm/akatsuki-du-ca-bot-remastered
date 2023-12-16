@@ -125,7 +125,7 @@ async def on_command_error(_: Context, error: Exception):
 
     await error_channel.send(f"```py\n{error}\n```")
 
-    # throw again
+    # throw againw
     raise error
 
 
