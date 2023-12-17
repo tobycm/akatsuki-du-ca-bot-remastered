@@ -19,7 +19,7 @@ async def search(query: str) -> Playable | Playlist | None:
         return None
 
     if isinstance(result, list):
-        result = result[0]
+        return result[0]
     if isinstance(result, Playlist):
         return result
 
@@ -45,10 +45,15 @@ async def connect_check(
         )
         return False
     voice_client = interaction.guild.voice_client
-    if not voice_client and not connecting: return True
-    if voice_client.channel is user_voice.channel:
+    if not voice_client: return True
+    if connecting:
         await interaction.response.send_message(
-            lang("music.voice_client.error.already_connected")
+            lang("music.voice_client.status.already_connected")
+        )
+        return False
+    if voice_client.channel != user_voice.channel:
+        await interaction.response.send_message(
+            lang("music.voice_client.error.playing_in_another_channel")
         )
         return False
     return True

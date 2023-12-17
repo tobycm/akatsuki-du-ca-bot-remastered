@@ -32,7 +32,7 @@ class NewTrackEmbed(Embed):
 
         super().__init__(
             title = lang("music.misc.action.queue.added"),
-            description = f"{title} - {track.artist}\n" +
+            description = f"{title} - [{track.author}]({track.artist.url})\n" +
             f"Duration: {seconds_to_time(round(track.length / 1000))}",
         )
 
