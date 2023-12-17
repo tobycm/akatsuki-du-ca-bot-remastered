@@ -42,12 +42,6 @@ class Bot:
 
 
 @dataclass
-class Spotify:
-    client_id: str
-    client_secret: str
-
-
-@dataclass
 class OsuAPI:
     key: str
 
@@ -61,7 +55,6 @@ class TenorAPI:
 class API:
     osu: OsuAPI
     tenor: TenorAPI
-    spotify: Spotify
 
 
 @dataclass
