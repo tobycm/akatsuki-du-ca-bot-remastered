@@ -10,7 +10,7 @@ from discord.ext.commands import Context
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
-from modules import database, gif, lang, minecraft, misc, osu, quote, waifu
+from modules import database, lang, misc, osu
 
 bot = AkatsukiDuCa(
     command_prefix = misc.get_prefix_for_bot,
@@ -58,11 +58,6 @@ async def reload(ctx: Context):
 
 database.load(config.redis)
 lang.load()
-osu.load(config.api.osu.key, bot.session)
-minecraft.load(bot.session)
-waifu.load(bot.session)
-quote.load(bot.session)
-gif.load(bot.session)
 misc.load()
 
 
@@ -138,6 +133,8 @@ async def setup_hook():
     await bot.load_extension("api")
     await bot.load_extension("jishaku")
     bot.logger.info("Loaded jishaku")
+
+    await osu.load(config.api.osu.key)
 
 
 setattr(bot, "setup_hook", setup_hook)

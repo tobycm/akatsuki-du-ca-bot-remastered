@@ -21,12 +21,7 @@ global updated_at
 updated_at = 0
 
 global session
-session: ClientSession
-
-
-def load(sess: ClientSession):
-    global session
-    session = sess
+session: ClientSession | None = None
 
 
 async def get_quote() -> Quote:
@@ -37,6 +32,11 @@ async def get_quote() -> Quote:
     global quotes
     global updated_at
     if int(time()) - updated_at > 600:
+        global session
+
+        if not session:
+            session = ClientSession()
+
         async with session.get("https://zenquotes.io/api/quote/") as response:
             quotes = []
             for quote in await response.json():

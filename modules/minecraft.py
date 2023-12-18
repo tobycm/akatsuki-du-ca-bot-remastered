@@ -12,18 +12,18 @@ Image = str
 Thumbnail = str
 
 global session
-session: ClientSession
-
-
-def load(sess: ClientSession):
-    global session
-    session = sess
+session: ClientSession | None = None
 
 
 async def get_minecraft_user(username: str) -> tuple[UUID, Image, Thumbnail]:
     """
     Return a tuple of user's UUID, image and thumbnail.
     """
+
+    global session
+
+    if not session:
+        session = ClientSession()
 
     async with session.get(
         f"https://playerdb.co/api/player/minecraft/{username}"
@@ -63,6 +63,12 @@ async def get_minecraft_server(server_ip: str) -> MinecraftServer | None:
     """
     Return a Minecraft server's info as an Embed.
     """
+
+    global session
+
+    if not session:
+        session = ClientSession()
+
     async with session.get(
         url = "https://api.mcsrvstat.us/2/" + server_ip, timeout = 30
     ) as response:
