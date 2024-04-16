@@ -6,10 +6,9 @@ global client
 client: Client
 
 
-def load(token: str, session: ClientSession):
+async def load(token: str):
     global client
     client = Client(token)
-    client._session = session
 
 
 async def get_player(username: str) -> Player:
