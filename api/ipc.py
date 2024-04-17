@@ -10,6 +10,7 @@ from discord.ext.ipc.server import Server
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
+from modules.log import logger
 
 
 class Routes(Cog):
@@ -19,16 +20,15 @@ class Routes(Cog):
 
     def __init__(self, bot: AkatsukiDuCa):
         self.bot = bot
-        self.logger = bot.logger
         bot.ipc = Server(bot, secret_key = config.bot.secret)
 
     async def cog_load(self) -> None:
-        self.logger.info("IPC Cog and Server started")
+        logger.info("IPC Cog and Server started")
         assert self.bot.ipc
         await self.bot.ipc.start()
 
     async def cog_unload(self) -> None:
-        self.logger.info("IPC Cog and Server stopped")
+        logger.info("IPC Cog and Server stopped")
         assert self.bot.ipc
         await self.bot.ipc.stop()
         self.bot.ipc = None

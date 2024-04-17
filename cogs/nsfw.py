@@ -8,6 +8,7 @@ from discord.ext.commands import GroupCog
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.lang import get_lang
+from modules.log import logger
 from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.waifu import random_image
 
@@ -19,15 +20,14 @@ class NSFWCog(GroupCog, name = "nsfw"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("NSFW Cog loaded")
+        logger.info("NSFW Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("NSFW Cog unloaded")
+        logger.info("NSFW Cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 1, key = user_cooldown_check)

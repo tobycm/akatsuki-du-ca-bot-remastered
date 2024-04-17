@@ -6,6 +6,7 @@ from cogs.music import MusicCog, RadioMusic
 from cogs.nsfw import NSFWCog
 from cogs.toys import ToysCog
 from cogs.utils import MinecraftCog, UtilsCog
+from modules.log import logger
 
 COGS_LIST = (
     FunCog,
@@ -28,11 +29,11 @@ async def setup(bot: AkatsukiDuCa):
 
     await MusicCog.connect_nodes(bot)
 
-    bot.logger.info("Cogs loaded")
+    logger.info("Cogs loaded")
 
 
 async def teardown(bot: AkatsukiDuCa):
     for cog in COGS_LIST:
         await bot.remove_cog(cog.__name__)
 
-    bot.logger.info("Cogs unloaded")
+    logger.info("Cogs unloaded")

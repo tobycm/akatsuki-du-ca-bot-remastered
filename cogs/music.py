@@ -8,20 +8,20 @@ from typing import Literal
 from discord import Embed, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
-from wavelink import Node, Pool, NodeReadyEventPayload, WebsocketClosedEventPayload, TrackStartEventPayload, \
-    TrackEndEventPayload, Playlist, QueueMode
+from wavelink import (Node, NodeReadyEventPayload, Playlist, Pool, QueueMode,
+                      TrackEndEventPayload, TrackStartEventPayload,
+                      WebsocketClosedEventPayload)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
-from models.music_embeds import (
-    NewPlaylistEmbed, NewTrackEmbed, QueuePaginator, make_queue_embed
-)
+from models.music_embeds import (NewPlaylistEmbed, NewTrackEmbed,
+                                 QueuePaginator, make_queue_embed)
 from models.music_player import Player
 from modules import wavelink_helpers
 from modules.lang import get_lang
-from modules.misc import (
-    GuildTextableChannel, rich_embed, seconds_to_time, user_cooldown_check
-)
+from modules.log import logger
+from modules.misc import (GuildTextableChannel, rich_embed, seconds_to_time,
+                          user_cooldown_check)
 from modules.wavelink_helpers import get_lang_and_player, search
 
 
@@ -32,15 +32,14 @@ class RadioMusic(GroupCog, name = "radio"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Radio cog loaded")
+        logger.info("Radio cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Radio cog unloaded")
+        logger.info("Radio cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 10, key = user_cooldown_check)
@@ -68,18 +67,16 @@ class MusicCog(Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
     bot: AkatsukiDuCa
-    logger: Logger
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
 
     async def cog_load(self) -> None:
-        self.logger.info("Music cog loaded")
+        logger.info("Music cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Music cog unloaded")
+        logger.info("Music cog unloaded")
         return await super().cog_unload()
 
     @staticmethod
@@ -101,7 +98,7 @@ class MusicCog(Cog):
         """
         Event fired when a node has finished connecting.
         """
-        self.logger.info(f"Connected to {payload.node.uri}")
+        logger.info(f"Connected to {payload.node.uri}")
 
     @Cog.listener()
     async def on_wavelink_websocket_closed(
@@ -113,8 +110,8 @@ class MusicCog(Cog):
 
         if not payload.player: return
 
-        self.logger.info(f"Disconnected from {payload.player.node.uri}")
-        self.logger.info(f"Reason: {payload.reason} | Code: {payload.code}")
+        logger.info(f"Disconnected from {payload.player.node.uri}")
+        logger.info(f"Reason: {payload.reason} | Code: {payload.code}")
 
     @Cog.listener()
     async def on_wavelink_track_end(self, payload: TrackEndEventPayload):
@@ -125,7 +122,7 @@ class MusicCog(Cog):
         player = payload.player
         assert isinstance(player, Player)
         if len(player.queue) == 0 and player.end_behavior == "disconnect":
-            player.dj, player.text_channel, player.loop_mode = None, None, "off"
+            player.dj, player.text_channel = None, None
             return await player.disconnect()
 
         await player.play(await player.queue.get_wait())

@@ -8,7 +8,7 @@ from string import ascii_letters
 from discord import ButtonStyle, Embed, File, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
-from discord.ui import View, Button
+from discord.ui import Button, View
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
@@ -16,6 +16,7 @@ from modules.database import get_user_lang
 from modules.exceptions import LangNotAvailable
 from modules.gif import get_gif_url
 from modules.lang import get_lang
+from modules.log import logger
 from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.quote import get_quote
 from modules.waifu import random_image
@@ -58,15 +59,14 @@ class GIFCog(GroupCog, name = "gif"):
         )
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Fun cog loaded")
+        logger.info("Fun cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Fun cog unloaded")
+        logger.info("Fun cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
@@ -157,7 +157,6 @@ class FunCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     @checks.cooldown(1, 5, key = user_cooldown_check)

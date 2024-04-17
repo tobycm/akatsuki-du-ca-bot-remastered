@@ -11,6 +11,7 @@ from discord.ext.commands import Context
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
 from modules import database, lang, misc, osu
+from modules.log import logger
 
 bot = AkatsukiDuCa(
     command_prefix = misc.get_prefix_for_bot,
@@ -49,7 +50,7 @@ async def reload(ctx: Context):
     await bot.reload_extension("api")
     await bot.reload_extension("jishaku")
     await ctx.send("Reloaded!")
-    bot.logger.info("Reloaded by command!")
+    logger.info("Reloaded by command!")
 
 
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ bot commands
@@ -67,7 +68,7 @@ async def on_ready():
     Run on ready (don't touch pls).
     """
 
-    bot.logger.info(f"Logged in as {bot.user}")
+    logger.info(f"Logged in as {bot.user}")
 
 
 @bot.event
@@ -96,7 +97,7 @@ async def on_guild_join(guild: Guild):
     Run on guild join.
     """
 
-    bot.logger.info(f"Joined {guild.name}")
+    logger.info(f"Joined {guild.name}")
 
 
 @bot.event
@@ -105,7 +106,7 @@ async def on_guild_remove(guild: Guild):
     Run on guild remove.
     """
 
-    bot.logger.info(f"Left {guild.name}")
+    logger.info(f"Left {guild.name}")
 
 
 @bot.event
@@ -132,7 +133,7 @@ async def setup_hook():
     await bot.load_extension("cogs")
     await bot.load_extension("api")
     await bot.load_extension("jishaku")
-    bot.logger.info("Loaded jishaku")
+    logger.info("Loaded jishaku")
 
     await osu.load(config.api.osu.key)
 

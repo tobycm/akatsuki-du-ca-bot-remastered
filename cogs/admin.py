@@ -4,12 +4,14 @@ Admin commands for bot in guild.
 
 
 from discord import Interaction
-from discord.app_commands import MissingPermissions, checks, command, guild_only
+from discord.app_commands import (MissingPermissions, checks, command,
+                                  guild_only)
 from discord.ext import commands
 from discord.ext.commands import Cog, Context, GroupCog
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.database import delete_prefix, set_prefix
+from modules.log import logger
 from modules.misc import check_owners, guild_cooldown_check
 
 
@@ -20,15 +22,14 @@ class PrefixCog(GroupCog, name = "prefix"):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Prefix Cog loaded")
+        logger.info("Prefix Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Prefix Cog unloaded")
+        logger.info("Prefix Cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 1, key = guild_cooldown_check)
@@ -67,15 +68,14 @@ class BotAdminCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Bot Admin Cog loaded")
+        logger.info("Bot Admin Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Bot Admin Cog unloaded")
+        logger.info("Bot Admin Cog unloaded")
         return await super().cog_unload()
 
     @commands.command(name = "resetguildprefix")

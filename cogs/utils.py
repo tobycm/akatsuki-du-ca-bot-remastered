@@ -12,6 +12,7 @@ from cogs.music import Player
 from config import config
 from modules.database import set_user_lang
 from modules.lang import get_lang, lang_list
+from modules.log import logger
 from modules.minecraft import get_minecraft_server
 from modules.misc import GuildTextableChannel, rich_embed, user_cooldown_check
 from modules.osu import get_player
@@ -41,15 +42,14 @@ class UtilsCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Utilities Cog loaded")
+        logger.info("Utilities Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Utilities Cog unloaded")
+        logger.info("Utilities Cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
@@ -294,15 +294,14 @@ class MinecraftCog(GroupCog, name = "minecraft"):
     """
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Minecraft Cog loaded")
+        logger.info("Minecraft Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Minecraft Cog unloaded")
+        logger.info("Minecraft Cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 1, key = user_cooldown_check)

@@ -3,11 +3,11 @@ These commands are for Toby for trolling only xd
 """
 
 from discord import utils
-from discord.ext.commands import (
-    Cog, Context, MissingRequiredArgument, NotOwner, command
-)
+from discord.ext.commands import (Cog, Context, MissingRequiredArgument,
+                                  NotOwner, command)
 
 from akatsuki_du_ca import AkatsukiDuCa
+from modules.log import logger
 from modules.misc import check_owners
 
 
@@ -18,15 +18,14 @@ class LegacyCommands(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Legacy Command loaded")
+        logger.info("Legacy Command loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Legacy Command unloaded")
+        logger.info("Legacy Command unloaded")
         return await super().cog_unload()
 
     @command(name = "say")

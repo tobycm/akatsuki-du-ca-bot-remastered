@@ -9,6 +9,7 @@ from discord.app_commands import checks, command
 from discord.ext.commands import Cog
 
 from akatsuki_du_ca import AkatsukiDuCa
+from modules.log import logger
 from modules.misc import user_cooldown_check
 
 
@@ -19,15 +20,14 @@ class ToysCog(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Toys Cog loaded")
+        logger.info("Toys Cog loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Toys Cog unloaded")
+        logger.info("Toys Cog unloaded")
         return await super().cog_unload()
 
     @checks.cooldown(1, 0.25, key = user_cooldown_check)

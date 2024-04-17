@@ -2,14 +2,14 @@
 File for error handler cog
 """
 
-from discord.ext.commands import (
-    Cog, CommandInvokeError, CommandNotFound, CommandOnCooldown, Context,
-    MissingPermissions, MissingRequiredArgument
-)
+from discord.ext.commands import (Cog, CommandInvokeError, CommandNotFound,
+                                  CommandOnCooldown, Context,
+                                  MissingPermissions, MissingRequiredArgument)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.exceptions import LangNotAvailable
 from modules.lang import get_lang
+from modules.log import logger
 from modules.misc import get_prefix_for_bot
 
 
@@ -20,15 +20,14 @@ class ErrorHandler(Cog):
 
     def __init__(self, bot: AkatsukiDuCa) -> None:
         self.bot = bot
-        self.logger = bot.logger
         super().__init__()
 
     async def cog_load(self) -> None:
-        self.logger.info("Error Handler loaded")
+        logger.info("Error Handler loaded")
         return await super().cog_load()
 
     async def cog_unload(self) -> None:
-        self.logger.info("Error Handler unloaded")
+        logger.info("Error Handler unloaded")
         return await super().cog_unload()
 
     @Cog.listener("on_command_error")

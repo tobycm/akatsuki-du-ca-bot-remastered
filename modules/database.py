@@ -18,7 +18,7 @@ def load(config: RedisConfig = RedisConfig()):
     Create and return a Redis instance
     """
 
-    pool = ConnectionPool.from_url(
+    pool: ConnectionPool = ConnectionPool.from_url(
         f"redis://{'' if not config.username and not config.password else f'{config.username}:{config.password}@'}{config.host}:{config.port}/{config.database}",
         max_connections = 5,
     )
