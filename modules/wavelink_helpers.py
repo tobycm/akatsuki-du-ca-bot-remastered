@@ -3,6 +3,7 @@ from wavelink import Playable, Playlist
 
 from models.music_player import Player
 from modules.lang import Lang, get_lang
+from modules.log import logger
 
 
 async def search(query: str) -> Playable | Playlist | None:
@@ -12,8 +13,11 @@ async def search(query: str) -> Playable | Playlist | None:
 
     try:
         result = await Playable.search(query)
-    except:
+    except Exception as error:
+        logger.debug(f"Error while searching for track: {error}")
         return None
+
+    logger.debug(f"Track searching result: {result}")
 
     if not result:
         return None
