@@ -9,8 +9,8 @@ from discord import Embed, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from wavelink import (Node, NodeReadyEventPayload, Playlist, Pool, QueueMode,
-                      TrackEndEventPayload, TrackStartEventPayload,
-                      WebsocketClosedEventPayload)
+                      TrackEndEventPayload, TrackExceptionEventPayload,
+                      TrackStartEventPayload, WebsocketClosedEventPayload)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
@@ -147,6 +147,14 @@ class MusicCog(Cog):
         await player.text_channel.send(
             embed = rich_embed(embed, player.dj, lang)
         )
+
+
+
+
+    @Cog.listener()
+    async def on_wavelink_track_exception(self, payload: TrackExceptionEventPayload):
+        logger.error(f"Track exception: {payload.exception.get("message")}")
+        
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "connect")

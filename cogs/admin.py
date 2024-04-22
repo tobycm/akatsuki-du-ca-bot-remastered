@@ -2,10 +2,10 @@
 Admin commands for bot in guild.
 """
 
-
 from discord import Interaction
-from discord.app_commands import (MissingPermissions, checks, command,
-                                  guild_only)
+from discord.app_commands import (
+    MissingPermissions, checks, command, guild_only
+)
 from discord.ext import commands
 from discord.ext.commands import Cog, Context, GroupCog
 

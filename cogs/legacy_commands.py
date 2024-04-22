@@ -3,8 +3,9 @@ These commands are for Toby for trolling only xd
 """
 
 from discord import utils
-from discord.ext.commands import (Cog, Context, MissingRequiredArgument,
-                                  NotOwner, command)
+from discord.ext.commands import (
+    Cog, Context, MissingRequiredArgument, NotOwner, command
+)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.log import logger

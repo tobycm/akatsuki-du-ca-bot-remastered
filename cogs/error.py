@@ -2,9 +2,10 @@
 File for error handler cog
 """
 
-from discord.ext.commands import (Cog, CommandInvokeError, CommandNotFound,
-                                  CommandOnCooldown, Context,
-                                  MissingPermissions, MissingRequiredArgument)
+from discord.ext.commands import (
+    Cog, CommandInvokeError, CommandNotFound, CommandOnCooldown, Context,
+    MissingPermissions, MissingRequiredArgument
+)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from modules.exceptions import LangNotAvailable
