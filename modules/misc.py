@@ -3,6 +3,7 @@ Just some checks and utils function
 """
 
 from math import floor
+from typing import TypeAlias
 
 from discord import (
     Color, DMChannel, Embed, GroupChannel, Interaction, Member, Message,
@@ -104,5 +105,5 @@ def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
     return embed
 
 
-GuildTextableChannel = TextChannel | Thread | VoiceChannel | StageChannel
-TextableChannel = GuildTextableChannel | DMChannel | GroupChannel
+GuildTextableChannel: TypeAlias = TextChannel | Thread | VoiceChannel | StageChannel
+TextableChannel: TypeAlias = GuildTextableChannel | DMChannel | GroupChannel
