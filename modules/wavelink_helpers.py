@@ -150,7 +150,7 @@ async def get_lang_and_player(interaction: Interaction) -> tuple[Lang, Player]:
     assert interaction.user
 
     lang = await get_lang(interaction.user.id)
-    player = await connect(interaction, lang)
+    player = await connect(interaction, lang, connecting = True)
     if not player:
         raise Exception("Failed to connect to voice channel")
     return lang, player

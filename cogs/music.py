@@ -8,20 +8,24 @@ from typing import Literal
 from discord import Embed, Interaction, Member
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
-from wavelink import (Node, NodeReadyEventPayload, Playlist, Pool, QueueMode,
-                      TrackEndEventPayload, TrackExceptionEventPayload,
-                      TrackStartEventPayload, WebsocketClosedEventPayload)
+from wavelink import (
+    Node, NodeReadyEventPayload, Playlist, Pool, QueueMode,
+    TrackEndEventPayload, TrackExceptionEventPayload, TrackStartEventPayload,
+    WebsocketClosedEventPayload
+)
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
-from models.music_embeds import (NewPlaylistEmbed, NewTrackEmbed,
-                                 QueuePaginator, make_queue_embed)
+from models.music_embeds import (
+    NewPlaylistEmbed, NewTrackEmbed, QueuePaginator, make_queue_embed
+)
 from models.music_player import Player
 from modules import wavelink_helpers
 from modules.lang import get_lang
 from modules.log import logger
-from modules.misc import (GuildTextableChannel, rich_embed, seconds_to_time,
-                          user_cooldown_check)
+from modules.misc import (
+    GuildTextableChannel, rich_embed, seconds_to_time, user_cooldown_check
+)
 from modules.wavelink_helpers import get_lang_and_player, search
 
 
@@ -148,13 +152,11 @@ class MusicCog(Cog):
             embed = rich_embed(embed, player.dj, lang)
         )
 
-
-
-
     @Cog.listener()
-    async def on_wavelink_track_exception(self, payload: TrackExceptionEventPayload):
-        logger.error(f"Track exception: {payload.exception.get("message")}")
-        
+    async def on_wavelink_track_exception(
+        self, payload: TrackExceptionEventPayload
+    ):
+        logger.error(f"Track exception: {payload.exception.get('message')}")
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "connect")
@@ -193,19 +195,19 @@ class MusicCog(Cog):
         lang, player = await get_lang_and_player(interaction)
         if not query:
             if not player.paused:
-                return await interaction.response.send_message(
-                    lang("music.misc.action.error.no_music")
+                return await interaction.edit_original_response(
+                    content = lang("music.misc.action.error.no_music")
                 )
             await player.pause(False)
-            return await interaction.response.send_message(
-                lang("music.misc.action.music.resumed")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.music.resumed")
             )
 
         assert isinstance(interaction.channel, GuildTextableChannel)
         assert isinstance(interaction.user, Member)
         player.dj, player.text_channel = interaction.user, interaction.channel
-        await interaction.response.send_message(
-            lang("music.misc.action.music.searching")
+        await interaction.edit_original_response(
+            content = lang("music.misc.action.music.searching")
         )
 
         result = await search(query)
@@ -281,14 +283,14 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player or not player.current:
-            await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
             return
 
         await player.pause(True)
-        return await interaction.response.send_message(
-            lang("music.misc.action.music.paused")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.music.paused")
         )
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
@@ -301,13 +303,13 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.current:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
 
         await player.stop()
-        return await interaction.response.send_message(
-            lang("music.misc.action.music.skipped")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.music.skipped")
         )
 
     @checks.cooldown(1, 2, key = user_cooldown_check)
@@ -322,8 +324,8 @@ class MusicCog(Cog):
         if not len(player.queue) == 0:
             player.queue.clear()
         await player.stop()
-        return await interaction.response.send_message(
-            lang("music.misc.action.music.stopped")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.music.stopped")
         )
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
@@ -336,19 +338,20 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_queue")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_queue")
             )
 
         generator = make_queue_embed(player.queue, lang)
 
         first_embed = next(generator)
         if not first_embed:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_queue")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_queue")
             )
 
-        await interaction.response.send_message(
+        await interaction.edit_original_response(
+            content = "",
             embed = rich_embed(first_embed[0], interaction.user, lang),
         )
 
@@ -372,8 +375,8 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.playing:
-            await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
             return
 
@@ -388,7 +391,9 @@ class MusicCog(Cog):
             interaction.user,
             lang,
         )
-        return await interaction.response.send_message(embed = embed)
+        return await interaction.edit_original_response(
+            content = "", embed = embed
+        )
 
     @checks.cooldown(1, 1.75, key = user_cooldown_check)
     @command(name = "clear_queue")
@@ -400,13 +405,13 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_queue")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_queue")
             )
 
         player.queue.clear()
-        return await interaction.response.send_message(
-            lang("music.misc.action.queue.cleared")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.queue.cleared")
         )
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
@@ -423,8 +428,8 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.playing:
-            await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
             return
 
@@ -435,8 +440,9 @@ class MusicCog(Cog):
         if mode == "queue":
             player.queue.mode = QueueMode.loop_all
 
-        await interaction.response.send_message(
-            lang("music.misc.action.loop")[mode or "off"] # type: ignore
+        await interaction.edit_original_response(
+            content = lang("music.misc.action.loop")[mode or "off"
+                                                     ] # type: ignore
         )
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
@@ -449,19 +455,19 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.playing:
-            await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
             return
 
         if player.current.length < position:
             # lmao seek over track
-            return await interaction.response.send_message(
-                "Lmao how to seek over track"
+            return await interaction.edit_original_response(
+                content = "Lmao how to seek over track"
             )
 
         await player.seek(position)
-        return await interaction.response.send_message("Done!")
+        return await interaction.edit_original_response(content = "\U0001f44c")
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
     @command(name = "volume")
@@ -475,18 +481,19 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.playing:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
 
         if volume is None:
-            return await interaction.response.send_message(
-                lang("music.misc.volume.current") % f"{player.volume}%"
+            return await interaction.edit_original_response(
+                content = lang("music.misc.volume.current") %
+                f"{player.volume}%"
             )
 
         await player.set_volume(volume)
-        return await interaction.response.send_message(
-            lang("music.misc.volume.changed") % f"{volume}%"
+        return await interaction.edit_original_response(
+            content = lang("music.misc.volume.changed") % f"{volume}%"
         )
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
@@ -499,15 +506,15 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if not player.playing:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_music")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_music")
             )
 
         filters = player.filters
         filters.timescale.set(speed = speed)
         await player.set_filters(filters)
-        return await interaction.response.send_message(
-            f"Speed changed to {speed}"
+        return await interaction.edit_original_response(
+            content = f"Speed changed to {speed}"
         )
 
     @checks.cooldown(1, 3, key = user_cooldown_check)
@@ -520,13 +527,13 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
-                lang("music.misc.action.error.no_queue")
+            return await interaction.edit_original_response(
+                content = lang("music.misc.action.error.no_queue")
             )
 
         player.queue.shuffle()
-        return await interaction.response.send_message(
-            lang("music.misc.action.queue.shuffled")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.queue.shuffled")
         )
 
     # @checks.cooldown(1, 3, key=user_cooldown_check)
