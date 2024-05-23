@@ -66,16 +66,17 @@ async def connect_check(
 async def connect(
     interaction: Interaction,
     lang: Lang,
-    connecting: bool = False,
+    should_connect: bool = False,
+    force_connect: bool = False,
 ) -> Player | None: # aka get player
     """
-    Initialize a player and connect to a voice channel if there are none.
+    Initialize a player or connect to a voice channel if there are none.
     """
 
-    if not await connect_check(interaction, lang, connecting = connecting):
+    if not await connect_check(interaction, lang, connecting = force_connect):
         return None
 
-    if connecting:
+    if should_connect:
         await interaction.response.send_message(
             lang("music.voice_client.status.connecting")
         )
@@ -92,10 +93,11 @@ async def connect(
 
     assert isinstance(player, Player)
 
-    if connecting:
+    if should_connect:
         await interaction.edit_original_response(
             content = lang("music.voice_client.status.connected")
         )
+
     return player
 
 
@@ -130,6 +132,7 @@ async def disconnect(interaction: Interaction, lang: Lang) -> bool:
 
     if not await disconnect_check(interaction, lang):
         return False
+
     await interaction.response.send_message(
         lang("music.voice_client.status.disconnecting")
     )
@@ -141,7 +144,10 @@ async def disconnect(interaction: Interaction, lang: Lang) -> bool:
     return True
 
 
-async def get_lang_and_player(interaction: Interaction) -> tuple[Lang, Player]:
+async def get_lang_and_player(
+    interaction: Interaction,
+    should_connect: bool = False
+) -> tuple[Lang, Player]:
     """
     Get lang and player
     """
@@ -150,7 +156,7 @@ async def get_lang_and_player(interaction: Interaction) -> tuple[Lang, Player]:
     assert interaction.user
 
     lang = await get_lang(interaction.user.id)
-    player = await connect(interaction, lang, connecting = True)
+    player = await connect(interaction, lang, should_connect = should_connect)
     if not player:
         raise Exception("Failed to connect to voice channel")
     return lang, player
