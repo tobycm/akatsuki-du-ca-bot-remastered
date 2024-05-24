@@ -1,55 +1,59 @@
 {
-    "voice_client": {
-        "status": {
-            "connecting": "接続中...",
-            "connected": "接続されました！",
-            "disconnecting": "切断中...",
-            "disconnected": "切断されました！"
-        },
-        "error": {
-            "not_connected": "接続されていませんですが、どうすれば切断できますか？",
-            "already_connected": "もう繋がってるよ (＞ｙ＜)",
-            "user_no_voice": "私に呼ぶ前に音声チャンネルに参加する必要があります >.<",
-            "no_permission": "私は音声チャンネルに接続する権限がありません (TдT) 私の権限と音声チャンネルメンバーの制限を確認してください！",
-            "playing_in_another_channel": "私は別のチャンネルでプレイ中です！",
-            "different_voice": "あなたの音声チャネルと私の音声チャネルは違います。",
-            "not_found": "何も見つかりませんでした。悲しいです (⋟﹏⋞)"
-        }
+  "voice_client": {
+    "status": {
+      "connecting": "接続中...",
+      "connected": "接続されました！",
+      "disconnecting": "切断中...",
+      "disconnected": "切断されました！"
     },
-    "misc": {
-        "action": {
-            "loop": {
-                "queue": "ループキュー!",
-                "song": "ループ曲！",
-                "off": "ループモードオフ！"
-            },
-            "queue": {
-                "cleared": "キューを消しました！",
-                "shuffled": "キューをシャッフルしました！",
-                "added": "キューに追加しました！",
-                "removed": "キュー内の %s番目の曲を削除しました！",
-                "flipped": "Flipped queue!"
-            },
-            "music": {
-                "searching": "検索中...",
-                "paused": "一時停止しました！",
-                "resumed": "再開しました！",
-                "skipped": "スキップしました！",
-                "stopped": "停止しました！"
-            },
-            "error": {
-                "invalid_index": "インデックスが無効です！",
-                "no_music": "プレイ中の曲はありません！",
-                "no_queue": "キューが空です！"
-            }
-        },
-        "volume": {
-            "current": "Current volume: %s",
-            "changed": "Volume changed to %s"
-        },
-        "queue": "キュー",
-        "result": "結果",
-        "now_playing": "プレイ中",
-        "suggestion_sent": "あなたの提案はラジオのオーナーに送信されました。ありがとうございました！"
+    "error": {
+      "not_connected": "接続されていませんですが、どうすれば切断できますか？",
+      "already_connected": "もう繋がってるよ (＞ｙ＜)",
+      "user_no_voice": "私に呼ぶ前に音声チャンネルに参加する必要があります >.<",
+      "no_permission": "私は音声チャンネルに接続する権限がありません (TдT) 私の権限と音声チャンネルメンバーの制限を確認してください！",
+      "playing_in_another_channel": "私は別のチャンネルでプレイ中です！",
+      "different_voice": "あなたの音声チャネルと私の音声チャネルは違います。",
+      "not_found": "何も見つかりませんでした。悲しいです (⋟﹏⋞)"
     }
+  },
+  "misc": {
+    "action": {
+      "loop": {
+        "queue": "ループキュー!",
+        "song": "ループ曲！",
+        "off": "ループモードオフ！"
+      },
+      "queue": {
+        "cleared": "キューを消しました！",
+        "shuffled": "キューをシャッフルしました！",
+        "added": "キューに追加しました！",
+        "removed": "キュー内の %s番目の曲を削除しました！",
+        "flipped": "Flipped queue!"
+      },
+      "music": {
+        "searching": "検索中...",
+        "paused": "一時停止しました！",
+        "resumed": "再開しました！",
+        "skipped": "スキップしました！",
+        "stopped": "停止しました！"
+      },
+      "error": {
+        "invalid_index": "インデックスが無効です！",
+        "no_music": "プレイ中の曲はありません！",
+        "no_queue": "キューが空です！"
+      }
+    },
+    "volume": {
+      "current": "Current volume: %s%",
+      "changed": "Volume changed to %s%"
+    },
+    "speed": {
+      "current": "Current speed: %sx",
+      "changed": "Speed changed to %sx"
+    },
+    "queue": "キュー",
+    "result": "結果",
+    "now_playing": "プレイ中",
+    "suggestion_sent": "あなたの提案はラジオのオーナーに送信されました。ありがとうございました！"
+  }
 }

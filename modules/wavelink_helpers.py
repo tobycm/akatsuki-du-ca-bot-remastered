@@ -2,6 +2,7 @@ from discord import Interaction, Member
 from wavelink import Playable, Playlist
 
 from models.music_player import Player
+from modules.exceptions import MusicException
 from modules.lang import Lang, get_lang
 from modules.log import logger
 
@@ -146,7 +147,8 @@ async def disconnect(interaction: Interaction, lang: Lang) -> bool:
 
 async def get_lang_and_player(
     interaction: Interaction,
-    should_connect: bool = False
+    should_connect: bool = False,
+    should_playing: bool = False,
 ) -> tuple[Lang, Player]:
     """
     Get lang and player
@@ -158,5 +160,12 @@ async def get_lang_and_player(
     lang = await get_lang(interaction.user.id)
     player = await connect(interaction, lang, should_connect = should_connect)
     if not player:
-        raise Exception("Failed to connect to voice channel")
+        raise MusicException.NotConnected
+
+    if should_playing and not player.playing:
+        await interaction.response.send_message(
+            lang("music.voice_client.error.not_playing")
+        )
+        raise MusicException.NotPlaying
+
     return lang, player

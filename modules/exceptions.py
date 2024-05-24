@@ -35,6 +35,16 @@ class MusicException:
         Raised when the bot and author in different voice channels.
         """
 
+    class NotConnected(Exception):
+        """
+        Raised when the bot is not connected to a voice channel.
+        """
+
+    class NotPlaying(Exception):
+        """
+        Raised when the player is not playing.
+        """
+
 
 class UnknownException(Exception):
     """

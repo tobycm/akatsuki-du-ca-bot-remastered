@@ -1,55 +1,59 @@
 {
-    "voice_client": {
-        "status": {
-            "connecting": "Connecting...",
-            "connected": "Connected!",
-            "disconnecting": "Disconnecting...",
-            "disconnected": "Disconnected!"
-        },
-        "error": {
-            "not_connected": "I didn't connect, how can you disconnect me???",
-            "already_connected": "I'm in already lol",
-            "user_no_voice": "You need to join the voice channel before calling me >.<",
-            "no_permission": "I have no permission to connect to the voice channel ;-; you should check my permissions and the voice channel member limit!",
-            "playing_in_another_channel": "Bot is playing in another channel bro!",
-            "different_voice": "Your VC != Bot VC",
-            "not_found": "Can't found anything. Sad ;-;"
-        }
+  "voice_client": {
+    "status": {
+      "connecting": "Connecting...",
+      "connected": "Connected!",
+      "disconnecting": "Disconnecting...",
+      "disconnected": "Disconnected!"
     },
-    "misc": {
-        "action": {
-            "loop": {
-                "queue": "Looping queue!",
-                "song": "Looping song!",
-                "off": "Loop mode off!"
-            },
-            "queue": {
-                "cleared": "Queue cleared!",
-                "shuffled": "Queue shuffled!",
-                "added": "Added to queue!",
-                "removed": "Removed %sth song in queue!",
-                "flipped": "Flipped queue!"
-            },
-            "music": {
-                "searching": "Searching...",
-                "paused": "Paused!",
-                "resumed": "Resumed!",
-                "skipped": "Skipped!",
-                "stopped": "Stopped!"
-            },
-            "error": {
-                "invalid_index": "Invalid index!",
-                "no_music": "Nothing is currently playing!",
-                "no_queue": "Queue empty!"
-            }
-        },
-        "volume": {
-            "current": "Current volume: %s",
-            "changed": "Volume changed to %s"
-        },
-        "queue": "Queue",
-        "result": "Results",
-        "now_playing": "Now Playing",
-        "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
+    "error": {
+      "not_connected": "I didn't connect, how can you disconnect me???",
+      "already_connected": "I'm in already lol",
+      "user_no_voice": "You need to join the voice channel before calling me >.<",
+      "no_permission": "I have no permission to connect to the voice channel ;-; you should check my permissions and the voice channel member limit!",
+      "playing_in_another_channel": "Bot is playing in another channel bro!",
+      "different_voice": "Your VC != Bot VC",
+      "not_found": "Can't found anything. Sad ;-;"
     }
+  },
+  "misc": {
+    "action": {
+      "loop": {
+        "queue": "Looping queue!",
+        "song": "Looping song!",
+        "off": "Loop mode off!"
+      },
+      "queue": {
+        "cleared": "Queue cleared!",
+        "shuffled": "Queue shuffled!",
+        "added": "Added to queue!",
+        "removed": "Removed %sth song in queue!",
+        "flipped": "Flipped queue!"
+      },
+      "music": {
+        "searching": "Searching...",
+        "paused": "Paused!",
+        "resumed": "Resumed!",
+        "skipped": "Skipped!",
+        "stopped": "Stopped!"
+      },
+      "error": {
+        "invalid_index": "Invalid index!",
+        "no_music": "Nothing is currently playing!",
+        "no_queue": "Queue empty!"
+      }
+    },
+    "volume": {
+      "current": "Current volume: %s%",
+      "changed": "Volume changed to %s%"
+    },
+    "speed": {
+      "current": "Current speed: %sx",
+      "changed": "Speed changed to %sx"
+    },
+    "queue": "Queue",
+    "result": "Results",
+    "now_playing": "Now Playing",
+    "suggestion_sent": "Your suggestion has been sent to the radio owner. Thank you so much!"
+  }
 }

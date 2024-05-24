@@ -1,55 +1,59 @@
 {
-    "voice_client": {
-        "status": {
-            "connecting": "Đang kết nối...",
-            "connected": "Đã kết nối!",
-            "disconnecting": "Đang ngắt kết nối...",
-            "disconnected": "Đã ngắt kết nối!"
-        },
-        "error": {
-            "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
-            "already_connected": "Kết nối rồi lmao",
-            "user_no_voice": "Vào voice trước đi chứ :v",
-            "no_permission": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
-            "playing_in_another_channel": "Bot đang phát trong kênh khác lmeo",
-            "different_voice": "Lmao khác kênh voice",
-            "not_found": "Hông tìm được gì hết á ;-;"
-        }
+  "voice_client": {
+    "status": {
+      "connecting": "Đang kết nối...",
+      "connected": "Đã kết nối!",
+      "disconnecting": "Đang ngắt kết nối...",
+      "disconnected": "Đã ngắt kết nối!"
     },
-    "misc": {
-        "action": {
-            "loop": {
-                "queue": "Đã bật chế độ lặp lại hàng đợi!",
-                "song": "Đã bật chế độ lặp lại bài hát!",
-                "off": "Đã tắt chế độ lặp lại!"
-            },
-            "queue": {
-                "cleared": "Đã xóa hàng đợi!",
-                "shuffled": "Đã xáo trộn hàng đợi!",
-                "added": "Đã thêm vào hàng đợi!",
-                "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!",
-                "flipped": "Đã lộn ngược hàng đợi!"
-            },
-            "music": {
-                "searching": "Đang tìm...",
-                "paused": "Đã tạm dừng!",
-                "resumed": "Đã tiếp tục!",
-                "skipped": "Đã bỏ qua!",
-                "stopped": "Đã dừng!"
-            },
-            "error": {
-                "invalid_index": "Số thứ tự không hợp lệ!",
-                "no_music": "Không có nhạc nào đang phát!",
-                "no_queue": "Không có nhạc nào trong hàng đợi!"
-            }
-        },
-        "volume": {
-            "current": "Âm lượng hiện tại: %s",
-            "changed": "Đã thay đổi âm lượng thành %s"
-        },
-        "queue": "Hàng đợi",
-        "result": "Kết quả",
-        "now_playing": "Đang phát",
-        "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
+    "error": {
+      "not_connected": "Chưa kết nối thì ngắt bằng niềm tin à :))",
+      "already_connected": "Kết nối rồi lmao",
+      "user_no_voice": "Vào voice trước đi chứ :v",
+      "no_permission": "Hong có quyền kết nối tới voice :0, check lại quyền của bot với limit người của voice nhé!",
+      "playing_in_another_channel": "Bot đang phát trong kênh khác lmeo",
+      "different_voice": "Lmao khác kênh voice",
+      "not_found": "Hông tìm được gì hết á ;-;"
     }
+  },
+  "misc": {
+    "action": {
+      "loop": {
+        "queue": "Đã bật chế độ lặp lại hàng đợi!",
+        "song": "Đã bật chế độ lặp lại bài hát!",
+        "off": "Đã tắt chế độ lặp lại!"
+      },
+      "queue": {
+        "cleared": "Đã xóa hàng đợi!",
+        "shuffled": "Đã xáo trộn hàng đợi!",
+        "added": "Đã thêm vào hàng đợi!",
+        "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!",
+        "flipped": "Đã lộn ngược hàng đợi!"
+      },
+      "music": {
+        "searching": "Đang tìm...",
+        "paused": "Đã tạm dừng!",
+        "resumed": "Đã tiếp tục!",
+        "skipped": "Đã bỏ qua!",
+        "stopped": "Đã dừng!"
+      },
+      "error": {
+        "invalid_index": "Số thứ tự không hợp lệ!",
+        "no_music": "Không có nhạc nào đang phát!",
+        "no_queue": "Không có nhạc nào trong hàng đợi!"
+      }
+    },
+    "volume": {
+      "current": "Âm lượng hiện tại: %s%",
+      "changed": "Đã thay đổi âm lượng thành %s%"
+    },
+    "speed": {
+      "current": "Tốc độ hiện tại: %sx",
+      "changed": "Đã thay đổi tốc độ thành %sx"
+    },
+    "queue": "Hàng đợi",
+    "result": "Kết quả",
+    "now_playing": "Đang phát",
+    "suggestion_sent": "Góp ý của bạn đã được gửi. Mauwh mauwh 💋"
+  }
 }

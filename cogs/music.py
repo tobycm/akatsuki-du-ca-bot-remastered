@@ -5,7 +5,7 @@ This is the music cog.
 from logging import Logger
 from typing import Literal
 
-from discord import Embed, Interaction, Member
+from discord import Embed, Interaction, Member, WebhookMessage
 from discord.app_commands import checks, command, guild_only
 from discord.ext.commands import Cog, GroupCog
 from wavelink import (
@@ -344,16 +344,17 @@ class MusicCog(Cog):
                 content = lang("music.misc.action.error.no_queue")
             )
 
+        await interaction.response.defer()
+
         generator = make_queue_embed(player.queue, lang)
 
         first_embed = next(generator)
         if not first_embed:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 content = lang("music.misc.action.error.no_queue")
             )
 
-        await interaction.edit_original_response(
-            content = "",
+        message: WebhookMessage = await interaction.followup.send(
             embed = rich_embed(first_embed[0], interaction.user, lang),
         )
 
@@ -362,10 +363,10 @@ class MusicCog(Cog):
         if second_embed:
             view = QueuePaginator([first_embed[0], second_embed[0]],
                                   interaction, lang, generator)
-            await interaction.edit_original_response(view = view)
+            await message.edit(view = view)
             await view.wait()
             view.disable()
-            await interaction.edit_original_response(view = view)
+            await message.edit(view = view)
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
     @command(name = "nowplaying")
@@ -375,12 +376,9 @@ class MusicCog(Cog):
         Show the now playing song.
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player.playing:
-            await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
-            return
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         track = player.current
         embed = rich_embed(
@@ -481,42 +479,46 @@ class MusicCog(Cog):
         Change the player volume.
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player.playing:
-            return await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         if volume is None:
             return await interaction.response.send_message(
-                content = lang("music.misc.volume.current") %
-                f"{player.volume}%"
+                content = lang("music.misc.volume.current") % player.volume
             )
 
         await player.set_volume(volume)
         return await interaction.response.send_message(
-            content = lang("music.misc.volume.changed") % f"{volume}%"
+            content = lang("music.misc.volume.changed") % volume
         )
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
     @command(name = "speed")
     @guild_only()
-    async def speed(self, interaction: Interaction, speed: float):
+    async def speed(
+        self, interaction: Interaction, speed: float | None = None
+    ):
         """
         Change the player speed.
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player.playing:
-            return await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         filters = player.filters
+
+        if speed is None:
+            return await interaction.response.send_message(
+                content = lang("music.misc.speed.current") %
+                filters.timescale.speed
+            )
+
         filters.timescale.set(speed = speed)
         await player.set_filters(filters)
         return await interaction.response.send_message(
-            content = f"Speed changed to {speed}"
+            content = lang("music.misc.speed.changed") % speed
         )
 
     @checks.cooldown(1, 3, key = user_cooldown_check)
