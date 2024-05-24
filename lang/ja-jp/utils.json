@@ -1,22 +1,22 @@
 {
-    "bug_report": {
-        "success": "Thank you for your bug report. It will be reviewed shortly."
-    },
-    "osu": {
-        "player_not_found": "Player not found bruh",
-        "stats": {
-            "description": "Big PP: %s\nRank: %s",
-            "title": "Best at everything %s"
-        }
-    },
-    "change_language": "Select your language:",
-    "minecraft": {
-        "server": {
-            "not_found": "Not Found",
-            "online": "%s is online",
-            "server_ip": "Server IP: %s",
-            "version": "Version: %s",
-            "players": "Players: %s / %s"
-        }
+  "bug_report": {
+    "success": "Thank you for your bug report. It will be reviewed shortly."
+  },
+  "osu": {
+    "player_not_found": "Player not found bruh",
+    "stats": {
+      "description": "Big PP: %s\nRank: %s",
+      "title": "Best at everything %s"
     }
+  },
+  "change_language": "Select your language:",
+  "minecraft": {
+    "server": {
+      "not_found": "Not Found",
+      "online": "%s is online",
+      "server_ip": "Server IP: %s",
+      "version": "Version: %s",
+      "players": "Players: %s / %s"
+    }
+  }
 }

@@ -1,9 +1,9 @@
 {
-    "waifu": "Waifu của bạn đây <3\n[Source](%s)",
-    "powered_by_waifu_im": "Được hỗ trợ bởi [waifu.im](https://waifu.im)",
-    "free_nitro": {
-        "title": "Bạn đã được tặng Nitro!",
-        "description": "Akatsuki Du Ca#2708 đã tặng bạn Nitro!\n%s",
-        "success": "Đang gửi bạn free nitro nè :3"
-    }
+  "waifu": "Waifu của bạn đây <3\n[Source](%s)",
+  "powered_by_waifu_im": "Được hỗ trợ bởi [waifu.im](https://waifu.im)",
+  "free_nitro": {
+    "title": "Bạn đã được tặng Nitro!",
+    "description": "Akatsuki Du Ca#2708 đã tặng bạn Nitro!\n%s",
+    "success": "Đang gửi bạn free nitro nè :3"
+  }
 }

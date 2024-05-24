@@ -1,34 +1,34 @@
 {
-    "slap": {
-        "title": "Vả",
-        "text": "%s đã bị tát bởi %s"
-    },
-    "hug": {
-        "title": "Ôm",
-        "text": "%s đã ôm %s. Ôm nhau thắm thiết :))"
-    },
-    "poke": {
-        "title": "Chọc",
-        "text": "%s đã chọc %s. Chọc nhau cho đời nó vui :))"
-    },
-    "pat": {
-        "title": "Xoa đầu",
-        "text": "%s đã xoa đầu %s. Ngủ đêeee"
-    },
-    "kick": {
-        "title": "Đá",
-        "text": "%s đã đá %s. Pay màu ahehehehe"
-    },
-    "punch": {
-        "title": "Đấm",
-        "text": "%s đã đấm %s. KO"
-    },
-    "cuddle": {
-        "title": "Âu yếm",
-        "text": "%s đã âu yếm %s. Ơ tôi thêm cái lệnh này khi nào thế? :0"
-    },
-    "bite": {
-        "title": "Cắn",
-        "text": "%s đã cắn %s. Ai cho cắn nhau thế >:|"
-    }
+  "slap": {
+    "title": "Vả",
+    "text": "%s đã bị tát bởi %s"
+  },
+  "hug": {
+    "title": "Ôm",
+    "text": "%s đã ôm %s. Ôm nhau thắm thiết :))"
+  },
+  "poke": {
+    "title": "Chọc",
+    "text": "%s đã chọc %s. Chọc nhau cho đời nó vui :))"
+  },
+  "pat": {
+    "title": "Xoa đầu",
+    "text": "%s đã xoa đầu %s. Ngủ đêeee"
+  },
+  "kick": {
+    "title": "Đá",
+    "text": "%s đã đá %s. Pay màu ahehehehe"
+  },
+  "punch": {
+    "title": "Đấm",
+    "text": "%s đã đấm %s. KO"
+  },
+  "cuddle": {
+    "title": "Âu yếm",
+    "text": "%s đã âu yếm %s. Ơ tôi thêm cái lệnh này khi nào thế? :0"
+  },
+  "bite": {
+    "title": "Cắn",
+    "text": "%s đã cắn %s. Ai cho cắn nhau thế >:|"
+  }
 }

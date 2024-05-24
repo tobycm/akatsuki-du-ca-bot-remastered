@@ -229,18 +229,23 @@ class FunCog(Cog):
         riel = f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})"
 
         embed = Embed(
-            title = lang("fun.free_nitro.title"),
+            title = "",
             description = lang("fun.free_nitro.description") % riel,
             color = 0x2F3136,
         )
-        embed.set_image(url = "https://i.ibb.co/5LDTWSj/freenitro.png")
+        embed.set_image(url = "https://i.ibb.co/k3xZ5Vp/du-ca-nitro.png")
         await interaction.response.send_message(
             lang("fun.free_nitro.success"), ephemeral = True
         )
 
         view = View(timeout = 600)
         view.add_item(
-            Button(style = ButtonStyle.blurple, label = "Claim", url = riel)
+            Button(
+                style = ButtonStyle.green,
+                label = "Claim",
+                url =
+                f"https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id}"
+            )
         )
 
         assert isinstance(interaction.channel, GuildTextableChannel)

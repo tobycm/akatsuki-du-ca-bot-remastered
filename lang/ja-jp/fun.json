@@ -1,9 +1,9 @@
 {
-    "waifu": "This is your waifu! <3\n[Source](%s)",
-    "powered_by_waifu_im": "Powered by [waifu.im](https://waifu.im)",
-    "free_nitro": {
-        "title": "You have been gifted Nitro!",
-        "description": "Akatsuki Du Ca#2708 gifted you Nitro!\n%s",
-        "success": "Getting sweet free nitro for you <3"
-    }
+  "waifu": "This is your waifu! <3\n[Source](%s)",
+  "powered_by_waifu_im": "Powered by [waifu.im](https://waifu.im)",
+  "free_nitro": {
+    "title": "You have been gifted Nitro!",
+    "description": "Akatsuki Du Ca#2708 gifted you Nitro!\n%s",
+    "success": "Getting sweet free nitro for you <3"
+  }
 }

@@ -1,22 +1,22 @@
 {
-    "bug_report": {
-        "success": "Cảm ơn bro đã gửi report. Lát tui check cho bro."
-    },
-    "osu": {
-        "player_not_found": "Không tìm thấy người chơi 0.0",
-        "stats": {
-            "description": "PP: %s\nRank: %s",
-            "title": "Người chơi hệ pro vjp %s"
-        }
-    },
-    "change_language": "Chọn ngôn ngữ:",
-    "minecraft": {
-        "server": {
-            "not_found": "Không tìm thấy",
-            "online": "%s is online",
-            "server_ip": "IP máy chủ: %s",
-            "version": "Phiên bản: %s",
-            "players": "Người chơi: %s / %s"
-        }
+  "bug_report": {
+    "success": "Cảm ơn bro đã gửi report. Lát tui check cho bro."
+  },
+  "osu": {
+    "player_not_found": "Không tìm thấy người chơi 0.0",
+    "stats": {
+      "description": "PP: %s\nRank: %s",
+      "title": "Người chơi hệ pro vjp %s"
     }
+  },
+  "change_language": "Chọn ngôn ngữ:",
+  "minecraft": {
+    "server": {
+      "not_found": "Không tìm thấy",
+      "online": "%s is online",
+      "server_ip": "IP máy chủ: %s",
+      "version": "Phiên bản: %s",
+      "players": "Người chơi: %s / %s"
+    }
+  }
 }

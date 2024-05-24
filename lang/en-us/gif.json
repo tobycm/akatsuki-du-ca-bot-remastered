@@ -1,34 +1,34 @@
 {
-    "slap": {
-        "title": "Slap",
-        "text": "%s slapped %s. Damn bro"
-    },
-    "hug": {
-        "title": "Hug",
-        "text": "%s hugged %s. How cute :Đ"
-    },
-    "poke": {
-        "title": "Poke",
-        "text": "%s poked %s. Pokey poke"
-    },
-    "pat": {
-        "title": "Pat",
-        "text": "%s patted %s. Sleep now"
-    },
-    "kick": {
-        "title": "Kick",
-        "text": "%s kicked %s. Dead XD"
-    },
-    "punch": {
-        "title": "Punch",
-        "text": "%s punched %s. KO"
-    },
-    "cuddle": {
-        "title": "Cuddle",
-        "text": "%s cuddled %s. Wait, when did I add this command :0"
-    },
-    "bite": {
-        "title": "Bite",
-        "text": "%s bit %s. Ayo no biting >:|"
-    }
+  "slap": {
+    "title": "Slap",
+    "text": "%s slapped %s. Damn bro"
+  },
+  "hug": {
+    "title": "Hug",
+    "text": "%s hugged %s. How cute :Đ"
+  },
+  "poke": {
+    "title": "Poke",
+    "text": "%s poked %s. Pokey poke"
+  },
+  "pat": {
+    "title": "Pat",
+    "text": "%s patted %s. Sleep now"
+  },
+  "kick": {
+    "title": "Kick",
+    "text": "%s kicked %s. Dead XD"
+  },
+  "punch": {
+    "title": "Punch",
+    "text": "%s punched %s. KO"
+  },
+  "cuddle": {
+    "title": "Cuddle",
+    "text": "%s cuddled %s. Wait, when did I add this command :0"
+  },
+  "bite": {
+    "title": "Bite",
+    "text": "%s bit %s. Ayo no biting >:|"
+  }
 }
