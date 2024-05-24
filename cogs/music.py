@@ -234,46 +234,46 @@ class MusicCog(Cog):
         if not player.playing and not player.current:
             await player.play(await player.queue.get_wait())
 
-    # @checks.cooldown(1, 1.25, key = user_cooldown_check)
-    # @command(name = "playtop")
-    # @guild_only()
-    # async def playtop(self, interaction: Interaction, query: str):
-    #     """
-    #     Play or add a song on top of the queue
-    #     """
-    #
-    #     lang, player = await get_lang_and_player(
-    #         interaction, should_connect=True
-    #     )
-    #
-    #     assert isinstance(interaction.channel, GuildTextableChannel)
-    #     assert isinstance(interaction.user, Member)
-    #     player.dj, player.text_channel = interaction.user, interaction.channel
-    #     await interaction.edit_original_response(
-    #         lang("music.misc.action.music.searching")
-    #     )
-    #
-    #     result = await search(query)
-    #     if not result:
-    #         return await interaction.edit_original_response(
-    #             content = lang("music.voice_client.error.not_found")
-    #         )
-    #
-    #     player.queue.put_at_front(result)
-    #
-    #     embed: Embed
-    #     if isinstance(result, Playlist):
-    #         embed = NewPlaylistEmbed(result, lang)
-    #     else:
-    #         embed = NewTrackEmbed(result, lang)
-    #
-    #     await interaction.edit_original_response(
-    #         content = "",
-    #         embed = rich_embed(embed, interaction.user, lang),
-    #     )
-    #
-    #     if not player.playing and not player.current:
-    #         await player.play(await player.queue.get_wait())
+    @checks.cooldown(1, 1.25, key = user_cooldown_check)
+    @command(name = "playtop")
+    @guild_only()
+    async def playtop(self, interaction: Interaction, query: str):
+        """
+        Play or add a song on top of the queue
+        """
+
+        lang, player = await get_lang_and_player(
+            interaction, should_connect = True
+        )
+
+        assert isinstance(interaction.channel, GuildTextableChannel)
+        assert isinstance(interaction.user, Member)
+        player.dj, player.text_channel = interaction.user, interaction.channel
+        await interaction.edit_original_response(
+            lang("music.misc.action.music.searching")
+        )
+
+        result = await search(query)
+        if not result:
+            return await interaction.edit_original_response(
+                content = lang("music.voice_client.error.not_found")
+            )
+
+        player.queue.put_at(0, result)
+
+        embed: Embed
+        if isinstance(result, Playlist):
+            embed = NewPlaylistEmbed(result, lang)
+        else:
+            embed = NewTrackEmbed(result, lang)
+
+        await interaction.edit_original_response(
+            content = "",
+            embed = rich_embed(embed, interaction.user, lang),
+        )
+
+        if not player.playing and not player.current:
+            await player.play(await player.queue.get_wait())
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
     @command(name = "pause")
