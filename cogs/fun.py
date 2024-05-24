@@ -242,7 +242,7 @@ class FunCog(Cog):
 
         assert isinstance(interaction.channel, GuildTextableChannel)
         return await interaction.channel.send(
-            f"[discord.gift/{code}](https://akatsukiduca.tobycm.dev/verify-nitro?key={code}&id={interaction.user.id})",
+            f"[discord.gift/{code}](<https://akatsukiduca.tobycm.dev/verify-nitro?key={code}&id={interaction.user.id}>)",
             file = File("assets/ducanitro.png"),
             view = view
         )
