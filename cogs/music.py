@@ -250,7 +250,7 @@ class MusicCog(Cog):
         assert isinstance(interaction.user, Member)
         player.dj, player.text_channel = interaction.user, interaction.channel
         await interaction.edit_original_response(
-            lang("music.misc.action.music.searching")
+            content = lang("music.misc.action.music.searching")
         )
 
         result = await search(query)
