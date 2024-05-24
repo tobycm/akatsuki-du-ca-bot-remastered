@@ -226,14 +226,6 @@ class FunCog(Cog):
 
         lang = await get_lang(interaction.user.id)
 
-        riel = f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})"
-
-        embed = Embed(
-            title = "",
-            description = lang("fun.free_nitro.description") % riel,
-            color = 0x2F3136,
-        )
-        embed.set_image(url = "https://i.ibb.co/k3xZ5Vp/du-ca-nitro.png")
         await interaction.response.send_message(
             lang("fun.free_nitro.success"), ephemeral = True
         )
@@ -249,7 +241,11 @@ class FunCog(Cog):
         )
 
         assert isinstance(interaction.channel, GuildTextableChannel)
-        return await interaction.channel.send(riel, embed = embed, view = view)
+        return await interaction.channel.send(
+            f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
+            file = File("assets/ducanitro.png"),
+            view = view
+        )
 
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "quote")
