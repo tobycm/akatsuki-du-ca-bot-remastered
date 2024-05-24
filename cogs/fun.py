@@ -236,13 +236,13 @@ class FunCog(Cog):
                 style = ButtonStyle.green,
                 label = "Claim",
                 url =
-                f"https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id}"
+                f"https://akatsukiduca.tobycm.dev/verify-nitro?key={code}&id={interaction.user.id}"
             )
         )
 
         assert isinstance(interaction.channel, GuildTextableChannel)
         return await interaction.channel.send(
-            f"[discord.gift/{code}](https://akatsukiduca.tk/verify-nitro?key={code}&id={interaction.user.id})",
+            f"[discord.gift/{code}](https://akatsukiduca.tobycm.dev/verify-nitro?key={code}&id={interaction.user.id})",
             file = File("assets/ducanitro.png"),
             view = view
         )
