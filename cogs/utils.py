@@ -72,8 +72,8 @@ class UtilsCog(Cog):
         assert player.statistics
 
         description = lang("utils.osu.stats.description") % (
-            player.statistics.global_rank,
             player.statistics.pp,
+            player.statistics.global_rank,
         )
 
         embed = rich_embed(
