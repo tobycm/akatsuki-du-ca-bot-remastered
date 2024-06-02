@@ -77,7 +77,10 @@ async def connect(
     if not await connect_check(interaction, lang, connecting = force_connect):
         return None
 
-    wasnt_connected = interaction.guild.voice_client is None
+    if interaction.guild.voice_client:
+        await interaction.response.send_message("...")
+
+    wasnt_connected = not interaction.guild.voice_client
 
     if should_connect and wasnt_connected:
         await interaction.response.send_message(
