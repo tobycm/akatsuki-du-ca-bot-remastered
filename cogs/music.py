@@ -443,7 +443,7 @@ class MusicCog(Cog):
             return
 
         if mode:
-            player.queue.mode = self.modes.index(mode)
+            player.queue.mode = QueueMode[self.modes.index(mode)]
 
         await interaction.response.send_message(
             content = lang("music.misc.action.loop")[self.modes[
