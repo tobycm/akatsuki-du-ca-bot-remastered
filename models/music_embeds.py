@@ -147,17 +147,14 @@ def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
     """
 
     page = 0
-
-    original_embed = QueueEmbed(lang)
-
     index = 0
 
     while index < len(queue):
         track = queue[index]
-        embed = copy.deepcopy(original_embed)
+        embed = QueueEmbed(lang)
 
-        while len(embed.description
-                  ) + len(f"{index + 1}. {track.title}\n") < 4000:
+        while len(embed.description) + len(f"{index + 1}. {track.title}\n"
+                                           ) < 4000 and index < len(queue):
             embed.description += f"{index + 1}. {track.title}\n"
             index += 1
 
