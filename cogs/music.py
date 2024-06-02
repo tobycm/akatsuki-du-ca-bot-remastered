@@ -421,8 +421,6 @@ class MusicCog(Cog):
             content = lang("music.misc.action.queue.cleared")
         )
 
-    modes = ["off", "song", "queue"]
-
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
     @command(name = "loop")
     @guild_only()
@@ -443,11 +441,17 @@ class MusicCog(Cog):
             return
 
         if mode:
-            player.queue.mode = QueueMode[self.modes.index(mode)]
+            if mode == "off":
+                player.queue.mode = QueueMode.normal
+            if mode == "song":
+                player.queue.mode = QueueMode.loop
+            if mode == "queue":
+                player.queue.mode = QueueMode.loop_all
+
+        mode = "off" if player.queue.mode == QueueMode.normal else "queue" if player.queue.mode == QueueMode.loop_all else "song"
 
         await interaction.response.send_message(
-            content = lang("music.misc.action.loop")[self.modes[
-                player.queue.mode]]
+            content = lang("music.misc.action.loop")[mode]
         )
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
