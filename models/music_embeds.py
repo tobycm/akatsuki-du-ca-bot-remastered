@@ -157,9 +157,10 @@ def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
                                            ) < 4000 and index < len(queue):
             embed.description += f"{index + 1}. {track.title}\n"
             index += 1
+            track = queue[index]
 
         embed.set_footer(text = f"Page {page + 1}")
-        embed.set_author(name = f"Queue - {len(queue)} items")
+        embed.set_author(name = f"{index + 1}/{len(queue)}")
 
         page += 1
         yield embed, page
