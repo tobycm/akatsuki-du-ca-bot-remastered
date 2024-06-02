@@ -289,12 +289,9 @@ class MusicCog(Cog):
         Pause a song.
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player or not player.current:
-            await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
-            return
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         await player.pause(True)
         return await interaction.response.send_message(
@@ -309,11 +306,9 @@ class MusicCog(Cog):
         Skip a song
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player.current:
-            return await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         await player.stop()
         return await interaction.response.send_message(
@@ -328,7 +323,9 @@ class MusicCog(Cog):
         Stop playing music.
         """
 
-        lang, player = await get_lang_and_player(interaction)
+        lang, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
         if not len(player.queue) == 0:
             player.queue.clear()
         await player.stop()
@@ -436,11 +433,6 @@ class MusicCog(Cog):
         """
 
         lang, player = await get_lang_and_player(interaction)
-        if not player.playing:
-            await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
-            return
 
         if mode:
             if mode == "off":
@@ -464,12 +456,9 @@ class MusicCog(Cog):
         Seeks to a certain point in the current track.
         """
 
-        lang, player = await get_lang_and_player(interaction)
-        if not player.playing:
-            await interaction.response.send_message(
-                content = lang("music.misc.action.error.no_music")
-            )
-            return
+        _, player = await get_lang_and_player(
+            interaction, should_playing = True
+        )
 
         position *= 1000
 
