@@ -458,13 +458,15 @@ class MusicCog(Cog):
             )
             return
 
+        position *= 1000
+
         if player.current.length < position:
             # lmao seek over track
             return await interaction.response.send_message(
                 content = "Lmao how to seek over track"
             )
 
-        await player.seek(position / 1000)
+        await player.seek(position)
         return await interaction.response.send_message(content = "\U0001f44c")
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
