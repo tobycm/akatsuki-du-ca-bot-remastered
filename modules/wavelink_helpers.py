@@ -77,7 +77,9 @@ async def connect(
     if not await connect_check(interaction, lang, connecting = force_connect):
         return None
 
-    if should_connect:
+    wasnt_connected = interaction.guild.voice_client is not None
+
+    if should_connect and wasnt_connected:
         await interaction.response.send_message(
             lang("music.voice_client.status.connecting")
         )
@@ -94,7 +96,7 @@ async def connect(
 
     assert isinstance(player, Player)
 
-    if should_connect:
+    if should_connect and wasnt_connected:
         await interaction.edit_original_response(
             content = lang("music.voice_client.status.connected")
         )
