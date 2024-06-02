@@ -125,9 +125,16 @@ class MusicCog(Cog):
 
         player = payload.player
         assert isinstance(player, Player)
-        if len(player.queue) == 0 and player.end_behavior == "disconnect":
-            player.dj, player.text_channel = None, None
-            return await player.disconnect()
+
+        if player.queue.mode == QueueMode.loop:
+            player.queue.put_at(0, payload.track)
+        if player.queue.mode == QueueMode.loop_all:
+            await player.queue.put_wait(payload.track)
+
+        if len(player.queue) == 0:
+            if player.end_behavior == "disconnect":
+                player.dj, player.text_channel = None, None
+                return await player.disconnect()
 
         await player.play(await player.queue.get_wait())
 
