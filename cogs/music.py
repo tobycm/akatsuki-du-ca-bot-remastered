@@ -2,7 +2,6 @@
 This is the music cog.
 """
 
-from logging import Logger
 from typing import Literal
 
 from discord import Embed, Interaction, Member, WebhookMessage
@@ -355,8 +354,9 @@ class MusicCog(Cog):
 
         generator = make_queue_embed(player.queue, lang)
 
-        first_embed = next(generator)
-        if not first_embed:
+        try:
+            first_embed = next(generator)
+        except StopIteration:
             return await interaction.followup.send(
                 content = lang("music.misc.action.error.no_queue")
             )
@@ -365,15 +365,17 @@ class MusicCog(Cog):
             embed = rich_embed(first_embed[0], interaction.user, lang),
         )
 
-        second_embed = next(generator)
+        try:
+            second_embed = next(generator)
+        except StopIteration:
+            return
 
-        if second_embed:
-            view = QueuePaginator([first_embed[0], second_embed[0]],
-                                  interaction, lang, generator)
-            await message.edit(view = view)
-            await view.wait()
-            view.disable()
-            await message.edit(view = view)
+        view = QueuePaginator([first_embed[0], second_embed[0]], interaction,
+                              lang, generator)
+        await message.edit(view = view)
+        await view.wait()
+        view.disable()
+        await message.edit(view = view)
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
     @command(name = "nowplaying")

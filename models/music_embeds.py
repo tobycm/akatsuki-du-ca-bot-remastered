@@ -4,11 +4,7 @@ from typing import Generator, cast
 import validators
 from discord import ButtonStyle, Embed, Interaction
 from discord.ui import Button, View, button
-from wavelink import (
-    Queue,
-    Playable,
-    Playlist,
-)
+from wavelink import Playable, Playlist, Queue
 
 from modules.lang import Lang
 from modules.misc import rich_embed, seconds_to_time
@@ -126,8 +122,9 @@ class QueuePaginator(View):
     async def next(self, interaction: Interaction, _: Button):
         self.page += 1
         if len(self.embeds) < self.page: # make embed
-            new_embed = next(self.embed_generator)
-            if not new_embed:
+            try:
+                new_embed = next(self.embed_generator)
+            except StopIteration:
                 self.page -= 1
                 return await interaction.response.send_message(
                     content = "No more pages"
@@ -155,9 +152,13 @@ def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
 
     for index, track in enumerate(queue):
         embed = copy.deepcopy(original_embed)
-        embed.description += f"{index + 1}. {track.title}\n"
+
+        while len(embed.description
+                  ) + len(f"{index + 1}. {track.title}\n") < 4000:
+            embed.description += f"{index + 1}. {track.title}\n"
+
+        embed.set_footer(text = f"Page {page + 1}")
+        embed.set_author(name = f"Queue - {len(queue)} items")
+
         page += 1
         yield embed, page
-
-    while True:
-        yield None
