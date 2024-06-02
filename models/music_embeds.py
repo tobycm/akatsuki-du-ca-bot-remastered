@@ -150,12 +150,16 @@ def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
 
     original_embed = QueueEmbed(lang)
 
-    for index, track in enumerate(queue):
+    index = 0
+
+    while index < len(queue):
+        track = queue[index]
         embed = copy.deepcopy(original_embed)
 
         while len(embed.description
                   ) + len(f"{index + 1}. {track.title}\n") < 4000:
             embed.description += f"{index + 1}. {track.title}\n"
+            index += 1
 
         embed.set_footer(text = f"Page {page + 1}")
         embed.set_author(name = f"Queue - {len(queue)} items")
