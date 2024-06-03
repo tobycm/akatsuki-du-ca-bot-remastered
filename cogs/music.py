@@ -125,8 +125,8 @@ class MusicCog(Cog):
         player = payload.player
         assert isinstance(player, Player)
 
-        if player.queue.mode == QueueMode.loop:
-            player.queue.put_at(0, payload.track)
+        # if player.queue.mode == QueueMode.loop:
+        #     player.queue.put_at(0, payload.track)
         if player.queue.mode == QueueMode.loop_all:
             await player.queue.put_wait(payload.track)
 
