@@ -294,7 +294,7 @@ class MusicCog(Cog):
         )
 
         await player.pause(True)
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.action.music.paused")
         )
 
@@ -311,7 +311,7 @@ class MusicCog(Cog):
         )
 
         await player.stop()
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.action.music.skipped")
         )
 
@@ -329,7 +329,7 @@ class MusicCog(Cog):
         if not len(player.queue) == 0:
             player.queue.clear()
         await player.stop()
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.action.music.stopped")
         )
 
@@ -343,7 +343,7 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = lang("music.misc.action.error.no_queue")
             )
 
@@ -397,7 +397,7 @@ class MusicCog(Cog):
             interaction.user,
             lang,
         )
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = "", embed = embed
         )
 
@@ -411,12 +411,12 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = lang("music.misc.action.error.no_queue")
             )
 
         player.queue.clear()
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.action.queue.cleared")
         )
 
@@ -444,7 +444,7 @@ class MusicCog(Cog):
 
         mode = "off" if player.queue.mode == QueueMode.normal else "queue" if player.queue.mode == QueueMode.loop_all else "song"
 
-        await interaction.response.send_message(
+        await interaction.edit_original_response(
             content = lang("music.misc.action.loop")[mode]
         )
 
@@ -464,12 +464,12 @@ class MusicCog(Cog):
 
         if player.current.length < position:
             # lmao seek over track
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = "Lmao how to seek over track"
             )
 
         await player.seek(position)
-        return await interaction.response.send_message(content = "\U0001f44c")
+        return await interaction.edit_original_response(content = "\U0001f44c")
 
     @checks.cooldown(1, 1, key = user_cooldown_check)
     @command(name = "volume")
@@ -486,12 +486,12 @@ class MusicCog(Cog):
         )
 
         if volume is None:
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = lang("music.misc.volume.current") % player.volume
             )
 
         await player.set_volume(volume)
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.volume.changed") % volume
         )
 
@@ -512,14 +512,14 @@ class MusicCog(Cog):
         filters = player.filters
 
         if speed is None:
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = lang("music.misc.speed.current") %
                 filters.timescale.speed
             )
 
         filters.timescale.set(speed = speed)
         await player.set_filters(filters)
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.speed.changed") % speed
         )
 
@@ -533,12 +533,12 @@ class MusicCog(Cog):
 
         lang, player = await get_lang_and_player(interaction)
         if len(player.queue) == 0:
-            return await interaction.response.send_message(
+            return await interaction.edit_original_response(
                 content = lang("music.misc.action.error.no_queue")
             )
 
         player.queue.shuffle()
-        return await interaction.response.send_message(
+        return await interaction.edit_original_response(
             content = lang("music.misc.action.queue.shuffled")
         )
 
