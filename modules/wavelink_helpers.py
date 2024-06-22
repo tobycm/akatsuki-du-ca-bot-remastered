@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable, Literal, TypeAlias
+from typing import Awaitable, Callable, TypeAlias
 
 from discord import Interaction, Member
 from wavelink import Playable, Playlist

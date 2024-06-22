@@ -1,5 +1,4 @@
-import copy
-from typing import Generator, cast
+from typing import Iterator, TypeAlias, cast
 
 import validators
 from discord import ButtonStyle, Embed, Interaction
@@ -77,19 +76,22 @@ class QueueEmbed(Embed):
         super().__init__(title = lang("music.misc.queue"), description = "")
 
 
+EmbedGenerator: TypeAlias = Iterator[tuple[QueueEmbed, int]]
+
+
 class QueuePaginator(View):
-    embeds: list[QueueEmbed]
+    embeds: list[tuple[QueueEmbed, int]]
     page: int
     original_interaction: Interaction
     lang: Lang
-    embed_generator: Generator[tuple[QueueEmbed, int] | None, None, None]
+    embed_generator: EmbedGenerator
 
     def __init__(
         self,
-        embeds_init: list[QueueEmbed],
+        embeds_init: list[tuple[QueueEmbed, int]],
         interaction: Interaction,
         lang: Lang,
-        embed_generator: Generator[tuple[QueueEmbed, int] | None, None, None],
+        embed_generator: EmbedGenerator,
     ):
         self.page = 0
         self.embeds = embeds_init
@@ -103,65 +105,71 @@ class QueuePaginator(View):
         for child in self.children:
             cast(Button, child).disabled = True
 
+    async def __update_embed(self, interaction: Interaction):
+        await interaction.response.defer()
+        await self.original_interaction.edit_original_response(
+            embed = rich_embed(
+                self.embeds[self.page][0], self.original_interaction.user,
+                self.lang
+            )
+        )
+
     @button(label = "◀", style = ButtonStyle.blurple)
     async def previous(self, interaction: Interaction, _: Button):
         self.page -= 1
         if self.page < 0:
             self.page = 0
             return await interaction.response.send_message(
-                content = "No more pages"
+                content = self.lang("music.misc.action.queue.first_page"),
+                ephemeral = True
             )
 
-        embed = self.embeds[self.page]
-        await interaction.response.send_message(content = "Changed page")
-        await self.original_interaction.response.edit_message(
-            embed = rich_embed(embed, interaction.user, self.lang)
-        )
+        await self.__update_embed(interaction)
 
     @button(label = "▶", style = ButtonStyle.blurple)
     async def next(self, interaction: Interaction, _: Button):
         self.page += 1
-        if len(self.embeds) < self.page: # make embed
+        if len(self.embeds) <= self.page: # make embed
             try:
                 new_embed = next(self.embed_generator)
-                assert new_embed
             except StopIteration:
-                self.page -= 1
+                self.page = len(self.embeds) - 1
                 return await interaction.response.send_message(
-                    content = "No more pages"
+                    content = self.lang("music.misc.action.queue.last_page"),
+                    ephemeral = True
                 )
 
-            self.embeds.append(new_embed[0])
-            self.page = new_embed[1]
+            self.embeds.append(new_embed)
 
-        embed = self.embeds[self.page]
-
-        await interaction.response.send_message(content = "Changed page")
-        await self.original_interaction.response.edit_message(
-            embed = rich_embed(embed, interaction.user, self.lang)
-        )
+        await self.__update_embed(interaction)
 
 
-def make_queue_embed(queue: Queue, lang: Lang): # embed, page number
+def make_queue_embed(
+    queue: Queue, lang: Lang
+) -> Iterator[tuple[QueueEmbed, int]]: # embed, page number
     """
     Make queue pages embeds
     """
 
     page = 0
+    current_page_items = 0
     index = 0
 
     while index < len(queue):
         track = queue[index]
         embed = QueueEmbed(lang)
 
-        while len(embed.description) + len(f"{index + 1}. {track.title}\n"
-                                           ) < 4000 and index < len(queue):
+        while len(embed.description) + len(
+            f"{index + 1}. {track.title}\n"
+        ) < 4000 and index < len(queue) and current_page_items < 20:
+            track = queue[index]
             embed.description += f"{index + 1}. {track.title}\n"
             index += 1
-            track = queue[index]
+            current_page_items += 1
 
         embed.set_footer(text = f"Page {page + 1}")
-        embed.set_author(name = f"{index + 1}/{len(queue)}")
+        embed.set_author(name = f"{index}/{len(queue)}")
 
-        page += 1
         yield embed, page
+        page += 1
+        current_page_items = 0

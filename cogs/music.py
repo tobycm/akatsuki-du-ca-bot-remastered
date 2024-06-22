@@ -200,7 +200,7 @@ class MusicCog(Cog):
         """
 
         lang, player = await get_lang_and_player(
-            interaction, should_connect = True
+            interaction, should_connect = not not query
         )
         if not query:
             if not player.paused:
@@ -341,8 +341,6 @@ class MusicCog(Cog):
             interaction, checks = [VoiceChecks.has_queue]
         )
 
-        await interaction.response.defer()
-
         generator = make_queue_embed(player.queue, lang)
 
         try:
@@ -350,9 +348,8 @@ class MusicCog(Cog):
         except StopIteration:
             raise MusicException.QueueEmpty
 
-        message = await interaction.followup.send(
+        await interaction.edit_original_response(
             embed = rich_embed(first_embed[0], interaction.user, lang),
-            wait = True
         )
 
         try:
@@ -360,12 +357,12 @@ class MusicCog(Cog):
         except StopIteration:
             return
 
-        view = QueuePaginator([first_embed[0], second_embed[0]], interaction,
-                              lang, generator)
-        await message.edit(view = view)
+        view = QueuePaginator([first_embed, second_embed], interaction, lang,
+                              generator)
+        await interaction.edit_original_response(view = view)
         await view.wait()
         view.disable()
-        await message.edit(view = view)
+        await interaction.edit_original_response(view = view)
 
     @checks.cooldown(1, 1.25, key = user_cooldown_check)
     @command(name = "nowplaying")
@@ -479,12 +476,13 @@ class MusicCog(Cog):
 
         if volume is None:
             return await interaction.edit_original_response(
-                content = lang("music.misc.volume.current") % player.volume
+                content = lang("music.misc.volume.current") %
+                f"{player.volume}%"
             )
 
         await player.set_volume(volume)
         return await interaction.edit_original_response(
-            content = lang("music.misc.volume.changed") % volume
+            content = lang("music.misc.volume.changed") % f"{player.volume}%"
         )
 
     # @checks.cooldown(1, 1, key = user_cooldown_check)
@@ -546,6 +544,6 @@ class MusicCog(Cog):
         for index in range(len(player.queue) // 2):
             player.queue.swap(index, len(player.queue) - index - 1)
 
-        return await interaction.response.send_message(
-            lang("music.misc.action.queue.flipped")
+        return await interaction.edit_original_response(
+            content = lang("music.misc.action.queue.flipped")
         )

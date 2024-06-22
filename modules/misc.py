@@ -3,6 +3,8 @@ Just some checks and utils function
 """
 
 from math import floor
+from random import choice
+from string import ascii_letters
 from typing import TypeAlias, Union
 
 from discord import (
@@ -109,3 +111,11 @@ GuildTextableChannel = (TextChannel, Thread, VoiceChannel, StageChannel)
 GuildTextableChannelType: TypeAlias = Union[TextChannel, Thread, VoiceChannel,
                                             StageChannel]
 TextableChannel = (*GuildTextableChannel, DMChannel, GroupChannel)
+
+
+def random_string(length: int) -> str:
+    """
+    Generate a random string
+    """
+
+    return "".join(choice(ascii_letters) for _ in range(length))

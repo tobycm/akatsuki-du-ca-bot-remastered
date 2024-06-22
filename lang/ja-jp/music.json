@@ -28,7 +28,9 @@
         "shuffled": "キューをシャッフルしました！",
         "added": "キューに追加しました！",
         "removed": "キュー内の %s番目の曲を削除しました！",
-        "flipped": "Flipped queue!"
+        "flipped": "Flipped queue!",
+        "first_page": "You're already on the first page!",
+        "last_page": "You're already on the last page!"
       },
       "music": {
         "searching": "検索中...",
@@ -44,8 +46,8 @@
       }
     },
     "volume": {
-      "current": "Current volume: %s%",
-      "changed": "Volume changed to %s%"
+      "current": "Current volume: %s",
+      "changed": "Volume changed to %s"
     },
     "speed": {
       "current": "Current speed: %sx",

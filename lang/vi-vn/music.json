@@ -28,7 +28,9 @@
         "shuffled": "Đã xáo trộn hàng đợi!",
         "added": "Đã thêm vào hàng đợi!",
         "removed": "Đã xóa bài hát thứ %s khỏi hàng đợi!",
-        "flipped": "Đã lộn ngược hàng đợi!"
+        "flipped": "Đã lộn ngược hàng đợi!",
+        "first_page": "Bạn đang ở trang đầu tiên rồi mà :v",
+        "last_page": "Bạn đang ở trang cuối rồi!"
       },
       "music": {
         "searching": "Đang tìm...",
@@ -44,8 +46,8 @@
       }
     },
     "volume": {
-      "current": "Âm lượng hiện tại: %s%",
-      "changed": "Đã thay đổi âm lượng thành %s%"
+      "current": "Âm lượng hiện tại: %s",
+      "changed": "Đã thay đổi âm lượng thành %s"
     },
     "speed": {
       "current": "Tốc độ hiện tại: %sx",

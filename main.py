@@ -4,11 +4,13 @@ Main bot file.
 """
 
 import asyncio
+import datetime
 import traceback
 
-from discord import Game, Guild, Intents, Message
+from discord import Game, Guild, Intents, Interaction, Message
+from discord.app_commands import errors as app_commands_errors
 from discord.ext.commands import Context
-from discord.ext.commands.errors import CommandNotFound, CommandOnCooldown
+from discord.ext.commands import errors as commands_errors
 
 from akatsuki_du_ca import AkatsukiDuCa
 from config import config
@@ -112,17 +114,17 @@ async def on_guild_remove(guild: Guild):
 
 
 @bot.event
-async def on_command_error(ctx: Context, error: Exception):
+async def on_error(ctx: Context, error: Exception):
     """
     Command error handler
     """
 
-    if isinstance(error, CommandNotFound):
+    if isinstance(error, commands_errors.CommandNotFound):
         return
 
     _lang = await lang.get_lang(ctx.author.id)
 
-    if isinstance(error, CommandOnCooldown):
+    if isinstance(error, commands_errors.CommandOnCooldown):
         return await ctx.send(
             _lang("main.exceptions.command_on_cooldown") %
             round(error.retry_after, 1)
@@ -160,10 +162,90 @@ async def on_command_error(ctx: Context, error: Exception):
     assert isinstance(error_channel, misc.TextableChannel)
 
     await error_channel.send(
-        f"```py\n{traceback.format_exception(error)}\n```"
+        f"```py\n{''.join(traceback.format_exception(error))}\n```"
     )
 
     await ctx.send(_lang("main.exceptions.unknown"))
+
+    # throw again
+    raise error
+
+
+@bot.tree.error
+async def on_error(interaction: Interaction, error):
+    """
+    Command error handler
+    """
+
+    if isinstance(error, app_commands_errors.CommandNotFound):
+        return
+
+    _lang = await lang.get_lang(interaction.user.id)
+
+    if isinstance(error, app_commands_errors.CommandOnCooldown):
+        return await interaction.edit_original_response(
+            content = _lang("main.exceptions.command_on_cooldown") %
+            round(error.retry_after, 1)
+        )
+
+    if isinstance(error, exceptions.LangNotAvailable):
+        return await interaction.edit_original_response(
+            content = _lang("main.exceptions.language_not_available")
+        )
+
+    if isinstance(error, exceptions.MusicException.AuthorNotInVoice):
+        return await interaction.edit_original_response(
+            content = _lang("music.voice_client.error.user_no_voice")
+        )
+
+    if isinstance(error, exceptions.MusicException.DifferentVoice):
+        return await interaction.edit_original_response(
+            content = _lang(
+                "music.voice_client.error.playing_in_another_channel"
+            )
+        )
+
+    if isinstance(error, exceptions.MusicException.NoPermissionToConnect):
+        return await interaction.edit_original_response(
+            content = _lang("music.voice_client.error.no_permission")
+        )
+
+    if isinstance(error, exceptions.MusicException.NotConnected):
+        return await interaction.edit_original_response(
+            content = _lang("music.voice_client.error.not_connected")
+        )
+
+    if isinstance(error, exceptions.MusicException.NotPlaying):
+        return await interaction.edit_original_response(
+            content = _lang("music.misc.action.error.no_music")
+        )
+
+    if isinstance(error, exceptions.MusicException.QueueEmpty):
+        return await interaction.edit_original_response(
+            content = _lang("music.misc.action.error.no_queue")
+        )
+
+    if isinstance(error, exceptions.MusicException.TrackNotFound):
+        return await interaction.edit_original_response(
+            content = _lang("music.voice_client.error.not_found")
+        )
+
+    # send error to channel
+    error_channel = bot.get_channel(config.bot.channels.error)
+    assert error_channel
+    assert isinstance(error_channel, misc.TextableChannel)
+
+    error_code = f"{datetime.datetime.now()} {interaction.command.name} {interaction.guild_id} {interaction.user.id} {type(error).__name__} {misc.random_string(8)}"
+
+    await error_channel.send(
+        f"Error code: `{error_code}`\n" +
+        f"```py\n{''.join(traceback.format_exception(error))}\n```"
+    )
+
+    await interaction.edit_original_response(
+        content = f"Error code: `{error_code}`\n" +
+        _lang("main.exceptions.unknown")
+    )
 
     # throw again
     raise error

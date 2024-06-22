@@ -28,7 +28,9 @@
         "shuffled": "Queue shuffled!",
         "added": "Added to queue!",
         "removed": "Removed %sth song in queue!",
-        "flipped": "Flipped queue!"
+        "flipped": "Flipped queue!",
+        "first_page": "You're already on the first page!",
+        "last_page": "You're already on the last page!"
       },
       "music": {
         "searching": "Searching...",
@@ -44,8 +46,8 @@
       }
     },
     "volume": {
-      "current": "Current volume: %s%",
-      "changed": "Volume changed to %s%"
+      "current": "Current volume: %s",
+      "changed": "Volume changed to %s"
     },
     "speed": {
       "current": "Current speed: %sx",
