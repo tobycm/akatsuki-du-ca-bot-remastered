@@ -124,6 +124,7 @@ class QueuePaginator(View):
         if len(self.embeds) < self.page: # make embed
             try:
                 new_embed = next(self.embed_generator)
+                assert new_embed
             except StopIteration:
                 self.page -= 1
                 return await interaction.response.send_message(

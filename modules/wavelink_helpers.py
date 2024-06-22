@@ -1,3 +1,5 @@
+from typing import Awaitable, Callable, Literal, TypeAlias
+
 from discord import Interaction, Member
 from wavelink import Playable, Playlist
 
@@ -5,6 +7,74 @@ from models.music_player import Player
 from modules.exceptions import MusicException
 from modules.lang import Lang, get_lang
 from modules.log import logger
+
+VoiceCheck: TypeAlias = Callable[[Interaction], Awaitable[None]]
+
+
+class VoiceChecks:
+
+    @staticmethod
+    def __get_player(interaction: Interaction) -> Player:
+        """
+        Get player
+        
+        Should be used only when bot is connected
+        """
+
+        assert interaction.guild
+        assert isinstance(interaction.guild.voice_client, Player)
+        return interaction.guild.voice_client
+
+    @staticmethod
+    async def has_current(interaction: Interaction) -> None:
+        """
+        Check if bot has a track playing
+        """
+
+        if VoiceChecks.__get_player(interaction).current:
+            return
+
+        raise MusicException.NotPlaying
+
+    @staticmethod
+    async def playing(interaction: Interaction) -> None:
+        """
+        Check if bot is actually playing a track
+        """
+
+        if VoiceChecks.__get_player(interaction).playing:
+            return
+
+        raise MusicException.NotPlaying
+
+    @staticmethod
+    async def has_queue(interaction: Interaction) -> None:
+        """
+        Check if bot has a queue
+        """
+
+        if len(VoiceChecks.__get_player(interaction).queue) > 0:
+            return
+
+        raise MusicException.QueueEmpty
+
+    # no use because can make /play request url to add track
+    # also missing lang
+    # @staticmethod
+    # async def paused(interaction: Interaction, lang: Lang) -> bool:
+    #     """
+    #     Check if bot is paused
+    #     """
+
+    #     player = VoiceChecks.__get_player(interaction)
+
+    #     if player.paused:
+    #         return True
+
+    #     await interaction.edit_original_response(
+    #         content = lang("music.voice_client.error.not_paused")
+    #     )
+    #     return False
 
 
 async def search(query: str) -> Playable | Playlist | None:
@@ -33,78 +103,76 @@ async def search(query: str) -> Playable | Playlist | None:
 
 async def connect_check(
     interaction: Interaction,
-    lang: Lang,
-    connecting: bool = False,
-) -> bool:
+    new_connection: bool = False,
+) -> None:
     """
     Connect checks
     """
 
-    assert isinstance(interaction.user, Member)
     assert interaction.guild
+    assert isinstance(interaction.user, Member)
 
-    user_voice = interaction.user.voice
-    if not user_voice: # author not in voice channel
-        await interaction.response.send_message(
-            lang("music.voice_client.error.user_no_voice")
-        )
-        return False
-    voice_client = interaction.guild.voice_client
-    if not voice_client: return True
-    if connecting:
-        await interaction.response.send_message(
-            lang("music.voice_client.status.already_connected")
-        )
-        return False
-    if voice_client.channel != user_voice.channel:
-        await interaction.response.send_message(
-            lang("music.voice_client.error.playing_in_another_channel")
-        )
-        return False
-    return True
+    if not interaction.user.voice: # author not in voice channel
+        raise MusicException.AuthorNotInVoice
+
+    if not interaction.guild.voice_client: return # ok to connect
+
+    if new_connection:
+        raise MusicException.AlreadyConnected
+
+    if interaction.guild.voice_client.channel != interaction.user.voice.channel:
+        raise MusicException.DifferentVoice
 
 
 async def connect(
     interaction: Interaction,
     lang: Lang,
     should_connect: bool = False,
-    force_connect: bool = False,
-) -> Player | None: # aka get player
+    new_connection: bool = False,
+    checks: list[VoiceCheck] = [],
+) -> Player: # aka get player
     """
     Initialize a player or connect to a voice channel if there are none.
     """
 
-    if not await connect_check(interaction, lang, connecting = force_connect):
-        return None
+    await connect_check(interaction, new_connection = new_connection)
 
-    wasnt_connected = not interaction.guild.voice_client
+    assert interaction.guild
 
-    if should_connect and wasnt_connected:
-        await interaction.edit_original_response(
-            content = lang("music.voice_client.status.connecting")
-        )
+    player = interaction.guild.voice_client
 
+    if player:
+        assert isinstance(player, Player)
+
+        for check in checks:
+            await check(interaction)
+
+        return player
+
+    if not should_connect:
+        raise MusicException.NotConnected
+
+    await interaction.edit_original_response(
+        content = lang("music.voice_client.status.connecting")
+    )
+
+    assert interaction.guild
     assert isinstance(interaction.user, Member)
     assert interaction.user.voice
     assert interaction.user.voice.channel
-    assert interaction.guild
 
-    player = (
-        interaction.guild.voice_client or await
-        interaction.user.voice.channel.connect(self_deaf = True, cls = Player)
+    player = await interaction.user.voice.channel.connect(
+        self_deaf = True, cls = Player
     )
 
-    assert isinstance(player, Player)
-
-    if should_connect and wasnt_connected:
-        await interaction.edit_original_response(
-            content = lang("music.voice_client.status.connected")
-        )
+    await interaction.edit_original_response(
+        content = lang("music.voice_client.status.connected")
+    )
 
     return player
 
 
-async def disconnect_check(interaction: Interaction, lang: Lang) -> bool:
+async def disconnect_check(interaction: Interaction) -> None:
     """
     Disconnect checks
     """
@@ -113,28 +181,19 @@ async def disconnect_check(interaction: Interaction, lang: Lang) -> bool:
     assert isinstance(interaction.user, Member)
 
     if not interaction.user.voice: # author not in voice channel
-        await interaction.response.send_message(
-            lang("music.voice_client.error.user_no_voice")
-        )
-        return False
+        raise MusicException.AuthorNotInVoice
+
     if not interaction.guild.voice_client: # bot didn't even connect lol
-        await interaction.response.send_message(
-            lang("music.voice_client.error.not_connected")
-        )
-        return False
+        raise MusicException.NotConnected
+
     if interaction.guild.voice_client.channel != interaction.user.voice.channel:
-        await interaction.response.send_message(
-            lang("music.voice_client.error.playing_in_another_channel")
-        )
-    return True
+        raise MusicException.DifferentVoice
 
 
-async def disconnect(interaction: Interaction, lang: Lang) -> bool:
+async def disconnect(interaction: Interaction, lang: Lang) -> None:
+    await disconnect_check(interaction)
     assert interaction.guild
     assert interaction.guild.voice_client
-
-    if not await disconnect_check(interaction, lang):
-        return False
 
     await interaction.response.send_message(
         lang("music.voice_client.status.disconnecting")
@@ -144,13 +203,12 @@ async def disconnect(interaction: Interaction, lang: Lang) -> bool:
     await interaction.edit_original_response(
         content = lang("music.voice_client.status.disconnected")
     )
-    return True
 
 
 async def get_lang_and_player(
     interaction: Interaction,
     should_connect: bool = False,
-    should_playing: bool = False,
+    checks: list[VoiceCheck] = [],
 ) -> tuple[Lang, Player]:
     """
     Get lang and player
@@ -162,14 +220,7 @@ async def get_lang_and_player(
     await interaction.response.send_message("...")
 
     lang = await get_lang(interaction.user.id)
-    player = await connect(interaction, lang, should_connect = should_connect)
-    if not player:
-        raise MusicException.NotConnected
 
-    if should_playing and not player.playing:
-        await interaction.response.send_message(
-            lang("music.voice_client.error.not_playing")
-        )
-        raise MusicException.NotPlaying
-
-    return lang, player
+    return lang, await connect(
+        interaction, lang, should_connect = should_connect, checks = checks
+    )

@@ -3,7 +3,7 @@ Just some checks and utils function
 """
 
 from math import floor
-from typing import TypeAlias
+from typing import TypeAlias, Union
 
 from discord import (
     Color, DMChannel, Embed, GroupChannel, Interaction, Member, Message,
@@ -71,8 +71,8 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     seconds = floor(seconds)
 
     minutes_str = (
-        f"0{minutes}"
-        if double_zero_in_minutes and minutes < 10 else f"{minutes}"
+        f"0{minutes}" if hours > 0 or
+        (double_zero_in_minutes and minutes < 10) else f"{minutes}"
     )
     seconds_str = f"0{seconds}" if seconds < 10 else f"{seconds}"
 
@@ -105,5 +105,7 @@ def rich_embed(embed: Embed, author: User | Member, lang: Lang) -> Embed:
     return embed
 
 
-GuildTextableChannel: TypeAlias = TextChannel | Thread | VoiceChannel | StageChannel
-TextableChannel: TypeAlias = GuildTextableChannel | DMChannel | GroupChannel
+GuildTextableChannel = (TextChannel, Thread, VoiceChannel, StageChannel)
+GuildTextableChannelType: TypeAlias = Union[TextChannel, Thread, VoiceChannel,
+                                            StageChannel]
+TextableChannel = (*GuildTextableChannel, DMChannel, GroupChannel)

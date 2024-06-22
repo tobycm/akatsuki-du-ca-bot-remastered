@@ -102,12 +102,12 @@ class UtilsCog(Cog):
 
         lang = await get_lang(interaction.user.id)
 
-        bug_channel = interaction.client.get_channel(config.bot.channels.bug)
-
         await interaction.response.send_message(
             lang("utils.bug_report.success")
         )
 
+        bug_channel = interaction.client.get_channel(config.bot.channels.bug)
+        assert bug_channel
         assert isinstance(bug_channel, GuildTextableChannel)
 
         await bug_channel.send(

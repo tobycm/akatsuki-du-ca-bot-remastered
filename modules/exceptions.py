@@ -45,6 +45,21 @@ class MusicException:
         Raised when the player is not playing.
         """
 
+    class QueueEmpty(Exception):
+        """
+        Raised when the queue is empty.
+        """
+
+    class AlreadyConnected(Exception):
+        """
+        Raised when the bot is already connected to a voice channel.
+        """
+
+    class TrackNotFound(Exception):
+        """
+        Raised when the bot can't find the track.
+        """
+
 
 class UnknownException(Exception):
     """
