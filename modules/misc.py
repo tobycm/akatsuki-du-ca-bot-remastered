@@ -73,8 +73,8 @@ def seconds_to_time(seconds: int, double_zero_in_minutes: bool = False) -> str:
     seconds = floor(seconds)
 
     minutes_str = (
-        f"0{minutes}" if hours > 0 or
-        (double_zero_in_minutes and minutes < 10) else f"{minutes}"
+        f"0{minutes}" if minutes < 10 and
+        (hours > 0 or double_zero_in_minutes) else f"{minutes}"
     )
     seconds_str = f"0{seconds}" if seconds < 10 else f"{seconds}"
 
