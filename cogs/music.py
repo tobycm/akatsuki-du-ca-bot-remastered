@@ -306,14 +306,16 @@ class MusicCog(Cog):
             interaction, checks = [VoiceChecks.playing]
         )
 
-        if not amount:
+        if not amount or amount < 1:
             amount = 1
 
         # if len(player.queue) < amount:
         # do smth ig
 
-        for _ in range(amount):
-            await player.skip()
+        for _ in range(amount - 1):
+            player.queue.delete(0)
+
+        await player.skip()
 
         return await interaction.edit_original_response(
             content = lang("music.misc.action.music.skipped")
