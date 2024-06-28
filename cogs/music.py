@@ -312,8 +312,11 @@ class MusicCog(Cog):
         # if len(player.queue) < amount:
         # do smth ig
 
-        for _ in range(amount - 1):
-            player.queue.delete(0)
+        try:
+            for _ in range(amount - 1):
+                player.queue.delete(0)
+        except IndexError:
+            pass
 
         await player.skip()
 
