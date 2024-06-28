@@ -297,7 +297,7 @@ class MusicCog(Cog):
     @checks.cooldown(1, 1.5, key = user_cooldown_check)
     @command(name = "skip")
     @guild_only()
-    async def skip(self, interaction: Interaction):
+    async def skip(self, interaction: Interaction, amount: int | None = None):
         """
         Skip a song
         """
@@ -306,7 +306,15 @@ class MusicCog(Cog):
             interaction, checks = [VoiceChecks.playing]
         )
 
-        await player.stop()
+        if not amount:
+            amount = 1
+
+        # if len(player.queue) < amount:
+        # do smth ig
+
+        for _ in range(amount):
+            await player.skip()
+
         return await interaction.edit_original_response(
             content = lang("music.misc.action.music.skipped")
         )
