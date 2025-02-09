@@ -43,7 +43,7 @@ class NSFWCog(GroupCog, name = "nsfw"):
         assert isinstance(interaction.channel, GuildTextableChannel)
 
         if not interaction.channel.is_nsfw():
-            await interaction.response.send_message(
+            return await interaction.response.send_message(
                 lang("nsfw.pls_go_to_nsfw"), ephemeral = True
             )
 
